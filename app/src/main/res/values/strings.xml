@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">FireWire</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="login_connect_with">Connect With</string>
+    <string name="or">or</string>
+    <string name="enter_email">Enter your email</string>
+    <string name="forgot">Forgot?</string>
+    <string name="sign_in">Sign in</string>
+    <string name="account_register">Don’t have an Account? Register</string>
+    <string name="terms_condition">By register or logging into an account you are agreeing with our Terms and Conditions</string>
+    <string name="back">Back</string>
+    <string name="register_sccount">Please register your account</string>
+    <string name="first_name">First Name</string>
+</resources>
