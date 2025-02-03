@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="?actionBarSize"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white">
+    <TextView
+        android:id="@+id/tvBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_16"
+        android:fontFamily="@font/poppins_regular"
+        android:textColor="@color/back_text"
+        android:gravity="center"
+        android:layout_marginStart="@dimen/text_16"
+        android:drawablePadding="@dimen/dis_5"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_title"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_title"
+        android:tint="@color/black"
+        app:drawableStartCompat="@drawable/ic_back" />
+
+   <TextView
+       android:id="@+id/tv_title"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       app:layout_constraintTop_toTopOf="parent"
+       android:textSize="@dimen/text_24"
+       android:fontFamily="@font/teko_regular"
+       android:textColor="@color/app_text_color"
+       app:layout_constraintBottom_toBottomOf="parent"
+       app:layout_constraintRight_toRightOf="parent"
+       app:layout_constraintLeft_toLeftOf="parent"
+       tools:text="Personalization"/>
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

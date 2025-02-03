@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "223386379375",
+    "firebase_url": "https://nycfirewire-8ea48.firebaseio.com",
+    "project_id": "nycfirewire-8ea48",
+    "storage_bucket": "nycfirewire-8ea48.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:223386379375:android:2a085b4b0affa291ac199a",
+        "android_client_info": {
+          "package_name": "com.pioneer.nycfirewire"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "223386379375-p7fojocgfta2904jpios3qo17n7fdr1k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsG2VX6D9m33DIIg-l0BJBXkggC4NP_gs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "223386379375-p7fojocgfta2904jpios3qo17n7fdr1k.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "223386379375-sd7bkbbvbgftj9hpp0594h8q0ei2uero.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.kbf.app13822684"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

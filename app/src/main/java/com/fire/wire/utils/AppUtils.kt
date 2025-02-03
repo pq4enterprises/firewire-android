@@ -1,7 +1,10 @@
 package com.fire.wire.utils
 
+import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Color
+import android.net.Uri
+import android.provider.OpenableColumns
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
@@ -10,26 +13,48 @@ import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.TextView
 import com.fire.wire.R
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 
 object AppUtils {
-    fun setMessageWithClickableLink(context: Context, textView: TextView) {
-        val content = context.getString(R.string.account_register)
-        val clickableSpan = object : ClickableSpan(){
-            override fun onClick(widget: View) {
-                showToast(context,"Clicked policy")
+
+    fun getImageFileFromUri(context: Context, uri: Uri): File? {
+        val contentResolver: ContentResolver = context.contentResolver
+
+        // Get the file name from the URI
+        val fileName = getFileName(context, uri) ?: return null
+
+        // Create a temp file to copy the image content
+        val tempFile = File(context.cacheDir, fileName)
+        val inputStream: InputStream? = contentResolver.openInputStream(uri)
+        val outputStream = FileOutputStream(tempFile)
+
+        inputStream?.use { input ->
+            outputStream.use { output ->
+                val buffer = ByteArray(4096)
+                var bytesRead: Int
+                while (input.read(buffer).also { bytesRead = it } != -1) {
+                    output.write(buffer, 0, bytesRead)
+                }
             }
         }
-        val startIndex = content.indexOf("Terms")
-        val endIndex = content.lastIndexOf("Conditions")+"Conditions".length
-        val spannableString = SpannableString(content)
-        val spanColor= ForegroundColorSpan(Color.WHITE)
 
-        spannableString.setSpan(clickableSpan, startIndex, endIndex,   Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        spannableString.setSpan(spanColor, startIndex, endIndex,   Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        textView.setText(spannableString)
-        textView.setTextColor(Color.WHITE)
-        textView.setMovementMethod(LinkMovementMethod.getInstance())
-        textView.setHighlightColor(Color.TRANSPARENT)
+        return tempFile
+    }
+
+    fun getFileName(context: Context, uri: Uri): String? {
+        var name: String? = null
+        if (uri.scheme == "content") {
+            val cursor = context.contentResolver.query(uri, null, null, null, null)
+            cursor?.use {
+                val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                if (it.moveToFirst()) {
+                    name = it.getString(nameIndex)
+                }
+            }
+        }
+        return name
     }
 
 }

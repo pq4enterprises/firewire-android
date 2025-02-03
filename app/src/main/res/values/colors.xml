@@ -14,6 +14,22 @@
     <color name="or_text">#525B66</color>
     <color name="email_text">#797A7E</color>
     <color name="grey_text">#525B66</color>
+    <color name="grey_bg">#F9F9F9</color>
+    <color name="heading_color">#232425</color>
+    <color name="country_item">#595959</color>
+    <color name="grey_lite">#9E9E9E</color>
+    <color name="back_text">#343E4C</color>
+    <color name="small_desc">#797979</color>
+    <color name="grey_little_text">#888888</color>
+    <color name="view_color">#EFEFEF</color>
+    <color name="grey_lite_bg">#FBFBFB</color>
+    <color name="choose_text_color">#1D292C</color>
+    <color name="personal_color">#1A1A1A</color>
+    <color name="email_text_color">#D2D2D2</color>
+    <color name="edit_text_bg">#BFC0C2</color>
+    <color name="transparent_color">#FF2b3544</color>
+    <color name="dim_grey">#BABABA</color>
+
 
 
 </resources>

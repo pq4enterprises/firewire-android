@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Bottom Layer: Rectangle with a solid color -->
+    <item android:left="0dp"
+        android:right="0dp"
+        android:top="0dp"
+        android:bottom="0dp">
+        <shape>
+            <solid android:color="#F9F9F9"/> <!-- Bottom color -->
+            <corners android:topLeftRadius="16dp"
+                android:topRightRadius="16dp"/><!-- No rounded corners at the bottom -->
+        </shape>
+    </item>
+
+    <!-- Top Layer: Rounded rectangle with a different color -->
+    <item android:left="0dp"
+        android:right="0dp"
+        android:top="52dp"
+        android:bottom="0dp">
+        <shape>
+            <solid android:color="#FFFFFF"/> <!-- Top color -->
+            <corners android:radius="0dp"/>
+        </shape>
+    </item>
+</layer-list>

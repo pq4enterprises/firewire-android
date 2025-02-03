@@ -2,6 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.fire.wire">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.android.vending.BILLING" />
+
+
+
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -12,9 +21,9 @@
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher_background"
+        android:icon="@drawable/app_icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/app_icon"
         android:supportsRtl="true"
         android:theme="@style/Theme.FireWire">
 
@@ -32,14 +41,96 @@
 
         <activity
             android:name=".activity.SplashActivity"
-            android:exported="true"
-            android:label="@string/title_activity_splash">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    </application>
+        <activity android:name=".activity.LoginNewActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="true"/>
+
+        <activity android:name=".activity.RegisterActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="true"/>
+
+        <activity android:name=".activity.MapsActivity"
+            android:exported="true"
+            android:theme="@style/Theme.FireWire.map"/>
+
+        <activity android:name=".activity.NavigationMenuActivity"
+            android:exported="true"/>
+
+        <activity android:name=".activity.FeedsActivity"
+            android:exported="true"/>
+
+        <activity android:name=".activity.NotificationLocalityActivity"
+            android:exported="true"/>
+
+        <activity android:name=".activity.NotificationCityActivity"
+            android:exported="true"/>
+        <activity android:name=".activity.WireDetailActivity"
+            android:exported="true"/>
+
+        <activity android:name=".activity.NewsDetailActivity"
+            android:exported="true"/>
+        <activity android:name=".activity.MyAccountActivity"
+            android:exported="true"/>
+        <activity android:name=".activity.UpdateProfileActivity"
+            android:exported="true"/>
+        <activity android:name=".activity.ChangePasswordActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="true"/>
+
+        <activity android:name=".activity.PersonalizationActivity"
+            android:exported="true"/>
+
+        <activity android:name=".activity.ForgotPasswordActivity"
+            android:exported="true"/>
+
+        <activity android:name=".activity.FeedFilterActivity"
+            android:exported="true"/>
+
+        <meta-data
+            android:name="com.google.android.gms.wallet.api.enabled"
+            android:value="true" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.fire.wire.fileprovider"
+            android:exported="false"
+           android:grantUriPermissions="true">
+           <meta-data
+            android:name="android.support.FILE_PROVIDER_PATHS"
+            android:resource="@xml/file_paths" />
+
+    </provider>
+
+        <!-- <meta-data
+               android:name="com.google.android.gms.auth.api.credentials.CREDENTIALS_API"
+               android:value="true" />-->
+
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+        <meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token"/>
+
+        <activity android:name="com.facebook.FacebookActivity"
+            android:configChanges=
+                "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name" />
+        <activity
+            android:name="com.facebook.CustomTabActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="@string/fb_login_protocol_scheme" />
+            </intent-filter>
+        </activity>
+
+
+</application>
 
 </manifest>

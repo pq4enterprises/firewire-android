@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <include
+        android:id="@+id/toolbarLayout"
+        layout="@layout/toolbar_third_layout"/>
+
+    <Button
+        android:id="@+id/btn_proceed"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/app_red"
+        android:textColor="@color/white"
+        android:text="@string/submit"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="@dimen/dis_30" />
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_proceed"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            <TextView
+                android:id="@+id/tv_title_locality"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="New York City"
+                android:textSize="@dimen/text_22"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:fontFamily="@font/poppins_bold"
+                android:textColor="@color/black"
+                android:layout_marginTop="@dimen/dis_10"
+                android:layout_marginStart="@dimen/dis_16"
+                />
+            <TextView
+                android:id="@+id/tv_city_select_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/select_all"
+                android:textColor="@color/app_red"
+                android:textSize="@dimen/text_16"
+                android:layout_marginEnd="@dimen/dis_16"
+                android:fontFamily="@font/poppins_regular"
+                app:layout_constraintTop_toTopOf="@+id/tv_title_locality"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_title_locality"/>
+
+            <TextView
+                android:id="@+id/tv_sub_locality"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sub_locality"
+                android:textSize="@dimen/text_18"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_title_locality"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/black"
+                android:layout_marginTop="@dimen/dis_10"
+                android:layout_marginStart="@dimen/dis_16"
+                />
+            <TextView
+                android:id="@+id/tv_locality_select_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/select_all"
+                android:textColor="@color/app_red"
+                android:textSize="@dimen/text_16"
+                android:layout_marginEnd="@dimen/dis_16"
+                android:fontFamily="@font/poppins_regular"
+                app:layout_constraintTop_toTopOf="@+id/tv_sub_locality"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_sub_locality"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_sub_locality"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:listitem="@layout/item_sub_notification_cb"
+                app:layout_constraintLeft_toLeftOf="@+id/tv_title_locality"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_sub_locality"
+                />
+
+            <TextView
+                android:id="@+id/tv_units"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sub_locality"
+                android:textSize="@dimen/text_18"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/rv_sub_locality"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/black"
+                android:layout_marginTop="@dimen/dis_10"
+                android:layout_marginStart="@dimen/dis_16"
+                />
+            <TextView
+                android:id="@+id/tv_unit_select_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/select_all"
+                android:textColor="@color/app_red"
+                android:textSize="@dimen/text_16"
+                android:layout_marginEnd="@dimen/dis_16"
+                android:fontFamily="@font/poppins_regular"
+                app:layout_constraintTop_toTopOf="@+id/tv_units"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_units"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_units"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:listitem="@layout/item_sub_notification_cb"
+                app:layout_constraintLeft_toLeftOf="@+id/tv_title_locality"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_units"
+                />
+            <ProgressBar
+                android:id="@+id/progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:theme="@style/redProgress"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_no_data"
+                android:text="@string/no_data_found"
+                android:visibility="gone"
+                android:textColor="@color/choose_text_color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

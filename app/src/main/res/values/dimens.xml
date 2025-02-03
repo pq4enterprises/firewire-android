@@ -5,4 +5,12 @@
     <dimen name="text_14">14sp</dimen>
     <dimen name="dis_12">12dp</dimen>
     <dimen name="dis_3">3dp</dimen>
+    <dimen name="text_28">28sp</dimen>
+    <dimen name="text_18">18sp</dimen>
+    <dimen name="text_22">22sp</dimen>
+    <dimen name="text_10">10sp</dimen>
+    <dimen name="dis_15">15dp</dimen>
+    <dimen name="text_24">24sp</dimen>
+    <dimen name="text_42">42sp</dimen>
+    <dimen name="text_20">20sp</dimen>
 </resources>
