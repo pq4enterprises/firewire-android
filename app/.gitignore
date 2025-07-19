@@ -1,0 +1,44 @@
+# Gradle
+.gradle/
+**/build/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Log/lock files
+*.log
+*.lock
+
+# IDE files
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Kotlin/Java specific
+*.class
+*.jar
+*.war
+*.ear
+
+# Others
+/captures/
+/output/
+
+# Android Studio Navigation Safe Args
+**/build/generated/
+
+# NDK
+.externalNativeBuild/
+
+# IntelliJ
+*.ipr
+*.iws
+out/
+
+# Misc
+*.tmp
+*.temp
+*.swp

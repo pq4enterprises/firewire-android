@@ -1,0 +1,123 @@
+<resources>
+    <string name="app_name">FireWire</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="title_activity_splash">LoginActivity</string>
+    <string name="title_activity_login">SplashActivity</string>
+    <string name="title_activity_register">RegisterActivity</string>
+    <string name="title_activity_nav">NavigationMenuActivity</string>
+    <string name="login_connect_with">Connect With</string>
+    <string name="or">or</string>
+    <string name="enter_email">Enter your email</string>
+    <string name="forgot"><u>Forgot?</u></string>
+    <string name="sign_in">Sign in</string>
+    <string name="account_register">Don’t have an Account? Register</string>
+    <string name="terms_condition">By register or logging into an account you are agreeing with our Terms and Conditions</string>
+    <string name="back">Back</string>
+    <string name="register_sccount">Please register your account</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="email_address">Email Address</string>
+    <string name="enter_first_name">Enter your first name</string>
+    <string name="enter_last_name">Enter you last name</string>
+    <string name="your_mail">yourmail@gmail.com</string>
+    <string name="phone_num">Phone Number</string>
+    <string name="enter_your_phone">Enter your phone number</string>
+    <string name="title_position">Title/Position</string>
+    <string name="enter_your_title">Enter your title/Position</string>
+    <string name="password">Password</string>
+    <string name="enter_password">Enter your password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="enter_confirm_password">Enter confirm password</string>
+    <string name="have_account_signin">Already have an Account? Sign In</string>
+    <string name="wire">Wire</string>
+    <string name="news">News</string>
+    <string name="select_areas">Select Areas</string>
+    <string name="done">Done</string>
+    <string name="select_all">Select All</string>
+    <string name="posts_listed">%s Posts are listed</string>
+    <string name="filter">Filter</string>
+    <string name="add_comment">Add a comment</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="cancel">Cancel</string>
+    <string name="gallery">Gallery</string>
+    <string name="news_listed">%s News are listed</string>
+    <string name="share">Share</string>
+    <string name="description">To everyone that’s been using the app, I’m sure you’re aware of some of the new additions already. For those that haven’t hopped on board yet, there’s a bunch of reasons to download now!
+        \n <b>SaltyWire:</b>
+        \n
+    If you’re a fan of the Gettin’ Salty Podcast and a fan of FireWire, you’re gonna love this!
+We’ve joined forces with Lou and Kubes to give you the ultimate experience. A subscription will get you access to the premium features on the FireWire app, and also never before seen premium content, documentaries, and training videos from the Gettin’ Salty guys. We will also be releasing our rewards program soon to give back to our loyal followers. Stay tuned!
+Check it out www.saltywire.com</string>
+    <string name="feeds">Feeds</string>
+    <string name="close">Close</string>
+    <string name="my_account">My Account</string>
+    <string name="salt_text_desc">The Gettin’ Salty Experience</string>
+    <string name="submit_tip">Submit A Tip</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="feed_areas">Feed Areas</string>
+    <string name="notifications">Notifications</string>
+    <string name="choose_locality">Choose a locality</string>
+    <string name="sub_locality">SubLocalities</string>
+    <string name="update_profile">Update Profile</string>
+    <string name="per_month">per month</string>
+    <string name="full_access_text">Get Full Access With A Premium Account</string>
+    <string name="gain_access_text">With a premium account, you gain access to:</string>
+    <string name="live_scanner">Our Live Scanner Feeds</string>
+    <string name="add_free">An Ad-Free app experience</string>
+    <string name="custom_notification">Custom notifications (specific units, boros, incident types, etc.) and more to come!</string>
+    <string name="get_now">Get Now</string>
+    <string name="terms_of_service">Terms Of Service</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="change">Change</string>
+    <string name="save_update">Save and Update</string>
+    <string name="change_password">Change Password ?</string>
+    <string name="view_list">View list</string>
+    <string name="title_activity_feeds">FeedsActivity</string>
+    <string name="title_activity_locality">NotificationLocality Activity</string>
+    <string name="title_activity_city">NotificationCityActivity</string>
+    <string name="current_password">Current Password</string>
+    <string name="new_password">New Password</string>
+    <string name="change_password_text">Change Password</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="enter_valid_email">Kindly enter valid email address.</string>
+    <string name="password_confirm_same">Password and confirm password should be same.</string>
+    <string name="register_success">You are registered successfully!</string>
+    <string name="password_length">Password should be minimum 8 characters long.</string>
+    <string name="star">%s Starred</string>
+    <string name="comments">%s Comments</string>
+    <string name="comment">%s Comment</string>
+    <string name="no_data_found">No data found!</string>
+    <string name="view_map">View map</string>
+    <string name="check_network_connection">Kindly check your network connection</string>
+    <string name="token_expired">Unauthorized! Access Token was expired!</string>
+    <string name="units">Units</string>
+    <string name="enter_current_password">Kindly enter current password</string>
+    <string name="error_confirm_password">Kindly enter confirm password</string>
+    <string name="error_new_password">Kindly enter new password</string>
+    <string name="error_new_current_match">Current password and New password should not be same</string>
+    <string name="error_confirm_current_match">New password and Confirm password should be same</string>
+    <string name="confirm_delete">Do you want to delete your account?</string>
+    <string name="notification_setting">Notification Settings</string>
+
+    <!--<string name="facebook_app_id">464876333289183</string>-->
+   <!-- <string name="facebook_app_id">891535999464182</string>
+    <string name="fb_login_protocol_scheme">fb1234</string>-->
+   <!-- <string name="facebook_client_token">810746e29da1a9dec382f5158a422859</string>-->
+    <string name="facebook_client_token">edf4d94539b2fde41f60e6b26be1e4ea</string>
+    <string name="message_sent_email">OTP sent to your email.Kindly check</string>
+    <string name="enter_comment">Please enter your comments</string>
+    <string name="otp">OTP</string>
+    <string name="send_otp">Send OTP</string>
+    <string name="verify_otp">Verify OTP</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="enter_otp">Kindly enter the OTP</string>
+    <string name="personalization">Personalization</string>
+    <string name="submit">Submit</string>
+    <string name="enter_reason">Enter your reason</string>
+    <!--todo add client -->
+    <string name="default_web_client_id">223386379375-p7fojocgfta2904jpios3qo17n7fdr1k.apps.googleusercontent.com</string>
+    <string name="incident_type">Incident Type</string>
+
+
+</resources>

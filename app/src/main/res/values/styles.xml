@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="redProgress">
+        <item name="colorAccent">@color/app_red</item> <!-- Whatever color you want-->
+    </style>
+
+
+
+</resources>

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/cl_wire_item"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/rv_bg"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:padding="@dimen/dis_10"
+        app:layout_constraintEnd_toStartOf="parent">
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/app_text_color"
+            android:textSize="@dimen/text_22"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:fontFamily="@font/poppins_regular"
+            tools:text="Working Fire"/>
+        <TextView
+            android:id="@+id/tv_date_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_12"
+            android:textColor="@color/grey_lite"
+            tools:text="10 Oct | 10.15 AM"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_title"
+            app:layout_constraintTop_toTopOf="@id/tv_title"/>
+        <TextView
+            android:id="@+id/tv_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_16"
+            android:maxLines="1"
+            android:textColor="@color/black"
+            android:textAllCaps="true"
+            tools:text="Fire in a 2 story apartment building"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_title"/>
+        <TextView
+            android:id="@+id/tv_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_14"
+            android:textColor="@color/app_red"
+            android:layout_marginTop="@dimen/dis_10"
+            android:drawablePadding="@dimen/dis_10"
+            android:textAllCaps="true"
+            tools:text="Fire in a 2 story apartment building"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/iv_banner"
+            app:drawableLeftCompat="@drawable/ic_fire" />
+
+        <ImageView
+            android:id="@+id/iv_banner"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/dis_10"
+            android:scaleType="centerCrop"
+            android:src="@drawable/dummy_img"
+            app:layout_constraintTop_toBottomOf="@id/tv_desc"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintDimensionRatio="16:9" />
+
+       <!-- <ImageView
+            android:id="@+id/iv_banner"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:src="@drawable/dummy_img"
+            android:scaleType="fitXY"
+            android:layout_marginTop="@dimen/dis_10"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_desc"
+            app:layout_constraintDimensionRatio="12:6"
+            />-->
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <RelativeLayout
+        android:id="@+id/ll_icons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dis_5"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/cl_container"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <LinearLayout
+            android:id="@+id/ll_rate_comment_share"
+            android:layout_width="wrap_content"
+            android:weightSum="3"
+            android:layout_gravity="start"
+            android:gravity="start"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/iv_rating"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/dis_10"
+                android:paddingStart="5dp"
+                android:paddingEnd="@dimen/dis_20"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_rating"
+                android:layout_weight="1"/>
+            <ImageView
+                android:id="@+id/iv_command"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_comment"
+                app:tint="@color/black"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"/>
+            <ImageView
+                android:id="@+id/iv_share"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_share"
+                android:paddingStart="@dimen/dis_20"
+                android:layout_gravity="center"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:paddingEnd="@dimen/dis_5"
+                app:tint="@color/black"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:weightSum="2"
+            android:layout_alignTop="@+id/ll_rate_comment_share"
+            android:layout_alignBottom="@+id/ll_rate_comment_share"
+            android:layout_alignParentEnd="true"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tv_rate_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:paddingStart="@dimen/dis_20"
+                android:paddingEnd="@dimen/dis_5"
+                android:textSize="@dimen/text_12"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:drawablePadding="@dimen/dis_5"
+                android:textColor="@color/grey_lite"
+                tools:text="12 Starred"
+                app:drawableStartCompat="@drawable/ic_gs_rating" />
+            <TextView
+                android:id="@+id/tv_comment_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingTop="5dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:paddingBottom="5dp"
+                android:layout_marginEnd="@dimen/dis_10"
+                android:textSize="@dimen/text_12"
+                android:layout_marginStart="@dimen/dis_10"
+                android:drawablePadding="@dimen/dis_5"
+                android:textColor="@color/grey_lite"
+                tools:text="06 Comments"
+                app:drawableStartCompat="@drawable/ic_gs_comment" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dis_10"
+        android:background="@color/grey_bg"
+        android:layout_marginTop="@dimen/dis_10"
+        app:layout_constraintTop_toBottomOf="@id/ll_icons"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

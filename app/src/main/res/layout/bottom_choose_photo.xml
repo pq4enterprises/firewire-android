@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rounded_corner_top_white"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout
+        android:id="@+id/ll_option"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2"
+        android:background="@drawable/rounded_corner_top_white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent">
+        <LinearLayout
+            android:id="@+id/ll_take_photo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginBottom="@dimen/dis_30"
+            android:layout_marginTop="@dimen/dis_50"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="@dimen/dis_16"
+            android:background="@drawable/ic_rectangle_grey"
+            android:orientation="vertical"
+            android:layout_weight="1">
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="33dp"
+                android:src="@drawable/ic_camera"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dis_10"
+                android:textSize="@dimen/dis_16"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/choose_text_color"
+                android:text="@string/take_photo"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ll_gallery"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginBottom="@dimen/dis_30"
+            android:layout_marginTop="@dimen/dis_50"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="@dimen/dis_16"
+            android:background="@drawable/ic_rectangle_grey"
+            android:orientation="vertical"
+            android:layout_weight="1">
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="33dp"
+                android:src="@drawable/ic_gallery"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dis_10"
+                android:textSize="@dimen/text_16"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/choose_text_color"
+                android:text="@string/gallery"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/dis_10"
+        android:textStyle="bold"
+        android:fontFamily="@font/poppins_regular"
+        android:layout_marginBottom="@dimen/dis_40"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ll_option"
+        android:text="@string/cancel"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

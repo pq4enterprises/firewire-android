@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/rounded_corner_rectangle"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <RelativeLayout
+        android:id="@+id/rl_header"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/heading_grey_bar_length"
+        android:orientation="horizontal"
+        android:background="@drawable/rounded_corner_rectangle"
+        android:paddingLeft="@dimen/dis_10"
+        android:paddingRight="@dimen/dis_10"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <TextView
+            android:id="@+id/tvBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_16"
+            android:fontFamily="@font/poppins_regular"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/text_16"
+            android:drawablePadding="@dimen/dis_5"
+            app:drawableTint="@color/black"
+            app:drawableStartCompat="@drawable/ic_back" />
+
+        <TextView
+            android:id="@+id/tv_total_comments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:fontFamily="@font/teko_regular"
+            android:layout_alignParentEnd="true"
+            tools:text="@string/posts_listed"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_18" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:drawablePadding="@dimen/dis_10"
+            android:text="@string/filter"
+            android:visibility="gone"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_12"
+            app:drawableStartCompat="@drawable/ic_filter" />
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/dis_10"
+        app:layout_constraintBottom_toTopOf="@+id/cv_comment"
+        app:layout_constraintTop_toBottomOf="@+id/rl_header"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_main_filter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            tools:listitem="@layout/item_comment_bottom" />
+
+        <ProgressBar
+            android:id="@+id/rv_progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:paddingBottom="50dp"
+            android:theme="@style/redProgress"
+            android:layout_below="@+id/rv_main_filter"/>
+
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:theme="@style/redProgress"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_no_data"
+        android:text="@string/no_data_found"
+        android:visibility="gone"
+        android:textColor="@color/choose_text_color"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_comment"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        app:cardElevation="@dimen/dis_10"
+        android:clipToPadding="true"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+        <RelativeLayout
+            android:id="@+id/ll_comment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:weightSum="3"
+            android:padding="@dimen/dis_16">
+            <ImageView
+                android:id="@+id/iv_photo"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_camera"/>
+            <EditText
+                android:id="@+id/et_comment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/add_comment"
+                android:layout_centerVertical="true"
+                android:textSize="@dimen/text_14"
+                android:layout_toLeftOf="@+id/iv_send"
+                android:layout_toRightOf="@+id/iv_photo"
+                android:layout_marginStart="@dimen/dis_16"
+                android:background="@null"
+                />
+            <ImageView
+                android:id="@+id/iv_send"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="end"
+                android:src="@drawable/ic_send"/>
+
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

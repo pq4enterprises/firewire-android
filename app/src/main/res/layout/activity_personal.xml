@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <include
+        android:id="@+id/toolbarLayout"
+        layout="@layout/toolbar_third_layout"/>
+
+    <TextView
+        android:id="@+id/tv_feed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/feed_areas"
+        android:textSize="@dimen/text_16"
+        android:visibility="visible"
+        android:fontFamily="@font/inter_regular"
+        android:textColor="@color/personal_color"
+        android:padding="@dimen/dis_10"
+        android:layout_marginStart="@dimen/dis_5"
+        android:layout_marginTop="@dimen/dis_20"
+        android:layout_marginEnd="@dimen/dis_10"
+        android:drawablePadding="@dimen/dis_16"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarLayout"
+        app:drawableStartCompat="@drawable/ic_feed_personal"
+        app:drawableEndCompat="@drawable/ic_right_arrow"
+        app:drawableTint="@color/black" />
+
+    <TextView
+        android:id="@+id/tv_notifications"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/notifications"
+        android:textSize="@dimen/text_16"
+        android:fontFamily="@font/inter_regular"
+        android:textColor="@color/personal_color"
+        android:padding="@dimen/dis_10"
+        android:layout_marginStart="@dimen/dis_5"
+        android:layout_marginEnd="@dimen/dis_10"
+        android:drawablePadding="@dimen/dis_16"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_feed"
+        app:drawableStartCompat="@drawable/ic_notification"
+        app:drawableEndCompat="@drawable/ic_right_arrow"
+        app:drawableTint="@color/black" />
+
+    <TextView
+        android:id="@+id/tv_notifications_sound"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/notification_souns"
+        android:textSize="@dimen/text_16"
+        android:visibility="gone"
+        android:fontFamily="@font/inter_regular"
+        android:textColor="@color/personal_color"
+        android:padding="@dimen/dis_10"
+        android:layout_marginStart="@dimen/dis_5"
+        android:layout_marginEnd="@dimen/dis_10"
+        android:drawablePadding="@dimen/dis_16"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_notifications"
+        app:drawableStartCompat="@drawable/ic_noti_sound"
+        app:drawableEndCompat="@drawable/ic_right_arrow"
+        app:drawableTint="@color/black" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/sw_theme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/enable_mode"
+        android:layout_marginTop="20dp"
+        android:textSize="@dimen/text_16"
+        android:fontFamily="@font/inter_regular"
+        android:textColor="@color/personal_color"
+        android:layout_marginStart="@dimen/dis_16"
+        android:layout_marginEnd="@dimen/dis_10"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_notifications_sound"/>
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

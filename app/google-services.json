@@ -1,0 +1,79 @@
+{
+  "project_info": {
+    "project_number": "223386379375",
+    "firebase_url": "https://nycfirewire-8ea48.firebaseio.com",
+    "project_id": "nycfirewire-8ea48",
+    "storage_bucket": "nycfirewire-8ea48.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:223386379375:android:2a085b4b0affa291ac199a",
+        "android_client_info": {
+          "package_name": "com.pioneer.nycfirewire"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "223386379375-2971610duks9mor615s5c7724kct7ge8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pioneer.nycfirewire",
+            "certificate_hash": "c849ecf4442cb720eed7e8e50e7d5bf528627210"
+          }
+        },
+        {
+          "client_id": "223386379375-8i5v44c3fh0e8do78s721h1mrt4f9p30.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pioneer.nycfirewire",
+            "certificate_hash": "cb34caa8d0a5cde8b3dc191019f2f005c63c0288"
+          }
+        },
+        {
+          "client_id": "223386379375-g7rpsn84vpcukc76i55hn7s3oj2rmek0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pioneer.nycfirewire",
+            "certificate_hash": "b8184224bb083e8d3cb8cc00334c230e5db146bc"
+          }
+        },
+        {
+          "client_id": "223386379375-jc0tqqm5ni6j057c5sf40clug2edkg5d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pioneer.nycfirewire",
+            "certificate_hash": "53b84f9d3b2bc185d3fde6f1f16df14fceeabfb9"
+          }
+        },
+        {
+          "client_id": "223386379375-p7fojocgfta2904jpios3qo17n7fdr1k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsG2VX6D9m33DIIg-l0BJBXkggC4NP_gs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "223386379375-p7fojocgfta2904jpios3qo17n7fdr1k.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "223386379375-sd7bkbbvbgftj9hpp0594h8q0ei2uero.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.kbf.app13822684"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

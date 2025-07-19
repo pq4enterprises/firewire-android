@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/tv_loc_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_18"
+        android:layout_marginTop="@dimen/dis_10"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:layout_marginStart="@dimen/dis_16"
+        android:fontFamily="@font/poppins_regular"
+        tools:text="New York City"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_feed_song"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:listitem="@layout/item_sub_feed"
+        android:layout_marginBottom="@dimen/dis_30"
+        />
+
+</LinearLayout>

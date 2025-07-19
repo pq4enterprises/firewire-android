@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#CA433A</color>
+    <color name="purple_500">#CA433A</color>
+    <color name="purple_700">#CA433A</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FFFFFF</color>
+    <color name="white">#000000</color>
+    <color name="black_text">#FFFFFF</color>
+
+    <!--app colors-->
+    <color name="app_red">#CA433A</color>
+    <color name="app_text_color">#FFFFFF</color>
+    <color name="or_text">#525B66</color>
+    <color name="email_text">#797A7E</color>
+    <color name="grey_text">#525B66</color>
+    <color name="grey_bg">#000000</color>
+    <color name="heading_color">#FFFFFF</color>
+    <color name="country_item">#FFFFFF</color>
+    <color name="grey_lite">#9E9E9E</color>
+    <color name="back_text">#FFFFFF</color>
+    <color name="small_desc">#797979</color>
+    <color name="grey_little_text">#888888</color>
+    <color name="view_color">#000000</color>
+    <color name="grey_lite_bg">#FBFBFB</color>
+    <color name="choose_text_color">#1D292C</color>
+    <color name="personal_color">#FFFFFF</color>
+    <color name="email_text_color">#D2D2D2</color>
+    <color name="edit_text_bg">#BFC0C2</color>
+    <color name="transparent_color">#FF2b3544</color>
+    <color name="dim_grey">#BABABA</color>
+    <color name="lite_red">#FFF3F2</color>
+    <color name="sw_bg">#202020</color>
+    <color name="home_switch_bg">#000000</color>
+    <color name="rv_bg">#202020</color>
+    <color name="login_reg_text">#FFFFFF</color>
+
+
+
+</resources>
+
