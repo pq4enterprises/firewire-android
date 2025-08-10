@@ -105,11 +105,7 @@ class PagingAdapter( private val listener: IncidentClickListener) : PagingDataAd
             }
 
             clContainer.setOnClickListener { view->
-                val bundle= Bundle()
-                bundle.putParcelable(BUN_WIRE_DETAILS,it)
-                val intent = Intent(context, WireDetailActivity::class.java)
-                intent.putExtra(BUN_WIRE_DETAILS, bundle)
-                context.startActivity(intent)
+                listener.onItemClicked(it)
             }
             ivShare.setOnClickListener {view->
                 val shareContent= it.field1Value.plus("\n").plus(it.address).plus("\n").plus(
@@ -149,4 +145,5 @@ class PagingAdapter( private val listener: IncidentClickListener) : PagingDataAd
 interface IncidentClickListener {
     fun onRatingClicked(incident: Incident,pos: Int)
     fun appIntroTour(tvTitle: TextView, ivRating: ImageView, ivCommand: ImageView, ivShare: ImageView)
+    fun onItemClicked(incident: Incident)
 }

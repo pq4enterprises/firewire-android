@@ -18,12 +18,14 @@
         app:layout_constraintEnd_toStartOf="parent">
         <TextView
             android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textColor="@color/app_text_color"
             android:textSize="@dimen/text_22"
             android:textStyle="bold"
             android:textAllCaps="true"
+            android:singleLine="true"
+            app:layout_constraintRight_toLeftOf="@+id/tv_date_time"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:fontFamily="@font/poppins_regular"

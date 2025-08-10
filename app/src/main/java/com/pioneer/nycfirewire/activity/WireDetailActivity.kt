@@ -1,5 +1,6 @@
 package com.pioneer.nycfirewire.activity
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -19,6 +20,7 @@ import com.pioneer.nycfirewire.prefs
 import com.pioneer.nycfirewire.resource.Resource
 import com.pioneer.nycfirewire.resource.ResourceState
 import com.pioneer.nycfirewire.utils.IntentUtils.BUN_WIRE_DETAILS
+import com.pioneer.nycfirewire.utils.IntentUtils.BUN_WIRE_LIST_DETAIL
 import com.pioneer.nycfirewire.viewModel.FireWireViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -51,12 +53,14 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
 
     private lateinit var binding: ActivityWireDetailBinding
     private var wireDetails= Incident()
+    private var incidentList= ArrayList<Incident>()
     private lateinit var mMap: GoogleMap
     private lateinit var vm: FireWireViewModel
     private var isLikeSingle=false
     var type="view"
     var fireStationlist= ArrayList<Points>()
     var likeCount=0
+    var updatedPosition= -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -177,17 +181,25 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
             ResourceState.SUCCESS -> {
                 binding.progress.gone()
                // isLikeSingle= !isLikeSingle
+                binding.ivRating.visible()
+                binding.pbSmall.gone()
 
                 if(isLikeSingle) {
                     likeCount= likeCount+1
                     binding.ivRating.setImageResource(R.drawable.ic_rating_red)
                 }else{
                     likeCount= likeCount-1
-                    binding.ivRating.setImageResource(R.drawable.ic_rating)}
+                    binding.ivRating.setImageResource(R.drawable.ic_rating)
+                }
+
+                var position = incidentList.indexOfFirst { it._id == wireDetails._id }
+                if(position!=-1) updatedPosition= position
 
                 binding.tvLikeCount.text= getString(R.string.star,likeCount.toString())
             }
             ResourceState.ERROR -> {
+                binding.ivRating.visible()
+                binding.pbSmall.gone()
                 binding.progress.gone()
                 showAlert(response.message)
                 if(response.message==getString(R.string.token_expired)) {
@@ -206,8 +218,9 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
     }
 
     private fun initExtra() {
-        val intent= intent.getBundleExtra(IntentUtils.BUN_WIRE_DETAILS)
+        val intent= intent.getBundleExtra(IntentUtils.EXTRA_WIRE_DETAILS)
          wireDetails= intent?.getParcelable(BUN_WIRE_DETAILS)?: Incident()
+         incidentList = intent?.getParcelableArrayList<Incident>(BUN_WIRE_LIST_DETAIL)?: ArrayList<Incident>()
         isLikeSingle= wireDetails.isLiked
         bindItems()
     }
@@ -274,9 +287,11 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
             shareText(this,shareContent)
         }
 
-        binding.ivRating.setOnClickListener {
+        binding.flRating.setOnClickListener {
             type="like"
             isLikeSingle= !isLikeSingle
+            binding.ivRating.gone()
+            binding.pbSmall.visible()
             vm.postComment(AddCommentRequest(prefs.userId,wireDetails._id,if(isLikeSingle)"like" else "unlike"))
         }
 
@@ -383,7 +398,11 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        prefs.isRecreate=true
+      //  prefs.isRecreate=true
+        val intent = Intent()
+        intent.putExtra("wire_detail", updatedPosition)
+        setResult(Activity.RESULT_OK, intent)
+        finish()
     }
 
     override fun onResume() {

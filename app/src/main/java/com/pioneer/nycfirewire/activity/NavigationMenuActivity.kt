@@ -162,6 +162,7 @@ class NavigationMenuActivity: BaseActivity() {
     private fun bindProfileDetails(data: UserDetails) {
         binding.tvName.text= data.firstName?.plus(" ").plus(data.lastName)
         binding.tvEmail.text= data.email
+        prefs.userRole= data.role
         prefs.userImg= data.img
         if(data.img?.isEmpty() == true) {
             Glide.with(this)

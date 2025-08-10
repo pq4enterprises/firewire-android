@@ -1,8 +1,8 @@
 package com.pioneer.nycfirewire.moduleInjection
 
 import android.content.Context
-import com.pioneer.nycfirewire.data.APIClient
 import com.pioneer.nycfirewire.data.XMLClient
+import com.pioneer.nycfirewire.data.auth.ApiClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,9 +14,13 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class AppModule {
 
+    /*@Provides
+    @Singleton
+    fun provideWebService(@ApplicationContext context: Context) = APIClient(context.applicationContext).apiEndPoint */
+
     @Provides
     @Singleton
-    fun provideWebService(@ApplicationContext context: Context) = APIClient(context.applicationContext).apiEndPoint
+    fun provideWebService(@ApplicationContext context: Context) = ApiClient(context.applicationContext).apiEndPoint
 
     @Provides
     @Singleton

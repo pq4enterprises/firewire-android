@@ -1,22 +1,15 @@
 package com.pioneer.nycfirewire.activity
 
-import android.content.Context
 import android.os.Bundle
 import android.webkit.JavascriptInterface
-import android.webkit.WebChromeClient
-import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import com.pioneer.nycfirewire.R
-import com.pioneer.nycfirewire.data.APIClient.Companion.BASE_INCIDENT_URL
-import com.pioneer.nycfirewire.data.APIClient.Companion.BASE_URL
+import com.pioneer.nycfirewire.data.auth.ApiClient.Companion.BASE_INCIDENT_URL
 import com.pioneer.nycfirewire.prefs
 import com.pioneer.nycfirewire.utils.Constants.DARK
-import com.pioneer.nycfirewire.utils.Constants.INCIDENT_POST
 import com.pioneer.nycfirewire.utils.Constants.LIGHT
-import com.pioneer.nycfirewire.utils.Constants.PROFILE_UPDATE
 
 class WebViewActivity : BaseActivity() {
 

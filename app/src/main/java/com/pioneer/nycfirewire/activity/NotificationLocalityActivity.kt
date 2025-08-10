@@ -93,10 +93,9 @@ class NotificationLocalityActivity : BaseActivity() {
                 bindingItem.tvCountryName.text= it.name
 
                 bindingItem.tvCountryName.setOnClickListener { view->
-                    moveToActivity(it,it.name.toString())
-                   /* if(prefs.userRole==USER_BASIC_USER){
+                    if(prefs.userRole==USER_BASIC_USER){
                         moveToPaymentPage()
-                    }else moveToActivity(it,it.name.toString())*/
+                    }else moveToActivity(it,it.name.toString())
                 }
             }
         )

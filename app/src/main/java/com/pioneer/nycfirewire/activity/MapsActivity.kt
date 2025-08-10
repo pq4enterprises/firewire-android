@@ -91,6 +91,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
 import com.pioneer.nycfirewire.fragment.WireFragmentWithPagination
+import com.pioneer.nycfirewire.listener.OnIncidentListLoadedListener
 import com.pioneer.nycfirewire.model.user.request.ProfileUpdateRequest
 import com.pioneer.nycfirewire.model.user.response.CommonResponse
 import com.pioneer.nycfirewire.model.user.response.UserDetails
@@ -100,10 +101,12 @@ import com.pioneer.nycfirewire.utils.Constants.FROM_START
 import com.pioneer.nycfirewire.utils.Constants.USER_BASIC_USER
 import com.pioneer.nycfirewire.utils.Constants.USER_PREMIUM_FREE
 import com.pioneer.nycfirewire.utils.DateUtils.getExpiryTime
+import com.pioneer.nycfirewire.utils.IntentUtils.EXTRA_WIRE_DETAILS
+import com.pioneer.nycfirewire.utils.showToast
 
 
 @AndroidEntryPoint
-class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, CallbackFunctions,PurchasesUpdatedListener {
+class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, CallbackFunctions,PurchasesUpdatedListener,OnIncidentListLoadedListener {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityHomeBinding
@@ -435,12 +438,14 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
         prefs.localityIds= localityId
 
         if(localityId.isNotEmpty() || subLocalityId.isNotEmpty()){
-            if(isNetworkConnected(this)) {
+
+            displayFragment(WireFragment.newInstance(incidentList,totalCount,  Bundle()),false)
+            /*if(isNetworkConnected(this)) {
                 vm.getIncidentList(ArrayList(localityId.distinct()), subLocalityId, "1", "10")
             }else showSnack(getString(R.string.check_network_connection))
             vm.incidentLiveData.observe(this, Observer {
                 updateIncidentList(it)
-            })
+            })*/
         }else{
             val intent= Intent(this, SelectAreaActivity::class.java)
             intent.putExtra(FROM_START,true)
@@ -568,7 +573,7 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
             val bundle= Bundle()
             bundle.putParcelable(BUN_WIRE_DETAILS,wireDetail)
             val intent = Intent(this, WireDetailActivity::class.java)
-            intent.putExtra(BUN_WIRE_DETAILS, bundle)
+            intent.putExtra(EXTRA_WIRE_DETAILS, bundle)
             startActivity(intent)
 
         }
@@ -614,7 +619,13 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
         }
 
         binding.toolbarLayout.ivRefresh.setOnClickListener {
-            vm.getIncidentList(kotlin.collections.ArrayList<String>(), kotlin.collections.ArrayList<String>(), "1", "10")
+            val currentFragment = supportFragmentManager.fragments.lastOrNull { it.isVisible }
+
+            if(currentFragment is WireFragment){
+                currentFragment.refreshData()
+                showToast(this,"Incident refreshed")
+            }
+            //vm.getIncidentList(kotlin.collections.ArrayList<String>(), kotlin.collections.ArrayList<String>(), "1", "10")
         }
     }
 
@@ -916,6 +927,13 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
                 println("Exit in acknowledge Purchase")
             }
         }
+    }
+
+    override fun onListLoaded(list: List<Incident>) {
+        incidentList.clear()
+        incidentList.addAll(list)
+        locationArrayList.clear()
+        formLatLng()
     }
 
 

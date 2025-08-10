@@ -2,6 +2,7 @@ package com.pioneer.nycfirewire.activity
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
@@ -65,6 +66,8 @@ abstract class BaseActivity :AppCompatActivity() {
     }
 
      fun showAlert(message: String? = "") {
+         if (isFinishing || isDestroyed) return
+
         AlertDialog.Builder(this)
             .setTitle(resources.getString(R.string.app_name))
             .setMessage(message)

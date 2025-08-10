@@ -105,6 +105,7 @@
                     android:name="com.google.android.gms.maps.SupportMapFragment"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
+                    android:visibility="gone"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -163,14 +164,26 @@
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:layout_height="wrap_content">
-                    <ImageView
-                        android:id="@+id/iv_rating"
+                    <FrameLayout
+                        android:id="@+id/fl_rating"
                         android:layout_width="wrap_content"
-                        android:layout_gravity="center"
-                        android:paddingEnd="@dimen/dis_10"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_rating"
-                        android:layout_weight="1"/>
+                        android:layout_height="wrap_content">
+                        <ProgressBar
+                            android:id="@+id/pb_small"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:visibility="gone"
+                            android:theme="@style/redProgress"/>
+                        <ImageView
+                            android:id="@+id/iv_rating"
+                            android:layout_width="wrap_content"
+                            android:layout_gravity="center"
+                            android:paddingEnd="@dimen/dis_10"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_rating"
+                            android:layout_weight="1"/>
+                    </FrameLayout>
+
                     <ImageView
                         android:id="@+id/iv_command"
                         android:layout_width="wrap_content"

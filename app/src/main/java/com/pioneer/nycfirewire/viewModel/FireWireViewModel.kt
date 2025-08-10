@@ -3,13 +3,11 @@ package com.pioneer.nycfirewire.viewModel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
-import com.pioneer.nycfirewire.data.APIClient
 import com.pioneer.nycfirewire.data.ApiEndPoints
 import com.pioneer.nycfirewire.fragment.PagingMetadataListener
 import com.pioneer.nycfirewire.fragment.PostPagingSource
@@ -34,11 +32,8 @@ import com.pioneer.nycfirewire.model.user.request.PostAreaData
 import com.pioneer.nycfirewire.model.user.request.ProfileUpdateRequest
 import com.pioneer.nycfirewire.model.user.request.UpdatePasswordRequest
 import com.pioneer.nycfirewire.model.user.response.SaltyWireResponse
-import com.pioneer.nycfirewire.utils.NetworkUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
 import javax.inject.Inject
 

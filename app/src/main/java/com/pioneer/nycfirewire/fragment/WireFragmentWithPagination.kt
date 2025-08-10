@@ -437,5 +437,9 @@ class WireFragmentWithPagination: Fragment(), IncidentClickListener {
         TODO("Not yet implemented")
     }
 
+    override fun onItemClicked(incident: Incident) {
+        TODO("Not yet implemented")
+    }
+
 
 }

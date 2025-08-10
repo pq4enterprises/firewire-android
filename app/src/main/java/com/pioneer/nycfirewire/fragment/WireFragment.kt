@@ -1,6 +1,7 @@
 package com.pioneer.nycfirewire.fragment
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -12,6 +13,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -62,10 +65,12 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
 import com.pioneer.nycfirewire.adapter.IncidentClickListener
 import com.pioneer.nycfirewire.adapter.PagingAdapter
+import com.pioneer.nycfirewire.listener.OnIncidentListLoadedListener
 import com.pioneer.nycfirewire.listener.OnLoadMoreListener
 import com.pioneer.nycfirewire.utils.Constants
 import com.pioneer.nycfirewire.utils.Constants.NEWS_FRAGMENT
 import com.pioneer.nycfirewire.utils.Constants.WIRE_FRAGMENT
+import com.pioneer.nycfirewire.utils.IntentUtils.BUN_WIRE_LIST_DETAIL
 import com.pioneer.nycfirewire.utils.IntentUtils.TOTAL_COUNT
 import com.pioneer.nycfirewire.utils.NetworkUtils.isOnline
 import com.pioneer.nycfirewire.utils.inVisible
@@ -93,6 +98,7 @@ class WireFragment: Fragment(),IncidentClickListener {
     var isDetach= false
 
     private lateinit var pagingAdapter: PagingAdapter
+    private lateinit var resultLauncher: ActivityResultLauncher<Intent>
 
 
 
@@ -103,6 +109,17 @@ class WireFragment: Fragment(),IncidentClickListener {
             putParcelableArrayList(NAV_WIRE_list,incident)
         }
 
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                var data = result.data?.getIntExtra("wire_detail",-1)?:0
+                // Call activity method or update fragment viewp
+                pagingAdapter.notifyItemChanged(data)
+            }
+        }
     }
 
 
@@ -198,10 +215,25 @@ class WireFragment: Fragment(),IncidentClickListener {
         lifecycleScope.launch {
             vm.posts.collectLatest { pagingData ->
                 pagingAdapter.submitData(pagingData)
+                val currentList = pagingAdapter.snapshot().items
+                incidentList= currentList as java.util.ArrayList<Incident>
+                (activity as? OnIncidentListLoadedListener)?.onListLoaded(currentList)
             }
 
             binding.rvMainFilter.post {
                 binding.rvMainFilter.scrollBy(0, 1) // forces scroll event
+            }
+        }
+
+        pagingAdapter.addLoadStateListener { loadStates ->
+            val isLoaded = loadStates.refresh is LoadState.NotLoading
+            if (isLoaded) {
+                val currentList = pagingAdapter.snapshot().items
+                Log.d("LoadedList", "Loaded ${currentList.size} items")
+                // You can also pass this list to Activity here if needed
+
+                (activity as? OnIncidentListLoadedListener)?.onListLoaded(currentList)
+
             }
         }
 
@@ -328,6 +360,7 @@ class WireFragment: Fragment(),IncidentClickListener {
 
     fun refreshData(){
         pagingAdapter.refresh()
+        (activity as? OnIncidentListLoadedListener)?.onListLoaded(pagingAdapter.snapshot().items)
     }
 
     override fun onDetach() {
@@ -399,8 +432,14 @@ class WireFragment: Fragment(),IncidentClickListener {
         }
     }
 
-
-
+    override fun onItemClicked(incident: Incident) {
+        val bundle= Bundle()
+        bundle.putParcelable(BUN_WIRE_DETAILS,incident)
+        bundle.putParcelableArrayList(BUN_WIRE_LIST_DETAIL, incidentList)
+        val intent = Intent(requireContext(), WireDetailActivity::class.java)
+        intent.putExtra(BUN_WIRE_DETAILS, bundle)
+        resultLauncher.launch(intent)
+    }
 
 
 }
