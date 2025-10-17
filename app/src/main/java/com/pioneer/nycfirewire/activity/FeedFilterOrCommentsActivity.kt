@@ -2,6 +2,7 @@ package com.pioneer.nycfirewire.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import com.pioneer.nycfirewire.fragment.CommentsFragment
 import com.pioneer.nycfirewire.fragment.FeedFilterFragment
@@ -23,6 +24,8 @@ class FeedFilterOrCommentsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding= FeedFilterActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
 
         initExtra()
     }

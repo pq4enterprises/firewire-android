@@ -93,7 +93,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
     <RelativeLayout
         android:id="@+id/ll_icons"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dis_5"
         android:orientation="horizontal"
@@ -104,10 +104,10 @@
             android:id="@+id/ll_rate_comment_share"
             android:layout_width="wrap_content"
             android:weightSum="3"
-            android:layout_gravity="start"
-            android:gravity="start"
+            android:layout_gravity="end"
+            android:gravity="end"
             android:layout_height="wrap_content">
-            <ImageView
+            <TextView
                 android:id="@+id/iv_rating"
                 android:layout_width="wrap_content"
                 android:layout_gravity="center"
@@ -115,15 +115,22 @@
                 android:paddingStart="5dp"
                 android:paddingEnd="@dimen/dis_20"
                 android:paddingTop="5dp"
+                android:text="2"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_16"
                 android:paddingBottom="5dp"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_rating"
+                android:drawableStart="@drawable/ic_rating"
+                android:drawablePadding="@dimen/dis_5"
                 android:layout_weight="1"/>
-            <ImageView
+            <TextView
                 android:id="@+id/iv_command"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_comment"
+                android:drawableStart="@drawable/ic_comment"
+                android:drawablePadding="@dimen/dis_5"
+                android:text="5"
+                android:textColor="@color/black"
                 app:tint="@color/black"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
@@ -138,7 +145,7 @@
                 android:layout_gravity="center"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
-                android:paddingEnd="@dimen/dis_5"
+                android:paddingEnd="@dimen/dis_20"
                 app:tint="@color/black"
                 android:layout_weight="1"/>
 
@@ -146,6 +153,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:weightSum="2"
+            android:visibility="gone"
             android:layout_alignTop="@+id/ll_rate_comment_share"
             android:layout_alignBottom="@+id/ll_rate_comment_share"
             android:layout_alignParentEnd="true"

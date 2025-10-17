@@ -1,8 +1,9 @@
 package com.pioneer.nycfirewire.activity
 
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
@@ -11,50 +12,40 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.android.billingclient.api.*
 import com.bumptech.glide.Glide
-import com.pioneer.nycfirewire.model.user.response.UserDetails
-import com.pioneer.nycfirewire.prefs
-import com.pioneer.nycfirewire.R
-import com.pioneer.nycfirewire.utils.Constants.SUB_PRODUCT_ID
-import com.pioneer.nycfirewire.utils.IntentUtils.UPDATE_PROFILE
-import com.pioneer.nycfirewire.utils.showToast
 import com.google.android.gms.common.util.CollectionUtils.listOf
-import com.google.firebase.Firebase
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.analytics
 import com.onesignal.OneSignal
+import com.pioneer.nycfirewire.R
 import com.pioneer.nycfirewire.databinding.ActivityMyAccountBinding
 import com.pioneer.nycfirewire.model.payment.PaymentRequest
 import com.pioneer.nycfirewire.model.user.response.CommonResponse
+import com.pioneer.nycfirewire.model.user.response.UserDetails
+import com.pioneer.nycfirewire.prefs
 import com.pioneer.nycfirewire.resource.Resource
 import com.pioneer.nycfirewire.resource.ResourceState
 import com.pioneer.nycfirewire.service.BackgroundAudioService
-import com.pioneer.nycfirewire.utils.Constants
-import com.pioneer.nycfirewire.utils.Constants.MAP_PAGE
-import com.pioneer.nycfirewire.utils.Constants.MY_ACCOUNT
-import com.pioneer.nycfirewire.utils.Constants.USER_BASIC_USER
-import com.pioneer.nycfirewire.utils.Constants.USER_PREMIUM_FREE
+import com.pioneer.nycfirewire.utils.*
+import com.pioneer.nycfirewire.utils.Constants.SUB_PRODUCT_ID
 import com.pioneer.nycfirewire.utils.DateUtils.formatToIso8601
 import com.pioneer.nycfirewire.utils.DateUtils.getExpiryDate
 import com.pioneer.nycfirewire.utils.IntentUtils.FROM_ACCOUNT
 import com.pioneer.nycfirewire.utils.IntentUtils.OTHER
-import com.pioneer.nycfirewire.utils.gone
-import com.pioneer.nycfirewire.utils.startNewActivity
-import com.pioneer.nycfirewire.utils.visible
+import com.pioneer.nycfirewire.utils.IntentUtils.UPDATE_PROFILE
 import com.pioneer.nycfirewire.viewModel.FireWireViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
-import kotlin.String
-
 
 @AndroidEntryPoint
-class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener,PurchaseHistoryResponseListener {
+class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener, PurchaseHistoryResponseListener {
 
-    private  var skuItem:ProductDetails?=null
+    private var skuItem: ProductDetails? = null
     private lateinit var binding: ActivityMyAccountBinding
-    private var isPurchased= false
+    private var isPurchased = false
     private var userDetails = UserDetails()
     private lateinit var billingClient: BillingClient
     private lateinit var vm: FireWireViewModel
+
+    // ✅ Prevent duplicate backend calls
+    private val processedPurchaseTokens = mutableSetOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,99 +58,93 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener,PurchaseHisto
         clickEvent()
         initUi()
 
-        vm.paymentLiveData.observe(this, Observer{
+        vm.paymentLiveData.observe(this, Observer {
             updatePayment(it)
         })
     }
 
     private fun updatePayment(response: Resource<CommonResponse>) {
-        when(response.state){
+        when (response.state) {
             ResourceState.LOADING -> binding.progress.visible()
             ResourceState.SUCCESS -> {
-                prefs.userRole= USER_PREMIUM_FREE
+                isPurchased = true
+                binding.btnGetNow.gone()
+                binding.btnSubscribe.visible()
+                binding.tvFullAccess.text = "Premium Account"
+
+                prefs.userRole = Constants.USER_PREMIUM_FREE
                 binding.progress.gone()
-                println("PaymentSuccess"+response)
-                 if(response.data?.code== Constants.CODE_SUCCESS) {
-                    println("You are an active user now!")
-                     userView()
-                 }
+
+                Log.d("Billing", "Backend confirmed payment: ${response.data}")
+                if (response.data?.code == Constants.CODE_SUCCESS) {
+                    Log.d("Billing", "User upgraded to premium successfully")
+                    userView()
+                }
             }
             ResourceState.ERROR -> {
                 binding.progress.gone()
-
+                Log.e("Billing", "Backend API error: ${response.message}")
             }
         }
     }
 
     override fun onResume() {
         super.onResume()
+        analyticMethod(Constants.MY_ACCOUNT, "MyAccountActivity")
 
-        analyticMethod(MY_ACCOUNT,"MyAccountActivity")
-
-        if(prefs.userImg?.isNotEmpty() == true) {
-            Glide.with(this)
-                .load(prefs.userImg)
-                .into(binding.ivProfile)
-            userDetails.img= prefs.userImg
+        if (prefs.userImg?.isNotEmpty() == true) {
+            Glide.with(this).load(prefs.userImg).into(binding.ivProfile)
+            userDetails.img = prefs.userImg
         }
 
-        if(prefs.userFirstName?.isNotEmpty() == true) {
+        if (prefs.userFirstName?.isNotEmpty() == true) {
             binding.tvProfileName.text = prefs.userFirstName?.plus(" ").plus(prefs.userLastName)
             binding.tvProfileEmail.text = prefs.userEmail
         }
 
-        if(isPurchased) {
+        if (isPurchased) {
             binding.btnGetNow.gone()
             binding.btnSubscribe.visible()
         }
     }
 
     private fun initExtra() {
-        var from= intent.getStringExtra(FROM_ACCOUNT)
-
-        if(from==OTHER){
+        val from = intent.getStringExtra(FROM_ACCOUNT)
+        if (from == OTHER) {
             billingView()
-        }else{
+        } else {
             userDetails = intent.getParcelableExtra(UPDATE_PROFILE) ?: UserDetails()
             binding.tvProfileName.text = userDetails.firstName.plus(" ").plus(userDetails.lastName)
             binding.tvProfileEmail.text = userDetails.email
         }
-
-
     }
 
     private fun initUi() {
-
         billingClient = BillingClient.newBuilder(this)
             .enablePendingPurchases()
             .setListener(this)
             .build()
 
-
-
         billingClient.startConnection(object : BillingClientStateListener {
-            override
-            fun onBillingSetupFinished(billingResult: BillingResult) {
+            override fun onBillingSetupFinished(billingResult: BillingResult) {
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                    Log.d("Billing", "Billing setup complete")
                     loadProducts()
-                    // The BillingClient is ready. You can query purchases here.
-                    queryInventoryAsync(); // This is used to fetch purchased items from google play store
+                    queryInventoryAsync()
                     checkIfUserAlreadyPurchased()
+                } else {
+                    Log.w("Billing", "Billing setup failed: ${billingResult.debugMessage}")
                 }
             }
 
             override fun onBillingServiceDisconnected() {
-                // Try to restart the connection on the next request to
-                // Google Play by calling the startConnection() method.
-                showToast(this@MyAccountActivity, "Billing service disconnected...")
+                showToast(this@MyAccountActivity, "Billing service disconnected. Retrying...")
+                billingClient.startConnection(this)
             }
-        }
-        )
-
-
+        })
     }
 
-    private fun userView(){
+    private fun userView() {
         binding.tvTermsService.visible()
         binding.tvPrivacyPolicy.visible()
         binding.tvSignOut.visible()
@@ -168,15 +153,13 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener,PurchaseHisto
         binding.bgView.gone()
     }
 
-    private fun billingView(){
-       // binding.tvTermsService.gone()
-       // binding.tvPrivacyPolicy.gone()
+    private fun billingView() {
         binding.tvTermsService.setTextColor(getColor(R.color.white))
-        val drawable: Drawable? = ContextCompat.getDrawable(this, R.drawable.ic_terms_service)
-        drawable?.let { it.setColorFilter(ContextCompat.getColor(this, R.color.white), android.graphics.PorterDuff.Mode.SRC_IN) }
+        val drawable = ContextCompat.getDrawable(this, R.drawable.ic_terms_service)
+        drawable?.setColorFilter(ContextCompat.getColor(this, R.color.white), android.graphics.PorterDuff.Mode.SRC_IN)
 
-        val drawable1: Drawable? = ContextCompat.getDrawable(this, R.drawable.ic_right_arrow)
-        drawable1?.let { it.setColorFilter(ContextCompat.getColor(this, R.color.white), android.graphics.PorterDuff.Mode.SRC_IN) }
+        val drawable1 = ContextCompat.getDrawable(this, R.drawable.ic_right_arrow)
+        drawable1?.setColorFilter(ContextCompat.getColor(this, R.color.white), android.graphics.PorterDuff.Mode.SRC_IN)
 
         binding.tvPrivacyPolicy.setTextColor(getColor(R.color.white))
         binding.tvPrivacyPolicy.setCompoundDrawablesWithIntrinsicBounds(drawable, null, drawable1, null)
@@ -188,95 +171,54 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener,PurchaseHisto
         binding.bgView.visible()
     }
 
-
-
-
-  /*  fun checkIfUserAlreadyPurchased(billingClient: BillingClient) {
-        billingClient.queryPurchasesAsync(BillingClient.ProductType.SUBS) { billingResult, purchases ->
-            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                if (purchases.isNotEmpty()) {
-                    for (purchase in purchases) {
-                        if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED && purchase.isAcknowledged) {
-                            isPurchased=true
-                            println("User already has an active subscription: ${purchase.skus}")
-                        }
-                    }
-                }else    isPurchased=false
-                println("No active subscriptions found")
-            }else if (billingResult.responseCode == BillingClient.BillingResponseCode.ERROR) {
-                // Unknown error, maybe retry or show a generic error message
-                println("Billing An unknown error occurred: ${billingResult.debugMessage}")
+    private fun updateSubscriptionUI(isActive: Boolean) {
+        runOnUiThread {
+            if (isActive) {
+                isPurchased = true
+                binding.btnGetNow.gone()
+                binding.btnSubscribe.visible()
+                binding.tvFullAccess.text = "Premium Account"
+                Log.d("SubscriptionCheck", "Subscription active")
             } else {
-                println("Failed to query purchases: ${billingResult.debugMessage}")
+                isPurchased = false
+                binding.btnGetNow.visible()
+                binding.btnSubscribe.gone()
+                binding.tvFullAccess.text = "Basic Account"
+                basedOnUserRoleWithoutPurchase()
+                Log.d("SubscriptionCheck", "Subscription inactive")
             }
         }
-
-    }*/
-
+    }
 
     private fun checkIfUserAlreadyPurchased() {
         billingClient.queryPurchasesAsync(
-            QueryPurchasesParams.newBuilder()
-                .setProductType(BillingClient.ProductType.SUBS) // or SUBS if subscription
-                .build()
+            QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.SUBS).build()
         ) { billingResult, purchasesList ->
             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-
-                if(purchasesList.isNotEmpty()){
-                    if(purchasesList.filter { it.products.contains(SUB_PRODUCT_ID)}.isNotEmpty()){
-                for (purchase in purchasesList) {
-                    if (purchase.products.contains(SUB_PRODUCT_ID)) {
-                        val isAutoRenewing = purchase.isAutoRenewing
-                        val purchaseTime = purchase.purchaseTime
-                        val currentTime = System.currentTimeMillis()
-                        val isExpired = !isAutoRenewing && (purchaseTime < currentTime)
-
-                        if (isExpired) {
-                            isPurchased=false
-                            binding.btnGetNow.visible()
-                            binding.btnSubscribe.gone()
-                            Log.d("SubscriptionCheck", "Subscription is expired")
-                            //TODO call update profile api BASEIC_USER
-                        } else {
-                            isPurchased=true
-                            binding.btnGetNow.gone()
-                            binding.btnSubscribe.visible()
-                            if (prefs.userRole == USER_BASIC_USER) {
-                                //TODO call update profile api PREMIUM_FREE
-                            }
-                            Log.d("SubscriptionCheck", "Subscription is active")
-                        }
-                    }
-                    }}else{
-                        basedOnUserRoleWithoutPurchase()
-                    }
-                }else{
-                    basedOnUserRoleWithoutPurchase()
-                }
-
+                val hasActiveSubscription = purchasesList?.any { purchase ->
+                    purchase.products.contains(SUB_PRODUCT_ID) &&
+                            (purchase.isAutoRenewing || purchase.purchaseTime >= System.currentTimeMillis())
+                } ?: false
+                updateSubscriptionUI(hasActiveSubscription)
             } else {
                 showSnack("Error checking purchases: ${billingResult.debugMessage}")
             }
         }
     }
 
-    private fun basedOnUserRoleWithoutPurchase(){
-        if(prefs.userRole == USER_PREMIUM_FREE){
-            isPurchased=true
-            binding.btnGetNow.gone()
-            binding.btnSubscribe.visible()
+    private fun basedOnUserRoleWithoutPurchase() {
+        runOnUiThread {
+            if (prefs.userRole == Constants.USER_PREMIUM_FREE) {
+                isPurchased = true
+                binding.btnGetNow.gone()
+                binding.btnSubscribe.visible()
+            }
         }
     }
 
-
     private fun getProductList(): ArrayList<String> {
         val productIdsList = ArrayList<String>()
-        productIdsList.add(SUB_PRODUCT_ID);
-
-        val params = SkuDetailsParams.newBuilder()
-        params.setSkusList(productIdsList)
-            .setType(BillingClient.SkuType.SUBS)
-
+        productIdsList.add(SUB_PRODUCT_ID)
         return productIdsList
     }
 
@@ -285,41 +227,39 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener,PurchaseHisto
     }
 
     private fun queryInventoryAsync() {
-        if (getProductList().isNullOrEmpty()) {
-            return
-        }
-        var productList =
-            listOf(
-                QueryProductDetailsParams.Product.newBuilder()
-                    .setProductId(SUB_PRODUCT_ID)
-                    .setProductType(BillingClient.ProductType.SUBS)
-                    .build()
-            )
+        if (getProductList().isNullOrEmpty()) return
 
-        val params = QueryProductDetailsParams.newBuilder().setProductList(productList).build()
+        val productList = listOf(
+            QueryProductDetailsParams.Product.newBuilder()
+                .setProductId(SUB_PRODUCT_ID)
+                .setProductType(BillingClient.ProductType.SUBS)
+                .build()
+        )
 
-        billingClient.queryProductDetailsAsync(params) {
-                billingResult,
-                productDetailsList ->
-            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                if (!productDetailsList.isEmpty()) {
-                    for (item in productDetailsList) {
-                        skuItem = item
-                       binding.tvPrice.text= skuItem?.subscriptionOfferDetails?.get(0)?.pricingPhases?.pricingPhaseList?.get(0)?.formattedPrice
-                    }
-                }
+        val params = QueryProductDetailsParams.newBuilder()
+            .setProductList(productList)
+            .build()
+
+        billingClient.queryProductDetailsAsync(params) { billingResult, productDetailsList ->
+            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && !productDetailsList.isNullOrEmpty()) {
+                skuItem = productDetailsList.firstOrNull()
+                val price = skuItem?.subscriptionOfferDetails
+                    ?.firstOrNull()
+                    ?.pricingPhases
+                    ?.pricingPhaseList
+                    ?.firstOrNull()
+                    ?.formattedPrice.orEmpty()
+                binding.tvPrice.text = price
+            } else {
+                Log.w("Billing", "Failed to query product details: ${billingResult.debugMessage}")
             }
         }
     }
 
     private fun clickEvent() {
-        binding.tvBack.setOnClickListener {
-            finish()
-        }
+        binding.tvBack.setOnClickListener { finish() }
+        binding.ivClose.setOnClickListener { finish() }
 
-        binding.ivClose.setOnClickListener {
-            finish()
-        }
         binding.tvUpdateProfile.setOnClickListener {
             val intent = Intent(this, UpdateProfileActivity::class.java)
             intent.putExtra(UPDATE_PROFILE, userDetails)
@@ -327,43 +267,40 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener,PurchaseHisto
         }
 
         binding.btnGetNow.setOnClickListener {
-            if(!isPurchased)  {
-                if(skuItem!=null) {
-
-                    val productDetailsParamsList = listOf(
-                        BillingFlowParams.ProductDetailsParams.newBuilder()
-                            // retrieve a value for "productDetails" by calling queryProductDetailsAsync()
-                            .setProductDetails(skuItem!!)
-                            // For One-time product, "setOfferToken" method shouldn't be called.
-                            // For subscriptions, to get the offer token corresponding to the selected
-                            // offer call productDetails.subscriptionOfferDetails?.get(selectedOfferIndex)?.offerToken
-                            .setOfferToken(skuItem?.subscriptionOfferDetails?.get(0)?.offerToken.toString())
-                            .build()
-                    )
-
-                    val flowParams = BillingFlowParams.newBuilder()
-                        .setProductDetailsParamsList(productDetailsParamsList)
-                        .build()
-                    billingClient.launchBillingFlow(this, flowParams)
-                }
-            }else{
-                showToast(this,"Already Purchased")
+            if (isPurchased) {
+                showToast(this, "Already Purchased")
+                return@setOnClickListener
             }
 
+            val sku = skuItem ?: run {
+                showToast(this, "Product not loaded yet")
+                return@setOnClickListener
+            }
+
+            val offerToken = sku.subscriptionOfferDetails?.firstOrNull()?.offerToken
+            if (offerToken.isNullOrEmpty()) {
+                showToast(this, "Offer token not available")
+                return@setOnClickListener
+            }
+
+            val productDetailsParamsList = listOf(
+                BillingFlowParams.ProductDetailsParams.newBuilder()
+                    .setProductDetails(sku)
+                    .setOfferToken(offerToken)
+                    .build()
+            )
+
+            val flowParams = BillingFlowParams.newBuilder()
+                .setProductDetailsParamsList(productDetailsParamsList)
+                .build()
+
+            binding.btnGetNow.isEnabled = false
+            billingClient.launchBillingFlow(this, flowParams)
         }
 
-        binding.tvTermsService.setOnClickListener {
-            moveToLink("https://nycfirewire.net/terms")
-        }
-        binding.tvPrivacyPolicy.setOnClickListener {
-            moveToLink("https://nycfirewire.net/privacy")
-        }
-        binding.tvSignOut.setOnClickListener {
-
-            showSignOut(getString(R.string.you_want_to_sign_out))
-
-        }
-        //ButtonConstants.ButtonType = SUBSCRIBE
+        binding.tvTermsService.setOnClickListener { moveToLink("https://nycfirewire.net/terms") }
+        binding.tvPrivacyPolicy.setOnClickListener { moveToLink("https://nycfirewire.net/privacy") }
+        binding.tvSignOut.setOnClickListener { showSignOut(getString(R.string.you_want_to_sign_out)) }
     }
 
     fun showSignOut(message: String? = "") {
@@ -371,95 +308,184 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener,PurchaseHisto
             .setTitle(resources.getString(R.string.app_name))
             .setMessage(message)
             .setCancelable(false)
-            .setNegativeButton(android.R.string.cancel) { _, _ ->
-            }
+            .setNegativeButton(android.R.string.cancel, null)
             .setPositiveButton(R.string.sign_out) { _, _ ->
-
                 prefs.deleteToken
                 prefs.isLogin = false
                 startNewActivity(LoginNewActivity::class.java)
-                prefs.userImg= ""
-                prefs.userFirstName= ""
-                prefs.userLastName= ""
-                prefs.userEmail= ""
-                prefs.soundName=""
-
+                prefs.userImg = ""
+                prefs.userFirstName = ""
+                prefs.userLastName = ""
+                prefs.userEmail = ""
+                prefs.soundName = ""
                 BackgroundAudioService.stopService(this)
-                prefs.feedMainPosition=-1
-                prefs.feedSubPosition= -1
-
-                AppCompatDelegate
-                    .setDefaultNightMode(
-                        AppCompatDelegate
-                            .MODE_NIGHT_NO);
-
-                prefs.isDarkMode= false
-
-                OneSignal.logout();
-            }
-            .show()
+                prefs.feedMainPosition = -1
+                prefs.feedSubPosition = -1
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                prefs.isDarkMode = false
+                OneSignal.logout()
+            }.show()
     }
 
+    // ✅ Updated acknowledge logic
+    private fun acknowledgePurchaseWithRetry(
+        billingClient: BillingClient,
+        purchase: Purchase,
+        maxRetries: Int = 3,
+        delayMillis: Long = 2000L
+    ) {
+        // Already acknowledged → no need to call again
+        if (purchase.isAcknowledged) {
+            Log.d("Billing", "✅ Purchase already acknowledged: ${purchase.purchaseToken}")
+            runOnUiThread { callPaymentBackendApi(purchase) }
+            return
+        }
 
-    private fun acknowledgePurchase(purchaseToken: String, purchase: Purchase) {
         val params = AcknowledgePurchaseParams.newBuilder()
-            .setPurchaseToken(purchaseToken)
+            .setPurchaseToken(purchase.purchaseToken)
+            .build()
+
+        var attempt = 0
+
+        fun attemptAcknowledge() {
+            billingClient.acknowledgePurchase(params) { billingResult ->
+                attempt++
+                Log.d(
+                    "Billing",
+                    "Acknowledge attempt $attempt result: ${billingResult.responseCode} (${billingResult.debugMessage})"
+                )
+
+                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                    Log.d("Billing", "✅ Acknowledged successfully after $attempt attempt(s)")
+                    runOnUiThread { callPaymentBackendApi(purchase) }
+                } else {
+                    // Retry only for transient server/network issues
+                    if (billingResult.responseCode == BillingClient.BillingResponseCode.SERVICE_UNAVAILABLE ||
+                        billingResult.responseCode == BillingClient.BillingResponseCode.ERROR ||
+                        billingResult.responseCode == BillingClient.BillingResponseCode.SERVICE_DISCONNECTED
+                    ) {
+                        if (attempt < maxRetries) {
+                            Log.w("Billing", "⚠️ Retry acknowledgment in ${delayMillis}ms (attempt $attempt/$maxRetries)")
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                attemptAcknowledge()
+                            }, delayMillis)
+                        } else {
+                            Log.e("Billing", "❌ Failed to acknowledge after $maxRetries attempts")
+                            // Optional: Still call backend if purchase state == PURCHASED
+                            if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED) {
+                                Log.w("Billing", "Proceeding to backend since purchase is confirmed but not acknowledged")
+                                runOnUiThread { callPaymentBackendApi(purchase) }
+                            }
+                        }
+                    } else {
+                        Log.e("Billing", "❌ Permanent error acknowledging: ${billingResult.debugMessage}")
+                    }
+                }
+            }
+        }
+
+        // Start first attempt
+        attemptAcknowledge()
+    }
+
+    /*private fun acknowledgePurchase(purchase: Purchase) {
+        val token = purchase.purchaseToken
+        if (token.isNullOrEmpty()) {
+            Log.w("Billing", "acknowledgePurchase called with empty token")
+            return
+        }
+
+        if (purchase.isAcknowledged) {
+            Log.d("Billing", "Purchase already acknowledged: ${purchase.orderId}")
+            if (!processedPurchaseTokens.contains(token)) {
+                processedPurchaseTokens.add(token)
+                runOnUiThread { callPaymentBackendApi(purchase) }
+            }
+            return
+        }
+
+        val params = AcknowledgePurchaseParams.newBuilder()
+            .setPurchaseToken(token)
             .build()
 
         billingClient.acknowledgePurchase(params) { billingResult ->
-            println("billingResult:"+ billingResult.responseCode )
+            Log.d("Billing", "Acknowledge result: ${billingResult.responseCode} (${billingResult.debugMessage}) for token=$token")
+
             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                callPaymentBackendApi(purchase)
-                println("acknowledge Purchase completed")
-            }else{
-                println("Exit in acknowledge Purchase")
+                processedPurchaseTokens.add(token)
+                runOnUiThread { callPaymentBackendApi(purchase) }
+            } else {
+                Log.w("Billing", "Acknowledge failed: ${billingResult.debugMessage}")
             }
         }
-    }
+    }*/
 
-
-    fun callPaymentBackendApi(purchase: Purchase) {
+    private fun callPaymentBackendApi(purchase: Purchase) {
         try {
-            isPurchased=true
-            binding.btnGetNow.gone()
-            binding.btnSubscribe.visible()
-            binding.tvFullAccess.text= "Premium Account"
+            val token = purchase.purchaseToken
+            Log.d("Billing", "Preparing backend call for token=$token, orderId=${purchase.orderId}")
 
-            var pricing= skuItem?.subscriptionOfferDetails?.get(0)?.pricingPhases?.pricingPhaseList?.get(0)
+            val pricing = skuItem
+                ?.subscriptionOfferDetails
+                ?.firstOrNull()
+                ?.pricingPhases
+                ?.pricingPhaseList
+                ?.firstOrNull()
 
-            var paymentRequest = PaymentRequest(
-                userId = prefs.userId.toString(),
+            val amountValue = pricing?.priceAmountMicros?.div(1_000_000.0) ?: 0.0
+
+            val paymentRequest = PaymentRequest(
+                userId = prefs.userId.orEmpty(),
                 paymentMethod = "Play Store",
-                paymentToken = purchase.purchaseToken,
-                transactionId = purchase.orderId.toString(),
-                amount= pricing?.formattedPrice.toString(),
-                currency=pricing?.priceCurrencyCode.toString(),
-                status= "success",
-                purchaseDate= formatToIso8601(purchase.purchaseTime) ,
-                expiredDate= getExpiryDate(purchase.purchaseTime),
-                type= if (purchase.isAutoRenewing) "Auto-renewable subscription" else "one-time"
+                paymentToken = token,
+                transactionId = purchase.orderId.orEmpty(),
+                amount = amountValue.toString(),
+                currency = pricing?.priceCurrencyCode.orEmpty(),
+                status = "success",
+                purchaseDate = formatToIso8601(purchase.purchaseTime),
+                expiredDate = getExpiryDate(purchase.purchaseTime),
+                type = if (purchase.isAutoRenewing) "Auto-renewable subscription" else "One-time"
             )
-            println("PaymentRequest"+paymentRequest)
+
+            Log.d("Billing", "Sending PaymentRequest → $paymentRequest")
             vm.paymentPost(paymentRequest)
-        }catch (e: Exception){
-            e.printStackTrace()
+        } catch (e: Exception) {
+            Log.e("Billing", "Error while calling backend API", e)
         }
-
     }
-
-
 
     override fun onPurchasesUpdated(billingResult: BillingResult, purchaseList: MutableList<Purchase>?) {
-        if (billingResult?.responseCode == BillingClient.BillingResponseCode.OK && purchaseList != null) {
-            for (purchase in purchaseList!!) {
-                if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED && !purchase.isAcknowledged) {
-                    acknowledgePurchase(purchase.purchaseToken,purchase)
+        Log.d("Billing", "onPurchasesUpdated → code=${billingResult.responseCode}, msg=${billingResult.debugMessage}, purchases=$purchaseList")
+
+        binding.btnGetNow.isEnabled = true
+
+        when (billingResult.responseCode) {
+            BillingClient.BillingResponseCode.OK -> {
+                purchaseList?.forEach { purchase ->
+                    val token = purchase.purchaseToken
+                    if (token.isNullOrEmpty()) return@forEach
+                    if (processedPurchaseTokens.contains(token)) {
+                        Log.d("Billing", "Already processed token: $token")
+                        return@forEach
+                    }
+
+                    Log.d("Billing", "PurchaseState: ${purchase.purchaseState}, acknowledged=${purchase.isAcknowledged}")
+                    if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED) {
+                        if (!purchase.isAcknowledged) {
+                            acknowledgePurchaseWithRetry(billingClient,purchase)
+                        } else {
+                            processedPurchaseTokens.add(token)
+                            runOnUiThread { callPaymentBackendApi(purchase) }
+                        }
+                    }
                 }
             }
-        } else if (billingResult?.responseCode == BillingClient.BillingResponseCode.USER_CANCELED) {
-            showToast(this,"You've cancelled the Google play billing process...")
-        } else {
-            showToast(this,"Item not found or Google play billing error...")
+            BillingClient.BillingResponseCode.USER_CANCELED -> {
+                showToast(this, "You've cancelled the Google Play billing process...")
+            }
+            else -> {
+                showToast(this, "Google Play billing error: ${billingResult.debugMessage}")
+            }
         }
     }
 
@@ -469,32 +495,18 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener,PurchaseHisto
     ) {
         if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
             if (!purchaseHistoryList.isNullOrEmpty()) {
-
-                var purchase= purchaseHistoryList[0]
+                val purchase = purchaseHistoryList[0]
                 val purchaseTimestamp: Long = purchase.purchaseTime
-                val days = getDaysSincePurchase(purchaseTimestamp)
+                getDaysSincePurchase(purchaseTimestamp)
             }
         }
-
-
     }
 
     fun getDaysSincePurchase(purchaseTimestamp: Long): Int {
         val purchaseDate = Date(purchaseTimestamp)
-
-        val calendarPurchase = Calendar.getInstance().apply {
-            time = purchaseDate
-        }
-
+        val calendarPurchase = Calendar.getInstance().apply { time = purchaseDate }
         val calendarToday = Calendar.getInstance()
-
         val diffInMillis = calendarToday.timeInMillis - calendarPurchase.timeInMillis
         return (diffInMillis / (1000 * 60 * 60 * 24)).toInt()
     }
-
-
-
-
-
-
 }

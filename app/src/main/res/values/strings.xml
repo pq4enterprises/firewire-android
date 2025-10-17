@@ -84,7 +84,8 @@ Check it out www.saltywire.com</string>
     <string name="password_confirm_same">Password and confirm password should be same.</string>
     <string name="register_success">You are registered successfully!</string>
     <string name="password_length">Password should be minimum 8 characters long.</string>
-    <string name="star">%s Likes</string>
+    <string name="stars">%s Likes</string>
+    <string name="star">%s Like</string>
     <string name="comments">%s Comments</string>
     <string name="comment">%s Comment</string>
     <string name="no_data_found">No data found!</string>
@@ -141,7 +142,7 @@ Check it out www.saltywire.com</string>
     <string name="notification_souns">Notification Sounds</string>
     <string name="menu">Menu</string>
     <string name="network_connection">No internet connection</string>
-
+    <string name="reply">Reply</string>
 
 
 </resources>

@@ -77,6 +77,7 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
     private fun initViewModel() {
         vm = ViewModelProvider(this).get(FireWireViewModel::class.java)
         if(isOnline(this)) {
+
             val commentRequest = AddCommentRequest(
                 prefs.userId.toString(), wireDetails._id, type
             )
@@ -159,7 +160,7 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
 
 
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
-                    mMap.animateCamera(CameraUpdateFactory.zoomTo(10.0f))
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(19.0f))
 
                 }
             }
@@ -218,7 +219,7 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
     }
 
     private fun initExtra() {
-        val intent= intent.getBundleExtra(IntentUtils.EXTRA_WIRE_DETAILS)
+        val intent= intent.getBundleExtra(IntentUtils.BUN_WIRE_DETAILS)
          wireDetails= intent?.getParcelable(BUN_WIRE_DETAILS)?: Incident()
          incidentList = intent?.getParcelableArrayList<Incident>(BUN_WIRE_LIST_DETAIL)?: ArrayList<Incident>()
         isLikeSingle= wireDetails.isLiked

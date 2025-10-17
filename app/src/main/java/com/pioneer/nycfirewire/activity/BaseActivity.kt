@@ -10,6 +10,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
@@ -61,7 +64,8 @@ abstract class BaseActivity :AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding= ActivityBaseContentBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        findViewById<View>(android.R.id.content).applySystemWindowInsets()
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
     }
 
@@ -89,6 +93,23 @@ abstract class BaseActivity :AppCompatActivity() {
         }
 
         Firebase.analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle)
+    }
+    fun View.applySystemWindowInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(this) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+
+            // Use the larger bottom inset (keyboard OR nav bar)
+            val bottomInset = maxOf(systemBars.bottom, imeInsets.bottom)
+
+            view.setPadding(
+                systemBars.left,
+                systemBars.top,
+                systemBars.right,
+                bottomInset
+            )
+            insets
+        }
     }
 
 

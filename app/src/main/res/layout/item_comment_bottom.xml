@@ -2,10 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/white"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <de.hdodenhof.circleimageview.CircleImageView
+   <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_image"
         android:layout_width="43dp"
         android:layout_height="43dp"
@@ -14,49 +15,52 @@
         app:layout_constraintTop_toTopOf="parent"
         android:src="@drawable/profile_img"
         app:civ_border_width="2dp"
+       android:visibility="visible"
         app:civ_border_color="#FFFFFFFF"/>
-    <TextView
-        android:id="@+id/tv_profile_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/text_14"
-        android:textStyle="bold"
-        android:fontFamily="@font/inter_regular"
-        android:layout_marginStart="@dimen/dis_16"
-        android:textColor="@color/app_text_color"
-        app:layout_constraintTop_toTopOf="@+id/profile_image"
-        app:layout_constraintBottom_toBottomOf="@+id/profile_image"
-        app:layout_constraintLeft_toRightOf="@+id/profile_image"
-        tools:text="John Mike"/>
-    <TextView
-        android:id="@+id/tv_location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/text_10"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/tv_profile_name"
-        app:layout_constraintLeft_toLeftOf="@+id/tv_profile_name"
-        android:textColor="@color/grey_little_text"
-        tools:text="San Diego"/>
-    <ImageView
-        android:id="@+id/iv_menu_dot"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dis_16"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:src="@drawable/ic_menu_dot"/>
-    <TextView
-        android:id="@+id/tv_date_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="10 Oct | 10.15 AM"
-        android:textSize="@dimen/text_12"
-        android:textColor="@color/grey_lite"
-        android:layout_marginEnd="@dimen/dis_16"
-        app:layout_constraintEnd_toStartOf="@+id/iv_menu_dot"
-        app:layout_constraintTop_toTopOf="@+id/iv_menu_dot"/>
-    <androidx.recyclerview.widget.RecyclerView
+ <TextView
+      android:id="@+id/tv_profile_name"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:textSize="@dimen/text_14"
+      android:textStyle="bold"
+      android:fontFamily="@font/inter_regular"
+      android:layout_marginStart="@dimen/dis_16"
+      android:textColor="@color/app_text_color"
+      app:layout_constraintTop_toTopOf="@+id/profile_image"
+      app:layout_constraintBottom_toBottomOf="@+id/profile_image"
+      app:layout_constraintLeft_toRightOf="@+id/profile_image"
+      tools:text="John Mike"/>
+ <TextView
+     android:id="@+id/tv_location"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:textSize="@dimen/text_10"
+     android:visibility="gone"
+     app:layout_constraintTop_toBottomOf="@+id/tv_profile_name"
+     app:layout_constraintLeft_toLeftOf="@+id/tv_profile_name"
+     android:textColor="@color/grey_little_text"
+     tools:text="San Diego"/>
+ <ImageView
+     android:id="@+id/iv_menu_dot"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:layout_margin="@dimen/dis_16"
+     app:layout_constraintTop_toTopOf="@id/profile_image"
+    app:layout_constraintBottom_toBottomOf="@+id/profile_image"
+     app:layout_constraintEnd_toEndOf="parent"
+     android:src="@drawable/ic_menu_dot"/>
+ <TextView
+     android:id="@+id/tv_date_time"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     tools:text="10 Oct | 10.15 AM"
+     android:textSize="@dimen/text_12"
+     android:textColor="@color/grey_lite"
+     android:layout_marginEnd="@dimen/dis_16"
+     app:layout_constraintBottom_toBottomOf="@+id/profile_image"
+     app:layout_constraintEnd_toStartOf="@+id/iv_menu_dot"
+     app:layout_constraintTop_toTopOf="@+id/profile_image"/>
+ <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_images"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -75,11 +79,79 @@
         android:layout_marginTop="@dimen/dis_15"
         android:textSize="@dimen/text_14"
         android:textColor="@color/small_desc"
+        android:layout_marginStart="@dimen/dis_5"
         tools:text="Lorem Ipsum is simp dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's since"
-        app:layout_constraintStart_toStartOf="@+id/profile_image"
-        app:layout_constraintEnd_toEndOf="@+id/tv_date_time"
+        app:layout_constraintLeft_toLeftOf="@+id/rv_images"
+        app:layout_constraintRight_toRightOf="@+id/tv_date_time"
         app:layout_constraintTop_toBottomOf="@+id/rv_images"/>
+    <TextView
+        android:id="@+id/tv_main_reply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/reply"
+        android:textStyle="bold"
+        android:textSize="@dimen/text_14"
+        android:layout_marginTop="@dimen/dis_15"
+        android:paddingTop="@dimen/dis_10"
+        android:textColor="@color/back_text"
+        android:layout_marginStart="@dimen/dis_16"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_comments"/>
+    <TextView
+        android:id="@+id/tv_main_total_replies"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:drawableStartCompat="@drawable/ic_reply_chat_icon"
+        android:text="3 Replies"
+        android:textSize="@dimen/text_12"
+        android:visibility="visible"
+        android:textStyle="bold"
+        android:drawablePadding="@dimen/dis_5"
+        android:textColor="@color/back_text"
+        android:layout_marginEnd="@dimen/dis_16"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_main_reply"
+        app:layout_constraintTop_toTopOf="@+id/tv_main_reply"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_replies"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:orientation="vertical"
+        android:layout_marginStart="@dimen/dis_30"
+        android:layout_marginTop="16dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:listitem="@layout/item_reply_content"
+        app:layout_constraintTop_toBottomOf="@+id/tv_main_reply" />
+
+    <TextView
+        android:id="@+id/tv_hide_reply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dis_16"
+        android:visibility="gone"
+        android:textSize="@dimen/text_12"
+        android:textStyle="bold"
+        android:textColor="@color/back_text"
+        android:layout_marginStart="@dimen/dis_16"
+        app:layout_constraintLeft_toLeftOf="@+id/rv_replies"
+        app:layout_constraintTop_toBottomOf="@+id/rv_replies"
+        android:text="Hide Replies"/>
     <View
+        android:id="@+id/view_reply_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/dis_16"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@+id/rv_replies"
+        app:layout_constraintEnd_toEndOf="@+id/rv_replies"
+        app:layout_constraintTop_toBottomOf="@+id/tv_hide_reply"
+        android:background="@color/view_color"/>
+
+    <View
+        android:id="@+id/view_comment"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="@dimen/dis_16"
@@ -87,7 +159,8 @@
         android:layout_marginStart="@dimen/dis_16"
         app:layout_constraintStart_toStartOf="@+id/profile_image"
         app:layout_constraintEnd_toEndOf="@+id/tv_date_time"
-        app:layout_constraintTop_toBottomOf="@+id/tv_comments"
+        app:layout_constraintTop_toBottomOf="@+id/tv_main_reply"
         android:background="@color/view_color"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -79,7 +79,11 @@ class BackgroundAudioService : Service() {
     }
 
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent == null) {
+            // Service restarted by system without intent
+            return START_STICKY // Or START_NOT_STICKY if you want it to stop
+        }
         url = intent.getStringExtra("url") ?: return START_NOT_STICKY
         playerPosition = intent.getIntExtra("mainPosition", -1)
         subPosition = intent.getIntExtra("position", -1)

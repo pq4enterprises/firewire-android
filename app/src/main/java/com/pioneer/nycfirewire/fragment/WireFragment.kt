@@ -184,6 +184,23 @@ class WireFragment: Fragment(),IncidentClickListener {
             vm.addCommentLiveData.observe(viewLifecycleOwner, Observer {
                 updateLikeData(it)
             })
+
+            lifecycleScope.launch {
+                vm.posts.collectLatest { pagingData ->
+                    pagingAdapter.submitData(pagingData)
+                    val currentList = pagingAdapter.snapshot().items
+                    incidentList= currentList as java.util.ArrayList<Incident>
+                    (activity as? OnIncidentListLoadedListener)?.onListLoaded(currentList)
+                }
+
+                binding.rvMainFilter.post {
+                    binding.rvMainFilter.scrollBy(0, 1) // forces scroll event
+                }
+            }
+
+            vm.totalCount.observe(viewLifecycleOwner, Observer{
+                binding.tvWireTotal.text= getString(R.string.posts_listed, it)
+            })
         }
         val recycler = binding.rvMainFilter.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -204,26 +221,15 @@ class WireFragment: Fragment(),IncidentClickListener {
                 val isRefreshing = loadStates.refresh is LoadState.Loading
                 binding.progress.isVisible = isRefreshing && pagingAdapter.itemCount == 0
                 loadStates.refresh.let {
-                        if (it is LoadState.Error && pagingAdapter.itemCount == 0) {
-                            binding.tvNoData.visible()
+                        if (it is LoadState.Error || pagingAdapter.itemCount == 0) {
+                          if(binding.progress.isVisible) binding.tvNoData.gone() else binding.tvNoData.visible()
                         }else  binding.tvNoData.gone()
                     }
             }
 
         }
 
-        lifecycleScope.launch {
-            vm.posts.collectLatest { pagingData ->
-                pagingAdapter.submitData(pagingData)
-                val currentList = pagingAdapter.snapshot().items
-                incidentList= currentList as java.util.ArrayList<Incident>
-                (activity as? OnIncidentListLoadedListener)?.onListLoaded(currentList)
-            }
 
-            binding.rvMainFilter.post {
-                binding.rvMainFilter.scrollBy(0, 1) // forces scroll event
-            }
-        }
 
         pagingAdapter.addLoadStateListener { loadStates ->
             val isLoaded = loadStates.refresh is LoadState.NotLoading
@@ -236,15 +242,13 @@ class WireFragment: Fragment(),IncidentClickListener {
 
             }
         }
-
-        vm.totalCount.observe(viewLifecycleOwner, Observer{
-            binding.tvWireTotal.text= getString(R.string.posts_listed, it)
-        })
     }
 
     private fun updateLikeData(response: Resource<CommonResponse>) {
         when(response.state){
-            ResourceState.LOADING -> binding.progress.visible()
+            ResourceState.LOADING ->{
+                binding.progress.visible()
+            }
             ResourceState.SUCCESS -> {
                 binding.progress.gone()
                 updateLikePosition()
@@ -380,8 +384,8 @@ class WireFragment: Fragment(),IncidentClickListener {
 
     override fun appIntroTour(
         tvTitle: TextView,
-        ivRating: ImageView,
-        ivCommand: ImageView,
+        ivRating: TextView,
+        ivCommand: TextView,
         ivShare: ImageView
     ) {
         if(prefs.showAppIntro && prefs.showFeedIntro ) {

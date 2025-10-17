@@ -6,6 +6,18 @@ data class AddCommentRequest(
     var type:String?="",
     var comment:String?="",
     var img: List<String>?=null,
+    var mentions: List<String>?=null,
+    var parentId:String?=""
+)
+
+
+data class mainCommentRequest(
+    var userId:String?="",
+    var incidentId:String?="",
+    var type:String?="",
+    var comment:String?="",
+    var img: List<String>?=null,
+    var mentions: List<String>?=null
 )
 
 

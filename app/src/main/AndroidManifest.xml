@@ -42,7 +42,7 @@
             </intent-filter>
         </activity>-->
         <activity android:name=".activity.LoginNewActivity"
-            android:windowSoftInputMode="adjustResize"
+            android:windowSoftInputMode="stateHidden|adjustResize"
             android:exported="true"/>
 
         <activity android:name=".activity.RegisterActivity"
@@ -51,6 +51,7 @@
 
         <activity android:name=".activity.MapsActivity"
             android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true">
             <meta-data
                 android:name="android.app.splash_screen"
@@ -90,6 +91,7 @@
         <activity android:name=".activity.MyAccountActivity"
             android:exported="true"/>
         <activity android:name=".activity.UpdateProfileActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true"/>
         <activity android:name=".activity.ChangePasswordActivity"
             android:windowSoftInputMode="adjustResize"

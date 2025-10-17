@@ -43,6 +43,7 @@ import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import com.android.billingclient.api.AcknowledgePurchaseParams
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClientStateListener
@@ -92,6 +93,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
 import com.pioneer.nycfirewire.fragment.WireFragmentWithPagination
 import com.pioneer.nycfirewire.listener.OnIncidentListLoadedListener
+import com.pioneer.nycfirewire.model.incident.response.FilterData
 import com.pioneer.nycfirewire.model.user.request.ProfileUpdateRequest
 import com.pioneer.nycfirewire.model.user.response.CommonResponse
 import com.pioneer.nycfirewire.model.user.response.UserDetails
@@ -101,7 +103,9 @@ import com.pioneer.nycfirewire.utils.Constants.FROM_START
 import com.pioneer.nycfirewire.utils.Constants.USER_BASIC_USER
 import com.pioneer.nycfirewire.utils.Constants.USER_PREMIUM_FREE
 import com.pioneer.nycfirewire.utils.DateUtils.getExpiryTime
+import com.pioneer.nycfirewire.utils.IntentUtils.BUN_WIRE_LIST_DETAIL
 import com.pioneer.nycfirewire.utils.IntentUtils.EXTRA_WIRE_DETAILS
+import com.pioneer.nycfirewire.utils.IntentUtils.FILTER_DATA
 import com.pioneer.nycfirewire.utils.showToast
 
 
@@ -133,6 +137,8 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         FirebaseApp.initializeApp(this)
         firebaseAnalytics = Firebase.analytics
 
@@ -215,7 +221,10 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
         val currentFragment = supportFragmentManager.fragments.lastOrNull { it.isVisible }
 
         if(currentFragment is WireFragment){
-            currentFragment.refreshData()
+            val bundle = Bundle()
+            bundle.putBoolean(FROM_WIRE, true)
+            replaceFragment(NAV_WIRE_NEWS, bundle)
+            //currentFragment.refreshData()
         }
     }
 
@@ -572,8 +581,9 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
             var wireDetail= incidentList.find { it.latitude==marker.position.latitude.toString() && it.longitude==marker.position.longitude.toString() }
             val bundle= Bundle()
             bundle.putParcelable(BUN_WIRE_DETAILS,wireDetail)
+            bundle.putParcelableArrayList(BUN_WIRE_LIST_DETAIL, incidentList)
             val intent = Intent(this, WireDetailActivity::class.java)
-            intent.putExtra(EXTRA_WIRE_DETAILS, bundle)
+            intent.putExtra(BUN_WIRE_DETAILS, bundle)
             startActivity(intent)
 
         }
@@ -609,6 +619,13 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
 
     private fun clickEvent() {
         binding.toolbarLayout.ivMenu.setOnClickListener {
+            val currentFragment = supportFragmentManager.fragments.lastOrNull { it.isVisible }
+            if(currentFragment is FilterFragment){
+                val fragmentManager = supportFragmentManager
+                fragmentManager.beginTransaction()
+                    .remove(currentFragment)  // removes current fragment
+                    .commitAllowingStateLoss()
+            }
             val intent = Intent(this, NavigationMenuActivity::class.java )
             startActivity(intent)
         }
@@ -619,13 +636,15 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
         }
 
         binding.toolbarLayout.ivRefresh.setOnClickListener {
-            val currentFragment = supportFragmentManager.fragments.lastOrNull { it.isVisible }
+            val bundle = Bundle()
+            bundle.putBoolean(FROM_WIRE, true)
+            replaceFragment(NAV_WIRE_NEWS, bundle)
+            /*val currentFragment = supportFragmentManager.fragments.lastOrNull { it.isVisible }
 
             if(currentFragment is WireFragment){
                 currentFragment.refreshData()
                 showToast(this,"Incident refreshed")
-            }
-            //vm.getIncidentList(kotlin.collections.ArrayList<String>(), kotlin.collections.ArrayList<String>(), "1", "10")
+            }*/
         }
     }
 
@@ -763,8 +782,8 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
         )
         if(fragment is CommentsFragment) binding.cvMap1.gone()
 
-        //if(isWireView && fragment!= WireFragment) recreate()
     }
+
 
     override fun replaceFragment(receivingType: String, data: Any) {
         when(receivingType){

@@ -51,7 +51,6 @@ import com.google.android.gms.tasks.Task
 import com.onesignal.OneSignal
 import com.pioneer.nycfirewire.R
 import com.pioneer.nycfirewire.databinding.ActivityLoginBinding
-import com.pioneer.nycfirewire.databinding.ActivityNewLoginBinding
 import com.pioneer.nycfirewire.utils.AppUtils
 import com.pioneer.nycfirewire.utils.Constants.FORGOT_PASSWORD
 import com.pioneer.nycfirewire.utils.Constants.LOGIN
@@ -66,7 +65,7 @@ import com.pioneer.nycfirewire.utils.visible
 class LoginNewActivity: BaseActivity() {
 
     private var callbackManager: CallbackManager? = null
-    private lateinit var binding: ActivityNewLoginBinding
+    private lateinit var binding: ActivityLoginBinding
     private lateinit var vm: UserViewModel
    // private lateinit var googleSignInClient: GoogleSignInClient
    // private lateinit var firebaseAuth: FirebaseAuth
@@ -79,7 +78,7 @@ class LoginNewActivity: BaseActivity() {
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityNewLoginBinding.inflate(layoutInflater)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initUi()
         initViewModel()
@@ -228,6 +227,13 @@ class LoginNewActivity: BaseActivity() {
             // Move the cursor to the end of the text after the transformation change
             binding.etPassword.setSelection(binding.etPassword.text.length);
         }
+
+        binding.etPassword.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) binding.nsView.post {
+                binding.nsView.smoothScrollTo(0, v.bottom)
+            }
+        }
+
 
 
 

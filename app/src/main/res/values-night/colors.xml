@@ -35,6 +35,7 @@
     <color name="home_switch_bg">#000000</color>
     <color name="rv_bg">#202020</color>
     <color name="login_reg_text">#FFFFFF</color>
+    <color name="user_name_bind">#64B5F6</color>
 
 
 

@@ -2,8 +2,11 @@ package com.pioneer.nycfirewire.activity
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.view.View
 import android.webkit.JavascriptInterface
+import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
 import com.bumptech.glide.Glide
@@ -146,6 +149,18 @@ class NewsDetailActivity : BaseActivity() {
         if(links.isNotEmpty()) sharingLink= links.get(0).attr("href")
         val webView = binding.webView
 
+        webView.webViewClient = object : WebViewClient() {
+            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                binding.progress.visibility = View.VISIBLE
+                super.onPageStarted(view, url, favicon)
+            }
+
+            override fun onPageFinished(view: WebView?, url: String?) {
+                binding.progress.visibility = View.GONE
+                super.onPageFinished(view, url)
+            }
+        }
+
         // Enable JavaScript (important for many modern websites)
         webView.settings.javaScriptEnabled = true
 
@@ -171,5 +186,8 @@ class NewsDetailActivity : BaseActivity() {
     }
 
 
+    }
 
-}
+
+
+

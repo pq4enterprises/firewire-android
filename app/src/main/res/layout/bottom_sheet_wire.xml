@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:clickable="true"
     android:focusable="true"
-    android:minHeight="300dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/rounded_corner_rectangle">
@@ -52,7 +51,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/white"
-        android:minHeight="300dp"
         tools:listitem="@layout/item_wire"
         android:paddingBottom="100dp"
         app:layout_behavior="@string/bottom_sheet_behavior"
@@ -77,12 +75,11 @@
         android:textColor="@color/choose_text_color"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minHeight="300dp"
         android:gravity="center"
+        android:layout_marginTop="100dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
         android:id="@+id/progress"

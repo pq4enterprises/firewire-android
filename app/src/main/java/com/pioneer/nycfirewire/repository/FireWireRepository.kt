@@ -48,6 +48,7 @@ import okhttp3.MultipartBody
 import retrofit2.Response
 import javax.inject.Inject
 import com.pioneer.nycfirewire.R
+import com.pioneer.nycfirewire.model.incident.request.mainCommentRequest
 
 class FireWireRepository @Inject constructor(
     private val apiEndPoint: ApiEndPoints,
@@ -341,6 +342,29 @@ class FireWireRepository @Inject constructor(
         liveData.setLoading()
         try {
             val result = apiEndPoint.postComment(request)
+            if (result.isSuccessful) {
+                liveData.setSuccess(result.body())
+            } else {
+                liveData.setError(errorHandling(result))
+            }
+
+        } catch (e: Exception) {
+            liveData.setError(e.message.toString())
+        }
+    }
+
+    suspend fun postMainComment(
+        liveData: MutableLiveData<Resource<CommonResponse>>,
+        request: mainCommentRequest,
+        context: Context
+    ){
+        if (!NetworkUtils.isOnline(context)) {
+            liveData.setError(context.getString(R.string.network_connection))
+            return
+        }
+        liveData.setLoading()
+        try {
+            val result = apiEndPoint.postMainComment(request)
             if (result.isSuccessful) {
                 liveData.setSuccess(result.body())
             } else {

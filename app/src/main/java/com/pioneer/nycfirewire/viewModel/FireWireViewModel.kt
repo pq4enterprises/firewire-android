@@ -1,6 +1,7 @@
 package com.pioneer.nycfirewire.viewModel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,12 +10,14 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.pioneer.nycfirewire.data.ApiEndPoints
+import com.pioneer.nycfirewire.extensions.setError
 import com.pioneer.nycfirewire.fragment.PagingMetadataListener
 import com.pioneer.nycfirewire.fragment.PostPagingSource
 import com.pioneer.nycfirewire.model.TrendingSearchResponseWrapper
 import com.pioneer.nycfirewire.model.incident.request.AddCommentRequest
 import com.pioneer.nycfirewire.model.incident.request.FeatureImageSetRequest
 import com.pioneer.nycfirewire.model.incident.request.ReportCommentRequest
+import com.pioneer.nycfirewire.model.incident.request.mainCommentRequest
 import com.pioneer.nycfirewire.model.incident.response.CommentsResponse
 import com.pioneer.nycfirewire.model.incident.response.IncidentByIdResponse
 import com.pioneer.nycfirewire.model.incident.response.IncidentResponse
@@ -33,7 +36,9 @@ import com.pioneer.nycfirewire.model.user.request.ProfileUpdateRequest
 import com.pioneer.nycfirewire.model.user.request.UpdatePasswordRequest
 import com.pioneer.nycfirewire.model.user.response.SaltyWireResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
 import javax.inject.Inject
 
@@ -157,6 +162,12 @@ class FireWireViewModel @Inject constructor(val context: Application,val apiEndP
         }
     }
 
+    fun postMainComment(request: mainCommentRequest){
+        viewModelScope.launch {
+            fireWireRepo.postMainComment(addCommentLiveData,request, context )
+        }
+    }
+
     fun postSelectArea(request: ArrayList<PostAreaData>){
         viewModelScope.launch {
             fireWireRepo.postSelectedArea(postSelectAreaLiveData,request, context)
@@ -169,11 +180,25 @@ class FireWireViewModel @Inject constructor(val context: Application,val apiEndP
         }
     }
 
-    fun paymentPost(request: PaymentRequest){
-        viewModelScope.launch {
-            fireWireRepo.postPayment(paymentLiveData,request,context)
+
+    fun paymentPost(request: PaymentRequest) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                Log.d("Billing", "➡️ Sending payment to backend: $request")
+
+                val result = fireWireRepo.postPayment(paymentLiveData, request, context)
+
+                Log.d("Billing", "✅ Backend API call completed successfully: $result")
+            } catch (e: Exception) {
+                Log.e("Billing", "❌ Error posting payment: ${e.message}", e)
+                withContext(Dispatchers.Main) {
+                    paymentLiveData.setError("Payment API failed: ${e.localizedMessage}")
+                }
+            }
         }
     }
+
+
 
     fun featureImageSetOrRemove(request: FeatureImageSetRequest, incidentId: String){
         viewModelScope.launch{

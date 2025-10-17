@@ -118,6 +118,7 @@ Check it out www.saltywire.com</string>
     <!--todo add client -->
     <string name="default_web_client_id">223386379375-p7fojocgfta2904jpios3qo17n7fdr1k.apps.googleusercontent.com</string>
     <string name="incident_type">Incident Type</string>
+    <string name="reply">Reply</string>
 
 
 </resources>

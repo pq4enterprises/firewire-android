@@ -2,6 +2,7 @@ package com.pioneer.nycfirewire.data
 import com.pioneer.nycfirewire.model.incident.request.AddCommentRequest
 import com.pioneer.nycfirewire.model.incident.request.FeatureImageSetRequest
 import com.pioneer.nycfirewire.model.incident.request.ReportCommentRequest
+import com.pioneer.nycfirewire.model.incident.request.mainCommentRequest
 import com.pioneer.nycfirewire.model.incident.response.CommentsResponse
 import com.pioneer.nycfirewire.model.incident.response.IncidentByIdResponse
 import com.pioneer.nycfirewire.model.incident.response.IncidentResponse
@@ -103,6 +104,9 @@ interface ApiEndPoints {
 
     @POST("api/app/incident/activity")
     suspend fun postComment(@Body request: AddCommentRequest):Response<CommonResponse>
+
+    @POST("api/app/incident/activity")
+    suspend fun postMainComment(@Body request: mainCommentRequest):Response<CommonResponse>
 
 
     @POST("api/app/auth/social-login")

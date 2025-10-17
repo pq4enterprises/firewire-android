@@ -7,6 +7,9 @@
         <item name="colorOnPrimary">@color/app_red</item>
         <item name="colorAccent">@color/app_red</item>
         <item name="android:windowBackground">@color/app_red</item>
+       <!-- <item name="android:windowFullscreen">true</item>-->
+        <!--<item name="android:navigationBarColor">@android:color/transparent</item>-->
+      <!--  <item name="android:windowLightStatusBar">true</item>-->
 
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
@@ -17,6 +20,10 @@
         <item name="colorPrimaryVariant">@color/white</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorAccent">@color/app_red</item>
+        <item name="android:windowFullscreen">true</item>
+
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
 
         <!-- Status bar color. -->
        <!-- <item name="android:statusBarColor" tools:targetApi="l">#CC2b3544</item>-->

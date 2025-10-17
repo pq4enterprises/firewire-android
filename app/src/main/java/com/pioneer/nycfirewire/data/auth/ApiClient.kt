@@ -1,7 +1,6 @@
 package com.pioneer.nycfirewire.data.auth
 
 import android.content.Context
-import com.onesignal.BuildConfig
 import com.pioneer.nycfirewire.data.ApiEndPoints
 import com.pioneer.nycfirewire.prefs
 import okhttp3.Interceptor
@@ -15,18 +14,22 @@ import java.util.concurrent.TimeUnit
 class ApiClient(context: Context) {
 
     companion object {
-       const val BASE_URL = "https://api.nycfirewireapp.com"
-       //const val BASE_URL = "https://dev-firewire-api.atomgroups.work"
-        //const val BASE_INCIDENT_URL = "https://firewire.atomgroups.work"
+        const val BASE_URL = "https://api.nycfirewireapp.com"
+      //const val BASE_URL = "https://staging.api.nycfirewireapp.com"
+      // const val BASE_URL = "https://dev-firewire-api.atomgroups.work"
         const val BASE_INCIDENT_URL = "https://admin.nycfirewireapp.com"
     }
 
     // Logging interceptor
-    private val logging = HttpLoggingInterceptor().apply {
+ /*   private val logging = HttpLoggingInterceptor().apply {
         level = if (BuildConfig.DEBUG)
             HttpLoggingInterceptor.Level.BODY
         else
             HttpLoggingInterceptor.Level.NONE
+    }*/
+
+    val logging = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.BODY // Options: NONE, BASIC, HEADERS, BODY
     }
 
     // Access token injector
@@ -34,6 +37,8 @@ class ApiClient(context: Context) {
         val original = chain.request()
         val token = prefs.token
         val requestBuilder = original.newBuilder()
+
+        println("token:"+token)
 
         if (!token.isNullOrEmpty()) {
             requestBuilder.addHeader("Authorization", "Bearer $token")
@@ -69,3 +74,5 @@ class ApiClient(context: Context) {
         .build()
         .create(ApiEndPoints::class.java)
 }
+
+

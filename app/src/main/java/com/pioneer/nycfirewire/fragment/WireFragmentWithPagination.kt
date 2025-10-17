@@ -231,8 +231,8 @@ class WireFragmentWithPagination: Fragment(), IncidentClickListener {
                     .load(it.featuredImageUrl)
                     .into(bindingItem.ivBanner)
                 if(it.isLiked)
-                bindingItem.ivRating.setImageResource(R.drawable.ic_rating_red)
-                else bindingItem.ivRating.setImageResource(R.drawable.ic_rating)
+                bindingItem.ivRating.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_rating_red,0,0,0)
+                else bindingItem.ivRating.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_rating,0,0,0)
 
                 bindingItem.ivRating.setOnClickListener { view->
                     isLikeSingle= !it.isLiked
@@ -430,8 +430,8 @@ class WireFragmentWithPagination: Fragment(), IncidentClickListener {
 
     override fun appIntroTour(
         tvTitle: TextView,
-        ivRating: ImageView,
-        ivCommand: ImageView,
+        ivRating: TextView,
+        ivCommand: TextView,
         ivShare: ImageView
     ) {
         TODO("Not yet implemented")
