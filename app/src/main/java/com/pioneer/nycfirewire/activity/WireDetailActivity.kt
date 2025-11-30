@@ -33,6 +33,8 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.pioneer.nycfirewire.R
 import com.pioneer.nycfirewire.databinding.ActivityWireDetailBinding
 import com.pioneer.nycfirewire.model.incident.response.IncidentByIdResponse
+import com.pioneer.nycfirewire.model.incident.response.IncidentDataByID
+import com.pioneer.nycfirewire.model.incident.response.IncidentSubLocality
 import com.pioneer.nycfirewire.model.incident.response.Points
 import com.pioneer.nycfirewire.utils.BitmapFromVector
 import com.pioneer.nycfirewire.utils.Constants.CODE_SUCCESS
@@ -41,12 +43,14 @@ import com.pioneer.nycfirewire.utils.Constants.INCIDENT_POST
 import com.pioneer.nycfirewire.utils.Constants.PLAY_STORE_URL
 import com.pioneer.nycfirewire.utils.DateUtils
 import com.pioneer.nycfirewire.utils.IntentUtils
+import com.pioneer.nycfirewire.utils.IntentUtils.INCIDENT_ID
 import com.pioneer.nycfirewire.utils.NAV_COMMENT_LIST
 import com.pioneer.nycfirewire.utils.NetworkUtils.isOnline
 import com.pioneer.nycfirewire.utils.gone
 import com.pioneer.nycfirewire.utils.startNewActivity
 import com.pioneer.nycfirewire.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.String
 
 @AndroidEntryPoint
 class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
@@ -61,6 +65,10 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
     var fireStationlist= ArrayList<Points>()
     var likeCount=0
     var updatedPosition= -1
+    var incidentId=""
+
+    private var pendingIncidentResponse: Resource<IncidentByIdResponse>? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,11 +86,11 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
         vm = ViewModelProvider(this).get(FireWireViewModel::class.java)
         if(isOnline(this)) {
 
-            val commentRequest = AddCommentRequest(
+           /* val commentRequest = AddCommentRequest(
                 prefs.userId.toString(), wireDetails._id, type
             )
 
-            vm.postComment(commentRequest)
+            vm.postComment(commentRequest)*/
 
             vm.commentsLiveData.observe(this, Observer {
                 updateView(it)
@@ -93,7 +101,7 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
                     updateLikeData(it)
             })
 
-            vm.getIncidentById(wireDetails._id.toString())
+            vm.getIncidentById(incidentId)
             vm.incidentByIdLiveData.observe(this, Observer {
                 updateIncidentDetails(it)
             })
@@ -106,61 +114,41 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
             ResourceState.SUCCESS -> {
                 binding.progress.gone()
                 if(response.data?.code==CODE_SUCCESS){
-                    var dataItem= response.data.data
-                    var item= dataItem?.get(0)
+                    println("incidentDetails:"+response.data.data)
+                    val dataItem= response.data.data?.get(0)!!
+                    val subLocalityData = IncidentSubLocality()
+                    subLocalityData.name= dataItem.subLocalityName
 
-                    if(item?.respondingUnits?.isNotEmpty() == true){
-                        var respondingString =item.respondingUnits.joinToString(", ").filter { it.toString().isNotEmpty() }
+
+                  wireDetails =  Incident(   _id =dataItem._id,
+                     latitude= dataItem.latitude,
+                    longitude= dataItem.longitude,
+                    address= dataItem.address,
+                     field1Value = dataItem.field1Value,
+                     field2Value = dataItem.field2Value,
+                     field3Value = dataItem.field3Value,
+                     commentCount= dataItem.commentCount,
+                     likeCount= dataItem.likeCount,
+                     featuredImageUrl= dataItem.featuredImageUrl,
+                     isLiked= dataItem.isLiked,
+                     subLocalityDetails= arrayListOf(subLocalityData))
+                      //response.data.data
+                    isLikeSingle= wireDetails.isLiked
+                    bindItems()
+
+
+                    if(dataItem.respondingUnits?.isNotEmpty() == true){
+                        var respondingString =dataItem.respondingUnits.joinToString(", ").filter { it.toString().isNotEmpty() }
                         binding.tvUnitValue.text=  respondingString
                         if(respondingString.isNotEmpty()) binding.tvUnitLabel.visible() else binding.tvUnitLabel.gone()
                     }else{
                         binding.tvUnitLabel.gone()
                     }
 
-                   // if(dataItem)
-
-                    val latLng = LatLng(
-                        wireDetails.latitude?.toDouble() ?: 0.0,
-                        wireDetails.longitude?.toDouble() ?: 0.0
-                    )
-
-                    mMap.addMarker(
-                        MarkerOptions()
-                            .position(latLng)
-                            .title(wireDetails.address)
-                            .icon(
-                                BitmapFromVector(
-                                    applicationContext,
-                                    R.drawable.frame
-                                )
-                            )
-                    )
-
-                  if(dataItem?.get(0)?.points?.isNotEmpty() == true) {
-                      fireStationlist= ArrayList(dataItem.get(0).points!!)
-                      fireStationlist.forEach {
-                          val latLng = LatLng(
-                              it.latitude?.toDouble() ?: 0.0,
-                              it.longitude?.toDouble() ?: 0.0
-                          )
-
-                          mMap.addMarker(
-                              MarkerOptions()
-                                  .position(latLng)
-                                  .title(it.name.toString())
-                                  .icon(
-                                      BitmapFromVector(
-                                          applicationContext,
-                                          R.drawable.ic_map_fire_station
-                                      )
-                                  ))
-                      }
-
-                  }
-
-
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
-                    mMap.animateCamera(CameraUpdateFactory.zoomTo(19.0f))
+                    if (!::mMap.isInitialized) {
+                        pendingIncidentResponse = response
+                        return
+                    }else addingMarkerInMap(response.data.data)
 
                 }
             }
@@ -176,30 +164,89 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
         }
     }
 
+
+    private fun addingMarkerInMap(dataItem: List<IncidentDataByID>?){
+        val latLng = LatLng(
+            wireDetails.latitude?.toDouble() ?: 0.0,
+            wireDetails.longitude?.toDouble() ?: 0.0
+        )
+
+        mMap.addMarker(
+            MarkerOptions()
+                .position(latLng)
+                .title(wireDetails.address)
+                .icon(
+                    BitmapFromVector(
+                        applicationContext,
+                        R.drawable.frame
+                    )
+                )
+        )
+
+        if(dataItem?.get(0)?.points?.isNotEmpty() == true) {
+            fireStationlist= ArrayList(dataItem.get(0).points!!)
+            fireStationlist.forEach {
+                val latLng = LatLng(
+                    it.latitude?.toDouble() ?: 0.0,
+                    it.longitude?.toDouble() ?: 0.0
+                )
+
+                mMap.addMarker(
+                    MarkerOptions()
+                        .position(latLng)
+                        .title(it.name.toString())
+                        .icon(
+                            BitmapFromVector(
+                                applicationContext,
+                                R.drawable.ic_map_fire_station
+                            )
+                        ))
+            }
+
+        }
+
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(19.0f))
+    }
+
     private fun updateLikeData(response: Resource<CommonResponse>) {
         when(response.state){
             ResourceState.LOADING -> binding.progress.visible()
             ResourceState.SUCCESS -> {
                 binding.progress.gone()
                // isLikeSingle= !isLikeSingle
-                binding.ivRating.visible()
+                binding.tvRating.visible()
                 binding.pbSmall.gone()
 
                 if(isLikeSingle) {
-                    likeCount= likeCount+1
-                    binding.ivRating.setImageResource(R.drawable.ic_rating_red)
+                    likeCount = likeCount + 1
+                    binding.tvRating.setCompoundDrawablesWithIntrinsicBounds(
+                        R.drawable.ic_rating_red,
+                        0,
+                        0,
+                        0
+                    )
                 }else{
                     likeCount= likeCount-1
-                    binding.ivRating.setImageResource(R.drawable.ic_rating)
+                    binding.tvRating.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_rating,0,0,0)
                 }
 
-                var position = incidentList.indexOfFirst { it._id == wireDetails._id }
-                if(position!=-1) updatedPosition= position
+                if(incidentList.isNotEmpty()){
+                    incidentId= wireDetails._id.toString()
+                }else {
+                    var position = incidentList.indexOfFirst { it._id == wireDetails._id }
+                    if (position != -1) updatedPosition = position
+                }
 
-                binding.tvLikeCount.text= getString(R.string.star,likeCount.toString())
+               // binding.tvLikeCount.text= getString(R.string.star,likeCount.toString())
+
+                binding.tvRating.text= if(likeCount<=1)
+                    getString(R.string.star,likeCount.toString())
+                else getString(R.string.stars,likeCount.toString())
             }
             ResourceState.ERROR -> {
-                binding.ivRating.visible()
+                binding.tvRating.visible()
                 binding.pbSmall.gone()
                 binding.progress.gone()
                 showAlert(response.message)
@@ -220,10 +267,14 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
 
     private fun initExtra() {
         val intent= intent.getBundleExtra(IntentUtils.BUN_WIRE_DETAILS)
-         wireDetails= intent?.getParcelable(BUN_WIRE_DETAILS)?: Incident()
-         incidentList = intent?.getParcelableArrayList<Incident>(BUN_WIRE_LIST_DETAIL)?: ArrayList<Incident>()
-        isLikeSingle= wireDetails.isLiked
-        bindItems()
+        if(intent?.containsKey(INCIDENT_ID) == true){
+            incidentId = intent.getString(INCIDENT_ID)?:""
+        }else {
+            wireDetails = intent?.getParcelable(BUN_WIRE_DETAILS) ?: Incident()
+            incidentList = intent?.getParcelableArrayList<Incident>(BUN_WIRE_LIST_DETAIL)
+                ?: ArrayList<Incident>()
+            incidentId= wireDetails._id.toString()
+        }
     }
 
     private fun bindItems() {
@@ -241,18 +292,29 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
 
         if(!wireDetails.likeCount.isNullOrEmpty()) {
             likeCount = wireDetails.likeCount?.toInt() ?: 0
-            binding.tvLikeCount.text = getString(R.string.star, wireDetails.likeCount)
+            //binding.tvLikeCount.text = getString(R.string.star, wireDetails.likeCount)
+
+            binding.tvRating.text= if(likeCount<=1)
+                getString(R.string.star,wireDetails.likeCount.toString())
+            else getString(R.string.stars,wireDetails.likeCount.toString())
         }
         val count= if(wireDetails.commentCount.isNullOrEmpty())"0" else wireDetails.commentCount
 
         if(count?.toInt()!! >1)
-            binding.tvCommentCount.text= getString(R.string.comments,count)
-        else binding.tvCommentCount.text= getString(R.string.comment,count)
+            binding.tvCommand.text= getString(R.string.comments,count)
+        else binding.tvCommand.text= getString(R.string.comment,count)
 
-        if(isLikeSingle)
-            binding.ivRating.setImageResource(R.drawable.ic_rating_red)
-        else binding.ivRating.setImageResource(R.drawable.ic_rating)
 
+        if(isLikeSingle) {
+            binding.tvRating.setCompoundDrawablesWithIntrinsicBounds(
+                R.drawable.ic_rating_red,
+                0,
+                0,
+                0
+            )
+        }else{
+            binding.tvRating.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_rating,0,0,0)
+        }
 
 //        if(wireDetails.field3Value.isNullOrEmpty())binding.tvDesc.gone() else binding.tvDesc.visible()
 //        binding.tvDesc.text= wireDetails.field3Value
@@ -291,12 +353,12 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
         binding.flRating.setOnClickListener {
             type="like"
             isLikeSingle= !isLikeSingle
-            binding.ivRating.gone()
+            binding.tvRating.gone()
             binding.pbSmall.visible()
             vm.postComment(AddCommentRequest(prefs.userId,wireDetails._id,if(isLikeSingle)"like" else "unlike"))
         }
 
-        binding.ivCommand.setOnClickListener { view->
+        binding.tvCommand.setOnClickListener { view->
             val intent= Intent(this, FeedFilterOrCommentsActivity::class.java)
             intent.putExtra(NAV_COMMENT_LIST, wireDetails._id)
             startActivity(intent)
@@ -327,6 +389,11 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
         mMap = googleMap
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_in_night))
         mMap.mapType = GoogleMap.MAP_TYPE_HYBRID
+
+        pendingIncidentResponse?.let {
+            addingMarkerInMap(it.data?.data)
+            pendingIncidentResponse = null
+        }
 
         mMap.setInfoWindowAdapter(object : GoogleMap.InfoWindowAdapter {
             override fun getInfoWindow(marker: Marker): View? {
@@ -402,6 +469,7 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
       //  prefs.isRecreate=true
         val intent = Intent()
         intent.putExtra("wire_detail", updatedPosition)
+        intent.putExtra("wire_id", incidentId)
         setResult(Activity.RESULT_OK, intent)
         finish()
     }
@@ -413,8 +481,8 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
         if(prefs.commentCount?.isNotEmpty() == true){
             var count= prefs.commentCount?.toInt()
             if(count?.toInt()!! >1)
-                binding.tvCommentCount.text= getString(R.string.comments,count.toString())
-            else binding.tvCommentCount.text= getString(R.string.comment,count.toString())
+                binding.tvCommand.text= getString(R.string.comments,count.toString())
+            else binding.tvCommand.text= getString(R.string.comment,count.toString())
             prefs.commentCount=""
         }
     }

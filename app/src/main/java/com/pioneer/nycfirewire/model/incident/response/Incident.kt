@@ -10,9 +10,9 @@ data class Incident(
     val latitude:String?="",
     val longitude:String?="",
     val address:String?="",
-    val field1Value:String?="",
-    val field2Value:String?="",
-    val field3Value:String?="",
+    val field1Value: String? = "",
+    val field2Value: String? = "",
+    val field3Value: String? = "",
     val commentCount:String?="0",
     var likeCount:String?="",
     val createdAt:String?="",
@@ -54,7 +54,7 @@ data class IncidentLocality(
 
 @Parcelize
 data class IncidentSubLocality(
-    val name:String?="" ,
+    var name:String?="" ,
     val latitude:String?="" ,
     val longitude:String?=""
 ):Parcelable

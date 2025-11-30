@@ -159,6 +159,7 @@ class CommentsFragment: Fragment() , ImageDataListener {
                 mentions.clear()
                 binding.progress.gone()
                 imageString=""
+                imageUri=null
                 if(response.data?.code=="comment_added") {
                    showSnackbar(binding.cvComment,response.data.message.toString())
                     binding.etComment.setText("")
@@ -193,13 +194,46 @@ class CommentsFragment: Fragment() , ImageDataListener {
                 if(response.data?.code== Constants.CODE_SUCCESS) {
                     imageString= response.data.data?.url?.get(0) ?: ""
                     val type="comment"
-                    val comment= binding.etComment.text.toString()
+                    var comment= binding.etComment.text.toString()
 
-                    var imgArray= ArrayList<String>()
-                    imgArray.add(imageString)
-                    val commentRequest= AddCommentRequest(
-                        prefs.userId.toString(), incidentId,type,comment,imgArray,mentions,parentId)
-                    vm.postComment(commentRequest)
+                    if(isMainReply){
+                        comment = if (comment.startsWith(mainPrefix)) {
+                            comment.removePrefix(mainPrefix).trim()
+                        } else {
+                            comment.trim()
+                        }
+                    }
+
+                    val validationCommentText=  if(comment.startsWith(mainPrefix)) comment.removePrefix(mainPrefix).trim() else comment
+
+                    if (validationCommentText.isNotEmpty()) {
+                        var imgArray = ArrayList<String>()
+                        imgArray.add(imageString)
+
+                        if (parentId.isNullOrEmpty()) {
+                            val commentRequest = mainCommentRequest(
+                                prefs.userId.toString(),
+                                incidentId,
+                                type,
+                                comment,
+                                imgArray,
+                                mentions
+                            )
+                            vm.postMainComment(commentRequest)
+                        } else {
+                            val commentRequest = AddCommentRequest(
+                                prefs.userId.toString(),
+                                incidentId,
+                                type,
+                                comment,
+                                imgArray,
+                                mentions,
+                                parentId
+                            )
+                            vm.postComment(commentRequest)
+                        }
+                    }else { showSnackbar(binding.cvComment, "Kindly enter comment") }
+
                 }else{
                     showAlert(response.data?.message.toString())
                 }
@@ -229,41 +263,45 @@ class CommentsFragment: Fragment() , ImageDataListener {
 
               val validationCommentText=  if(comment.startsWith(mainPrefix)) comment.removePrefix(mainPrefix).trim() else comment
 
-                if (imageUri != null && !imageUri.toString().isNullOrEmpty()) {
-                    uploadImageData(imageUri!!)
-                    binding.cvComment.gone()
-                } else if (validationCommentText.isNotEmpty()) {
-                    val type = "comment"
+              if(validationCommentText.isNotEmpty()) {
+                  if (imageUri != null && !imageUri.toString().isNullOrEmpty()) {
+                      uploadImageData(imageUri!!)
+                      binding.cvComment.gone()
+                  } else if (validationCommentText.isNotEmpty()) {
+                      val type = "comment"
 
-                    var imgArray = ArrayList<String>()
+                      var imgArray = ArrayList<String>()
 
-                    if(parentId.isNullOrEmpty()){
-                        val commentRequest = mainCommentRequest(
-                            prefs.userId.toString(),
-                            incidentId,
-                            type,
-                            comment,
-                            imgArray,
-                            mentions
-                        )
-                        vm.postMainComment(commentRequest)
-                    }else{
-                        val commentRequest = AddCommentRequest(
-                            prefs.userId.toString(),
-                            incidentId,
-                            type,
-                            comment,
-                            imgArray,
-                            mentions,
-                            parentId
-                        )
-                        vm.postComment(commentRequest)
-                    }
+                      if (parentId.isNullOrEmpty()) {
+                          val commentRequest = mainCommentRequest(
+                              prefs.userId.toString(),
+                              incidentId,
+                              type,
+                              comment,
+                              imgArray,
+                              mentions
+                          )
+                          vm.postMainComment(commentRequest)
+                      } else {
+                          val commentRequest = AddCommentRequest(
+                              prefs.userId.toString(),
+                              incidentId,
+                              type,
+                              comment,
+                              imgArray,
+                              mentions,
+                              parentId
+                          )
+                          vm.postComment(commentRequest)
+                      }
 
-                    binding.cvComment.gone()
-                } else {
-                    showSnackbar(binding.cvComment, "Kindly enter comment or select an image")
-                }
+                      binding.cvComment.gone()
+                  } else {
+                      showSnackbar(binding.cvComment, "Kindly enter comment")
+                  }
+              }else{
+                  showSnackbar(binding.cvComment, "Kindly enter comment")
+              }
 
         }
         binding.tvBack.setOnClickListener{
@@ -419,6 +457,9 @@ class CommentsFragment: Fragment() , ImageDataListener {
                                 isLastPage = true   // ✅ stop future loads
                                 binding.rvProgress.gone()
                                 binding.progress.gone()
+                            }else{
+                                binding.progress.gone()
+                                rvBasedSetup(list)
                             }
                         }
 

@@ -18,8 +18,8 @@ android {
         applicationId = "com.pioneer.nycfirewire"
         minSdk = 24
         targetSdk = 35
-        versionCode = 88
-        versionName = "7.6"
+        versionCode = 111
+        versionName = "9.9"
        /* versionCode = 25
         versionName = "2.5"*/
 
@@ -49,6 +49,12 @@ android {
         viewBinding = true
         buildConfig= true
     }
+    dexOptions{
+        incremental=true
+
+    }
+
+
 }
 
 dependencies {
@@ -116,8 +122,10 @@ dependencies {
     implementation ("com.github.Baseflow:PhotoView:2.3.0")
 
 
+
 }
 
 kapt {
     correctErrorTypes = true
 }
+

@@ -18,4 +18,5 @@ object IntentUtils {
     const val AUDIO_SUB_POSITION="sub_position"
     const val BUN_WIRE_LIST_DETAIL="wire_list_detail"
     const val EXTRA_WIRE_DETAILS="wire_details_extra"
+    const val INCIDENT_ID="incident_id"
 }

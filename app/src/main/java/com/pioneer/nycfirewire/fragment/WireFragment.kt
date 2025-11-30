@@ -115,9 +115,18 @@ class WireFragment: Fragment(),IncidentClickListener {
         super.onCreate(savedInstanceState)
         resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                var data = result.data?.getIntExtra("wire_detail",-1)?:0
-                // Call activity method or update fragment viewp
-                pagingAdapter.notifyItemChanged(data)
+                val data = result.data?.getIntExtra("wire_detail",-1)?:0
+                val incidentId = result.data?.getStringExtra("wire_id")
+                if(data!=-1){
+                    // Call activity method or update fragment viewp
+                    pagingAdapter.notifyItemChanged(data)
+                }else{
+                   if(incidentId?.isNotEmpty() == true) {
+                       val position = incidentList.indexOfFirst { it._id == incidentId }
+                       pagingAdapter.notifyItemChanged(position)
+                   }
+
+                }
             }
         }
     }

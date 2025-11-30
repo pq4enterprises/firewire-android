@@ -14,10 +14,11 @@ import java.util.concurrent.TimeUnit
 class ApiClient(context: Context) {
 
     companion object {
-        const val BASE_URL = "https://api.nycfirewireapp.com"
-      //const val BASE_URL = "https://staging.api.nycfirewireapp.com"
+       // const val BASE_URL = "https://api.nycfirewireapp.com"
+      const val BASE_URL = "https://staging.api.nycfirewireapp.com"
       // const val BASE_URL = "https://dev-firewire-api.atomgroups.work"
-        const val BASE_INCIDENT_URL = "https://admin.nycfirewireapp.com"
+       // const val BASE_INCIDENT_URL = "https://admin.nycfirewireapp.com"
+        const val BASE_INCIDENT_URL = "https://staging.admin.nycfirewireapp.com"
     }
 
     // Logging interceptor

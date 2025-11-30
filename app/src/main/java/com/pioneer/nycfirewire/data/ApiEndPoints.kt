@@ -149,7 +149,7 @@ interface ApiEndPoints {
   //  https://dev-firewire-api.atomgroups.work/api/app/locality?sortBy=createdAt&sortDir=desc&offset=1&limit=100?&query={"type":"notification"}
 
 
-   // https://firewire-api.atomgroups.com/api/app/incident?sortDir=desc&offset=1&limit=10&query={"search":"new", "locality" :["6729efb097dfc3f21f13bad9"], "subLocality": ["6731c44d477cc8909d1d0123"] }
+   //https://firewire-api.atomgroups.com/api/app/incident?sortDir=desc&offset=1&limit=10&query={"search":"new", "locality" :["6729efb097dfc3f21f13bad9"], "subLocality": ["6731c44d477cc8909d1d0123"] }
 
 
 

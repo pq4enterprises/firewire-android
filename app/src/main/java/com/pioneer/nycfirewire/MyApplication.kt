@@ -5,6 +5,7 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
@@ -19,8 +20,15 @@ import com.google.firebase.analytics.analytics
 import com.pioneer.nycfirewire.utils.Prefs
 import com.onesignal.OneSignal
 import com.onesignal.debug.LogLevel
+import com.onesignal.notifications.INotificationClickEvent
+import com.onesignal.notifications.INotificationClickListener
+import com.pioneer.nycfirewire.activity.WireDetailActivity
 import com.pioneer.nycfirewire.service.BackgroundAudioService
+import com.pioneer.nycfirewire.utils.IntentUtils.BUN_WIRE_DETAILS
+import com.pioneer.nycfirewire.utils.IntentUtils.BUN_WIRE_LIST_DETAIL
+import com.pioneer.nycfirewire.utils.IntentUtils.INCIDENT_ID
 import dagger.hilt.android.HiltAndroidApp
+import org.json.JSONObject
 import javax.inject.Inject
 
 
@@ -56,6 +64,23 @@ class MyApplication : Application() {
 
         // OneSignal Initialization
         OneSignal.initWithContext(this, ONESIGNAL_APP_ID)
+
+        OneSignal.Notifications.addClickListener(object : INotificationClickListener {
+            override fun onClick(event: INotificationClickEvent) {
+                val data: JSONObject? = event.notification.additionalData
+                val incidentId = data?.optString("incidentId")
+
+                if (!incidentId.isNullOrEmpty()) {
+                     val bundle= Bundle()
+               bundle.putString(INCIDENT_ID,incidentId)
+                val intent = Intent(instance, WireDetailActivity::class.java)
+                intent.putExtra(BUN_WIRE_DETAILS, bundle)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    instance.startActivity(intent)
+                }
+            }
+        })
+
 
 // Registering the activity lifecycle callback
         registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
