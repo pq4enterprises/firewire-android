@@ -52,7 +52,10 @@ import com.onesignal.OneSignal
 import com.pioneer.nycfirewire.R
 import com.pioneer.nycfirewire.databinding.ActivityLoginBinding
 import com.pioneer.nycfirewire.utils.AppUtils
+import com.pioneer.nycfirewire.utils.Constants.CODE_EMAIL_NOT_VERIFIED
+import com.pioneer.nycfirewire.utils.Constants.EMAIL_ID
 import com.pioneer.nycfirewire.utils.Constants.FORGOT_PASSWORD
+import com.pioneer.nycfirewire.utils.Constants.FROM_PAGE
 import com.pioneer.nycfirewire.utils.Constants.LOGIN
 import com.pioneer.nycfirewire.utils.gone
 import com.pioneer.nycfirewire.utils.isValidEmail
@@ -164,6 +167,8 @@ class LoginNewActivity: BaseActivity() {
                        // println("onesignalId:"+ OneSignal.User.onesignalId)
                         //println("onesignalId1:"+ OneSignal.User)
                     }
+                }else if(response.data?.code== CODE_EMAIL_NOT_VERIFIED){
+                    moveToOtpScreen(binding.etEmail.text.toString())
                 }else showToast(this,response.data?.message.toString())
                     //showSnack(response.data?.message.toString())
             }
@@ -172,6 +177,14 @@ class LoginNewActivity: BaseActivity() {
                 showAlert(response.message)
             }
         }
+    }
+
+    private fun moveToOtpScreen(email: String) {
+        var intent = Intent(this, VerifyEmailOtpActivity::class.java)
+        intent.putExtra(EMAIL_ID,email)
+        intent.putExtra(FROM_PAGE,LOGIN)
+        startActivity(intent)
+        finish()
     }
 
     private fun clickEvent() {

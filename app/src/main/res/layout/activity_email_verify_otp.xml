@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar_third_layout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="@dimen/dis_16"
+        android:layout_marginTop="@dimen/dis_16"
+        android:layout_marginRight="@dimen/dis_16"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+        <TextView
+            android:id="@+id/tv_email_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_12"
+            android:layout_marginTop="@dimen/dis_20"
+            android:fontFamily="@font/poppins_regular"
+            android:textColor="@color/login_reg_text"
+            android:text="@string/email_address"/>
+        <EditText
+            android:id="@+id/et_email_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:textColor="@color/black"
+            android:hint="@string/your_mail"
+            android:textSize="@dimen/text_14"
+            android:paddingEnd="@dimen/dis_16"
+            android:enabled="false"
+            android:focusable="false"
+            android:textColorHint="@color/dim_grey"
+            android:paddingStart="@dimen/dis_16"
+            android:layout_marginTop="@dimen/dis_3"
+            android:background="@drawable/ic_rectangle_box" />
+      
+
+        <TextView
+            android:id="@+id/tv_otp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            android:textSize="@dimen/text_12"
+            android:layout_marginTop="@dimen/dis_20"
+            android:fontFamily="@font/poppins_regular"
+            android:textColor="@color/login_reg_text"
+            android:text="@string/otp"/>
+        <EditText
+            android:id="@+id/et_otp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:visibility="visible"
+            android:textColor="@color/black"
+            android:hint="OTP"
+            android:textSize="@dimen/text_14"
+            android:paddingEnd="@dimen/dis_16"
+            android:paddingStart="@dimen/dis_16"
+            android:layout_marginTop="@dimen/dis_3"
+            android:background="@drawable/ic_rectangle_box" />
+        <TextView
+            android:id="@+id/tvTimer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Resend OTP in 00:30"/>
+        <TextView
+            android:id="@+id/tv_resend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/app_red"
+            android:textSize="@dimen/text_18"
+            android:padding="@dimen/dis_20"
+            android:visibility="gone"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/dis_20"
+            android:textStyle="bold"
+            android:text="Resend OTP"/>
+
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/btn_verify_otp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/ic_rectangle_box_red"
+        android:textColor="@color/white"
+        android:text="@string/verify_otp"
+        android:textAllCaps="false"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginRight="@dimen/dis_16"
+        android:layout_marginLeft="@dimen/dis_16"
+        android:layout_marginBottom="@dimen/dis_30"/>
+
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:theme="@style/redProgress"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

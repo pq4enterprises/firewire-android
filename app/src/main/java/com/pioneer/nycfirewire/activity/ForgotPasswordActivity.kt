@@ -1,8 +1,10 @@
 package com.pioneer.nycfirewire.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -17,7 +19,10 @@ import com.pioneer.nycfirewire.viewModel.UserViewModel
 import com.pioneer.nycfirewire.R
 import com.pioneer.nycfirewire.databinding.ActivityForgotPasswordBinding
 import com.pioneer.nycfirewire.utils.Constants
+import com.pioneer.nycfirewire.utils.Constants.EMAIL_ID
 import com.pioneer.nycfirewire.utils.Constants.FORGOT_PASSWORD
+import com.pioneer.nycfirewire.utils.Constants.FROM_PAGE
+import com.pioneer.nycfirewire.utils.Constants.LOGIN
 import com.pioneer.nycfirewire.utils.Constants.RADIO_FEED
 import com.pioneer.nycfirewire.utils.gone
 import com.pioneer.nycfirewire.utils.isValidEmail
@@ -35,6 +40,14 @@ class ForgotPasswordActivity : BaseActivity() {
     private var resetToken=""
     private var isPasswordVisible: Boolean = false
     private var isConfirmPasswordVisible: Boolean = false
+
+    private val verifyOtpLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            // This is triggered when VerifyEmailOtpActivity sets RESULT_OK and finishes
+            // The email is now verified, so we show the OTP fields for the "Forgot Password" flow
+            showSnack("Email verified successfully. Now you can change the password.")
+        }
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -213,6 +226,8 @@ class ForgotPasswordActivity : BaseActivity() {
                         binding.etEmailAddress.isClickable=false
                         binding.etEmailAddress.isFocusable=false
                         otpVerify()
+                    }else if(it1.code== Constants.CODE_EMAIL_NOT_VERIFIED){
+                        moveToOtpScreen(binding.etEmailAddress.text.toString())
                     }else{
                         showSnack(it1.message.toString())
                     }
@@ -224,6 +239,15 @@ class ForgotPasswordActivity : BaseActivity() {
             }
             else -> {}
         }
+    }
+
+
+    private fun moveToOtpScreen(email: String) {
+        val intent = Intent(this, VerifyEmailOtpActivity::class.java).apply {
+            putExtra(EMAIL_ID, email)
+            putExtra(FROM_PAGE, FORGOT_PASSWORD)
+        }
+        verifyOtpLauncher.launch(intent)
     }
 
     private fun otpVerify(){

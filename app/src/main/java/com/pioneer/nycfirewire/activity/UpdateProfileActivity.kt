@@ -1,9 +1,13 @@
 package com.pioneer.nycfirewire.activity
 
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.green
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -25,6 +29,9 @@ import com.pioneer.nycfirewire.viewModel.FireWireViewModel
 import com.pioneer.nycfirewire.R
 import com.pioneer.nycfirewire.databinding.ActivityUpdateProfileBinding
 import com.pioneer.nycfirewire.model.user.response.UserResponse
+import com.pioneer.nycfirewire.utils.Constants.EMAIL_ID
+import com.pioneer.nycfirewire.utils.Constants.FROM_PAGE
+import com.pioneer.nycfirewire.utils.Constants.LOGIN
 import com.pioneer.nycfirewire.utils.Constants.PROFILE_UPDATE
 import com.pioneer.nycfirewire.utils.Constants.SELECT_AREA
 import com.pioneer.nycfirewire.utils.startNewActivity
@@ -41,6 +48,28 @@ class UpdateProfileActivity: BaseActivity(), ImageDataListener {
     private lateinit var vm: FireWireViewModel
     private var profileDetails= UserDetails()
     var imageString=""
+
+    private val verifyOtpLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            binding.tvVerifyEmail.apply {
+                isClickable = false
+                text = "Verified"
+
+                // 1. Change the icon to a success icon
+                setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_verified, 0, 0, 0)
+
+                // 2. Set Drawable Tint Programmatically to Green
+                compoundDrawableTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(this@UpdateProfileActivity, R.color.green)
+                )
+
+                // 3. Change text color if desired
+                setTextColor(ContextCompat.getColor(this@UpdateProfileActivity, R.color.black))
+            }
+            showSnack("Email verified successfully!")
+        }
+    }
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -115,6 +144,18 @@ class UpdateProfileActivity: BaseActivity(), ImageDataListener {
                 .load(profileDetails.img)
                 .into(binding.ivProfile)
         }
+        if(profileDetails.emailVerified == true){
+            binding.tvVerifyEmail.apply {
+                isClickable = false
+                text = "Verified"
+                setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_verified, 0, 0, 0)
+                compoundDrawableTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(this@UpdateProfileActivity, R.color.green)
+                )
+                setTextColor(ContextCompat.getColor(this@UpdateProfileActivity, R.color.black))
+            }
+        }
+
     }
 
     private fun updateUploadedImage(response: Resource<CommonResponse>) {
@@ -210,6 +251,19 @@ class UpdateProfileActivity: BaseActivity(), ImageDataListener {
             bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
         }
 
+        binding.tvVerifyEmail.setOnClickListener {
+            moveToOtpScreen(binding.etEmailAddress.text.toString())
+        }
+
+    }
+
+    private fun moveToOtpScreen(email: String) {
+
+        val intent = Intent(this, VerifyEmailOtpActivity::class.java).apply {
+            putExtra(EMAIL_ID, email)
+            putExtra(FROM_PAGE, UPDATE_PROFILE)
+        }
+        verifyOtpLauncher.launch(intent)
     }
 
     override fun getImageData(uri: Uri) {

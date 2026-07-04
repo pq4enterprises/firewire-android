@@ -10,8 +10,10 @@ import com.pioneer.nycfirewire.model.user.request.ForgotPasswordRequest
 import com.pioneer.nycfirewire.model.user.request.LoginRequest
 import com.pioneer.nycfirewire.model.user.request.RefreshTokenRequest
 import com.pioneer.nycfirewire.model.user.request.RegisterRequest
+import com.pioneer.nycfirewire.model.user.request.ResendOtpRequest
 import com.pioneer.nycfirewire.model.user.request.ResetPasswordRequest
 import com.pioneer.nycfirewire.model.user.request.SocialLoginRequest
+import com.pioneer.nycfirewire.model.user.request.VerifyEmailOtpRequest
 import com.pioneer.nycfirewire.model.user.request.VerifyOtpRequest
 import com.pioneer.nycfirewire.model.user.response.CommonResponse
 import com.pioneer.nycfirewire.model.user.response.LoginResponse
@@ -35,6 +37,9 @@ class UserViewModel @Inject constructor(val context: Application) : AndroidViewM
     val resetPasswordLiveData = MutableLiveData<Resource<CommonResponse>>()
     val otpVerifyLiveData = MutableLiveData<Resource<VerifyOtpResponse>>()
     val socialLoginLiveData = MutableLiveData<Resource<LoginResponse>>()
+
+    val emailOtpVerifyLiveData = MutableLiveData<Resource<LoginResponse>>()
+    val resendOtpLiveData = MutableLiveData<Resource<LoginResponse>>()
 
 
     fun registerUser(registerRequest: RegisterRequest){
@@ -75,6 +80,19 @@ class UserViewModel @Inject constructor(val context: Application) : AndroidViewM
     fun postSocialLogin(request: SocialLoginRequest){
         viewModelScope.launch {
             userRepository.postSocialLogin(socialLoginLiveData,request,context)
+        }
+    }
+
+
+    fun verifyOtpEmail(request: VerifyEmailOtpRequest){
+        viewModelScope.launch {
+            userRepository.verifyEmailOtp(emailOtpVerifyLiveData,request,context)
+        }
+    }
+
+    fun resendOtpEmail(request: ResendOtpRequest){
+        viewModelScope.launch {
+            userRepository.resendEmailOtp(resendOtpLiveData,request,context)
         }
     }
 

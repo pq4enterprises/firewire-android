@@ -143,6 +143,8 @@ Check it out www.saltywire.com</string>
     <string name="menu">Menu</string>
     <string name="network_connection">No internet connection</string>
     <string name="reply">Reply</string>
+    <string name="verify_email">Verify Email</string>
+    <string name="verified">Verified</string>
 
 
 </resources>

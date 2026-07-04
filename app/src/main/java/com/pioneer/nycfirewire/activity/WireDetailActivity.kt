@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -79,6 +80,31 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
         clickEvent()
         initExtra()
         initViewModel()
+
+        setupMapTouchHandler()
+    }
+
+
+    private fun setupMapTouchHandler() {
+        binding.mapOverlay.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    // When user touches the map, tell ScrollView: "Don't steal this touch!"
+                    binding.nestedScrollView.requestDisallowInterceptTouchEvent(true)
+                    false
+                }
+                MotionEvent.ACTION_UP -> {
+                    // When user lifts finger, allow ScrollView to scroll normally again
+                    binding.nestedScrollView.requestDisallowInterceptTouchEvent(false)
+                    true
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    binding.nestedScrollView.requestDisallowInterceptTouchEvent(true)
+                    false
+                }
+                else -> false
+            }
+        }
     }
 
 

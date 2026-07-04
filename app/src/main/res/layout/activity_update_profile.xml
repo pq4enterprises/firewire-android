@@ -105,6 +105,23 @@
         android:layout_marginTop="@dimen/dis_3"
         android:inputType="textEmailAddress"
         android:background="@drawable/ic_rectangle_box"/>
+
+        <TextView
+            android:id="@+id/tv_verify_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dis_16"
+            android:layout_marginTop="6dp"
+            android:layout_gravity="start|center"
+            android:gravity="center"
+            android:drawablePadding="@dimen/dis_5"
+            android:text="Verify Email"
+            android:drawableTint="@color/app_red"
+            android:drawableStart="@android:drawable/stat_sys_warning"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:clickable="true"
+            android:focusable="true"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

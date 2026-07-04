@@ -17,8 +17,10 @@ import com.pioneer.nycfirewire.model.user.request.ForgotPasswordRequest
 import com.pioneer.nycfirewire.model.user.request.LoginRequest
 import com.pioneer.nycfirewire.model.user.request.RefreshTokenRequest
 import com.pioneer.nycfirewire.model.user.request.RegisterRequest
+import com.pioneer.nycfirewire.model.user.request.ResendOtpRequest
 import com.pioneer.nycfirewire.model.user.request.ResetPasswordRequest
 import com.pioneer.nycfirewire.model.user.request.SocialLoginRequest
+import com.pioneer.nycfirewire.model.user.request.VerifyEmailOtpRequest
 import com.pioneer.nycfirewire.model.user.request.VerifyOtpRequest
 import com.pioneer.nycfirewire.model.user.response.CommonResponse
 import com.pioneer.nycfirewire.model.user.response.LoginResponse
@@ -193,6 +195,54 @@ class UserRepository @Inject constructor(private val apiEndPoint: ApiEndPoints, 
             liveData.setError(e.message.toString())
         }
     }
+
+
+    suspend fun verifyEmailOtp(
+        liveData: MutableLiveData<Resource<LoginResponse>>,
+        request: VerifyEmailOtpRequest,
+        context: Context
+    ) {
+        if (!NetworkUtils.isOnline(context)) {
+            liveData.setError(context.getString(R.string.network_connection))
+            return
+        }
+        liveData.setLoading()
+        try {
+            val result = apiEndPoint.verifyEmailOtp(request)
+            if (result.isSuccessful) {
+                liveData.setSuccess(result.body())
+            } else {
+                liveData.setError(errorHandling(result))
+            }
+
+        } catch (e: Exception) {
+            liveData.setError(e.message.toString())
+        }
+    }
+
+    suspend fun resendEmailOtp(
+        liveData: MutableLiveData<Resource<LoginResponse>>,
+        request: ResendOtpRequest,
+        context: Context
+    ) {
+        if (!NetworkUtils.isOnline(context)) {
+            liveData.setError(context.getString(R.string.network_connection))
+            return
+        }
+        liveData.setLoading()
+        try {
+            val result = apiEndPoint.resendEmailOtp(request)
+            if (result.isSuccessful) {
+                liveData.setSuccess(result.body())
+            } else {
+                liveData.setError(errorHandling(result))
+            }
+
+        } catch (e: Exception) {
+            liveData.setError(e.message.toString())
+        }
+    }
+
 
 
 

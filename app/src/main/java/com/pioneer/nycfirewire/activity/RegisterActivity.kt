@@ -23,6 +23,7 @@ import com.pioneer.nycfirewire.viewModel.UserViewModel
 import com.onesignal.OneSignal
 import com.pioneer.nycfirewire.R
 import com.pioneer.nycfirewire.databinding.ActivityRegisterBinding
+import com.pioneer.nycfirewire.utils.Constants.EMAIL_ID
 import com.pioneer.nycfirewire.utils.Constants.FROM_START
 import com.pioneer.nycfirewire.utils.Constants.NOTIFICATION_AREAS
 import com.pioneer.nycfirewire.utils.Constants.REGISTRATION
@@ -86,9 +87,12 @@ class RegisterActivity : BaseActivity() {
 
                         if(it1.code==CODE_SUCCESS) {
 
-                            showSnack(getString(R.string.register_success))
+                            //showSnack(getString(R.string.register_success))
+                            showSnack(it1.message)
+                            moveToEmailOtpVerification()
 
-                            if (!it1.data.token.isNullOrEmpty()) {
+
+                            /*if (!it1.data.token.isNullOrEmpty()) {
                                 prefs.token = it1.data.token
                                 prefs.refreshToken = it1.data.refreshToken
                                 prefs.isLogin = true
@@ -102,7 +106,7 @@ class RegisterActivity : BaseActivity() {
                                 println("onesignalId:" + OneSignal.User.onesignalId)
                                 moveToLogin(it1)
 
-                            }
+                            }*/
                         }else showSnack(it1.message)
                     }
                 }
@@ -113,9 +117,16 @@ class RegisterActivity : BaseActivity() {
             }
         }
     }
-   // numz@gmail.com, qwert123#
 
-    private fun moveToLogin(response: RegisterResponse) {
+    private fun moveToEmailOtpVerification() {
+        var intent = Intent(this, VerifyEmailOtpActivity::class.java)
+        intent.putExtra(EMAIL_ID,binding.etEmailAddress.text.toString())
+        startActivity(intent)
+        finish()
+    }
+    // numz@gmail.com, qwert123#
+
+   /* private fun moveToLogin(response: RegisterResponse) {
         if(response.code==CODE_SUCCESS){
             var intent = Intent(this, SelectAreaActivity::class.java)
             intent.putExtra(FROM_START,true)
@@ -123,7 +134,7 @@ class RegisterActivity : BaseActivity() {
             finish()
         }
 
-    }
+    }*/
 
     private fun clickEvent() {
         binding.toolbar.tvBack.setOnClickListener {
@@ -137,27 +148,27 @@ class RegisterActivity : BaseActivity() {
         binding.ivPasswordShow.setOnClickListener {
             if (isPasswordVisible) {
                 // Hide the password
-                binding.etPassword.transformationMethod = PasswordTransformationMethod.getInstance();
-                binding.ivPasswordShow.setImageResource(R.drawable.ic_hide_password);
+                binding.etPassword.transformationMethod = PasswordTransformationMethod.getInstance()
+                binding.ivPasswordShow.setImageResource(R.drawable.ic_hide_password)
             } else {
                 // Show the password
-                binding.etPassword.transformationMethod = HideReturnsTransformationMethod.getInstance();
-                binding.ivPasswordShow.setImageResource(R.drawable.ic_show_password);
+                binding.etPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
+                binding.ivPasswordShow.setImageResource(R.drawable.ic_show_password)
             }
             isPasswordVisible = !isPasswordVisible;
             // Move the cursor to the end of the text after the transformation change
-            binding.etPassword.setSelection(binding.etPassword.text.length);
+            binding.etPassword.setSelection(binding.etPassword.text.length)
         }
 
         binding.ivConfirmPasswordShow.setOnClickListener {
             if (isConfirmPassword) {
                 // Hide the password
-                binding.etConfirmPassword.transformationMethod = PasswordTransformationMethod.getInstance();
+                binding.etConfirmPassword.transformationMethod = PasswordTransformationMethod.getInstance()
                 binding.ivConfirmPasswordShow.setImageResource(R.drawable.ic_hide_password);
             } else {
                 // Show the password
                 binding.etConfirmPassword.transformationMethod = HideReturnsTransformationMethod.getInstance();
-                binding.ivConfirmPasswordShow.setImageResource(R.drawable.ic_show_password);
+                binding.ivConfirmPasswordShow.setImageResource(R.drawable.ic_show_password)
             }
             isConfirmPassword = !isConfirmPassword;
             // Move the cursor to the end of the text after the transformation change

@@ -17,9 +17,11 @@ import com.pioneer.nycfirewire.model.user.request.PostAreaData
 import com.pioneer.nycfirewire.model.user.request.ProfileUpdateRequest
 import com.pioneer.nycfirewire.model.user.request.RefreshTokenRequest
 import com.pioneer.nycfirewire.model.user.request.RegisterRequest
+import com.pioneer.nycfirewire.model.user.request.ResendOtpRequest
 import com.pioneer.nycfirewire.model.user.request.ResetPasswordRequest
 import com.pioneer.nycfirewire.model.user.request.SocialLoginRequest
 import com.pioneer.nycfirewire.model.user.request.UpdatePasswordRequest
+import com.pioneer.nycfirewire.model.user.request.VerifyEmailOtpRequest
 import com.pioneer.nycfirewire.model.user.request.VerifyOtpRequest
 import com.pioneer.nycfirewire.model.user.response.CommonResponse
 import com.pioneer.nycfirewire.model.user.response.FeedResponse
@@ -142,6 +144,12 @@ interface ApiEndPoints {
 
     @GET("api/app/content")
     suspend fun getContent():Response<SaltyWireResponse>
+
+    @POST("api/app/auth/verify-email-otp")
+    suspend fun verifyEmailOtp(@Body request: VerifyEmailOtpRequest):Response<LoginResponse>
+
+    @POST("api/app/auth/resend-email-otp")
+    suspend fun resendEmailOtp(@Body request: ResendOtpRequest):Response<LoginResponse>
 
 
    // https://dev-firewire.atomgroups.work/noauth/create/incident?form=add&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NWE5NGNiYTcyMTMzNTRhMTk4YWM1ZCIsInJvbGUiOiJzdXBlciIsImVtYWlsIjoidmltYWxhZGV2aUBhdG9tZ3JvdXBzLmNvbSIsImlhdCI6MTc0MTQxNjA1OSwiZXhwIjoxNzQxNDUyMDU5fQ.pe7PrDNBMlBBhfLC2pVdfo1GC-jNXy8SGxvosmlFo1c&theme=light

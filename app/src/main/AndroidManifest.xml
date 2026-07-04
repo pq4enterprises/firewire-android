@@ -109,6 +109,8 @@
             android:exported="true"/>
         <activity android:name=".activity.NotificationSoundActivity"
             android:exported="true"/>
+        <activity android:name=".activity.VerifyEmailOtpActivity"
+            android:exported="true"/>
 
         <meta-data
             android:name="com.google.android.gms.wallet.api.enabled"

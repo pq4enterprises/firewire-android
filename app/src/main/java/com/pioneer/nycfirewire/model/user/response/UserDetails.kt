@@ -13,7 +13,8 @@ data class UserDetails(
     var email:String?="",
     var role:String?="",
     var title:String?="",
-    var img:String?=""
+    var img:String?="",
+    var emailVerified: Boolean?=false,
 ):Parcelable
 
 

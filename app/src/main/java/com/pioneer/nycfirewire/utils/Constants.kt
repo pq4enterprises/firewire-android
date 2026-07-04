@@ -30,6 +30,7 @@ object Constants {
     var LIGHT="light"
     var DARK="dark"
     var ACTION_STOP="action_stop"
+    var EMAIL_ID="email_id"
 
 
     //Analytics page names
@@ -55,4 +56,6 @@ object Constants {
     var INCIDENT_POST="Incident Post"
     var INCIDENT_DETAILS="incident_details"
     var RADIO_CLICKED="radio_clicked"
+    var CODE_EMAIL_NOT_VERIFIED="email_not_verified"
+    var FROM_PAGE="from_page"
 }

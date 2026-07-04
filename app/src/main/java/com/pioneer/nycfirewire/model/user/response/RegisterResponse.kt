@@ -5,8 +5,12 @@ import com.pioneer.nycfirewire.model.user.response.LoginData
 data class RegisterResponse(
     val message: String,
     val code: String,
-    val error:String,
-    val data: LoginData
+    val error:String?=null,
+    val data: RegisterData
 )
 
-data class RegisterData(var data:String)
+
+data class RegisterData(
+    val email: String,
+    val emailVerified: Boolean
+)
