@@ -42,6 +42,21 @@
     <string name="gallery">Gallery</string>
     <string name="news_listed">%s News are listed</string>
     <string name="share">Share</string>
+    <string name="map_hybrid">HYBRID</string>
+    <string name="map_street">STREET</string>
+    <string name="map_satellite">SATELLITE</string>
+    <string name="units_title">UNITS</string>
+    <string name="incident_title">INCIDENT</string>
+    <string name="units_engine">ENGINE</string>
+    <string name="units_truck">TRUCK/RES</string>
+    <string name="units_marine">MARINE</string>
+    <string name="units_chief">CHIEF</string>
+    <string name="units_soc">SOC</string>
+    <string name="units_suppression">SUPPRESSION</string>
+    <string name="units_rescue">RESCUE/SOC</string>
+    <string name="units_command">COMMAND</string>
+    <string name="units_empty">NO UNITS LISTED</string>
+    <string name="fw_watermark">FIRE WIRE · @NYCFIREWIRE</string>
     <string name="description">To everyone that’s been using the app, I’m sure you’re aware of some of the new additions already. For those that haven’t hopped on board yet, there’s a bunch of reasons to download now!
         \n <b>SaltyWire:</b>
         \n

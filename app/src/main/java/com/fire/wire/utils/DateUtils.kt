@@ -12,6 +12,8 @@ object DateUtils {
         try {
 
             var spf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH)
+            // API timestamps are UTC (trailing 'Z'); parse as UTC, format in device-local time
+            spf.timeZone = TimeZone.getTimeZone("UTC")
             val newDate = spf.parse(date)
             spf = SimpleDateFormat("dd LLL | hh:mm aa", Locale.ENGLISH)
             formatDate = spf.format(newDate!!)

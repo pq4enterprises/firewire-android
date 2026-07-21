@@ -30,6 +30,28 @@
     <color name="transparent_color">#FF2b3544</color>
     <color name="dim_grey">#BABABA</color>
 
+    <!-- incident detail redesign (2026 design system) -->
+    <color name="fw_bg">#EFEFF2</color>
+    <color name="fw_surface">#FFFFFF</color>
+    <color name="fw_surface2">#E7E8ED</color>
+    <color name="fw_text">#15161B</color>
+    <color name="fw_muted">#6C6F78</color>
+    <color name="fw_hairline">#17000000</color>
+    <color name="fw_red">#E5342A</color>
+    <color name="fw_red_tint">#FDECEA</color>
+    <color name="fw_map_overlay">#8C000000</color>
+    <color name="fw_unit_engine_bg">#1C1C1E</color>
+    <color name="fw_unit_engine_fg">#FFFFFF</color>
+    <color name="fw_unit_truck_bg">#E5342A</color>
+    <color name="fw_unit_truck_fg">#000000</color>
+    <color name="fw_unit_marine_bg">#17B26A</color>
+    <color name="fw_unit_marine_fg">#000000</color>
+    <color name="fw_unit_chief_bg">#F7C948</color>
+    <color name="fw_unit_chief_fg">#000000</color>
+    <color name="fw_unit_soc_bg">#FCF0E4</color>
+    <color name="fw_unit_soc_fg">#B5661F</color>
+    <color name="fw_legend_soc">#E0842F</color>
+
 
 
 </resources>

@@ -14,7 +14,10 @@ data class IncidentDataByID(
     val description: String? = "",
     val updatedAt: String? = "",
     val commentCount: String? = "",
-    val likeCount: String? = ""
+    val likeCount: String? = "",
+    val field4Value: String? = "",
+    val respondingUnits: List<String?>? = null,
+    val subLocalityName: String? = ""
 ) : Parcelable
 
 

@@ -3,8 +3,11 @@ package com.fire.wire.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -63,6 +66,32 @@ class WireDetailActivity : AppCompatActivity(), OnMapReadyCallback {
             if(type=="like")
             updateLikeData(it)
         })
+
+        // the list API omits respondingUnits, so fetch the full incident by id
+        // (same as iOS) to populate the units card and signal chip
+        vm.incidentByIdLiveData.observe(this, Observer { response ->
+            if (response.state == ResourceState.SUCCESS) {
+                val detail = response.data?.data?.firstOrNull() ?: return@Observer
+                wireDetails = wireDetails.copy(
+                    field4Value = detail.field4Value ?: wireDetails.field4Value,
+                    respondingUnits = detail.respondingUnits ?: wireDetails.respondingUnits
+                )
+                val signal = wireDetails.field4Value?.trim().orEmpty()
+                if (signal.isNotEmpty()) {
+                    binding.tvSignalChip.text = signal
+                    binding.tvSignalChip.visible()
+                }
+                val subLocality = detail.subLocalityName?.trim().orEmpty()
+                if (subLocality.isNotEmpty()) {
+                    binding.tvSubLocality.text = subLocality
+                    binding.tvSubLocality.visible()
+                }
+                bindUnits()
+            }
+        })
+        if (!wireDetails._id.isNullOrEmpty()) {
+            vm.getIncidentById(wireDetails._id.toString())
+        }
     }
 
     private fun updateLikeData(response: Resource<CommonResponse>) {
@@ -102,43 +131,130 @@ class WireDetailActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun bindItems() {
-        binding.tvTitle.text= wireDetails.field1Value
-        binding.tvSubTitle.text= wireDetails.field2Value
+        // summary card: incident type badge + optional signal chip
+        binding.tvLevelBadge.text= wireDetails.field1Value
+        val signal= wireDetails.field4Value?.trim().orEmpty()
+        if(signal.isNotEmpty()){
+            binding.tvSignalChip.text= signal
+            binding.tvSignalChip.visible()
+        } else binding.tvSignalChip.gone()
+
+        // address is the headline; field3 (city/town) is the subtitle; field2 is the description
+        binding.tvTitle.text= wireDetails.address
         binding.tvAddress.text= wireDetails.address
 
-        if(wireDetails.field2Value?.isNotEmpty() == true)binding.tvSubTitle.visible() else binding.tvSubTitle.gone()
+        // sub-locality (e.g. borough) comes populated in the list response;
+        // the deployed by-ID API only returns the raw id
+        val subLocality= wireDetails.subLocalityDetails?.firstOrNull()?.name?.trim().orEmpty()
+        if(subLocality.isNotEmpty()){
+            binding.tvSubLocality.text= subLocality
+            binding.tvSubLocality.visible()
+        } else binding.tvSubLocality.gone()
 
-        binding.tvLikeCount.text= getString(R.string.star,wireDetails.likeCount)
-        val count= if(wireDetails.commentCount.isNullOrEmpty())"0" else wireDetails.commentCount
+        val subTitle= wireDetails.field3Value?.trim().orEmpty()
+        if(subTitle.isNotEmpty()){
+            binding.tvSubTitle.text= subTitle
+            binding.tvSubTitle.visible()
+        } else binding.tvSubTitle.gone()
 
-        if(count?.toInt()!! >1)
-            binding.tvCommentCount.text= getString(R.string.comments,count)
-        else binding.tvCommentCount.text= getString(R.string.comment,count)
+        val desc= wireDetails.field2Value?.trim().orEmpty()
+        if(desc.isNotEmpty()){
+            binding.tvDesc.text= desc
+            binding.tvDesc.visible()
+        } else binding.tvDesc.gone()
+        binding.tvDesc.setOnClickListener {
+            binding.tvDesc.maxLines = if (binding.tvDesc.maxLines == 3) Integer.MAX_VALUE else 3
+        }
+
+        binding.tvLikeCount.text= if(wireDetails.likeCount.isNullOrEmpty()) "0" else wireDetails.likeCount
+        binding.tvCommentCount.text= if(wireDetails.commentCount.isNullOrEmpty()) "0" else wireDetails.commentCount
 
         if(isLikeSingle)
             binding.ivRating.setImageResource(R.drawable.ic_rating_red)
         else binding.ivRating.setImageResource(R.drawable.ic_rating)
 
-
-        if(wireDetails.field3Value.isNullOrEmpty())binding.tvDesc.gone() else binding.tvDesc.visible()
-        binding.tvDesc.text= wireDetails.field3Value
-
         if(!wireDetails.createdAt.isNullOrEmpty())
-            binding.tvDateTime.text= DateUtils.getFormattedDateOfFireWire(wireDetails.createdAt.toString())
+            binding.tvDateTime.text= DateUtils.getFormattedDateOfFireWire(wireDetails.createdAt.toString()).uppercase()
 
         if(wireDetails.featuredImageUrl.isNullOrEmpty()){
-            binding.tvNoImage.visible()
+            binding.cardBanner.gone()
         }else{
+            binding.cardBanner.visible()
             Glide.with(this)
                 .load(wireDetails.featuredImageUrl)
                 .into(binding.ivBanner)
-            binding.tvNoImage.gone()
         }
 
+        bindUnits()
+    }
 
+    private fun bindUnits() {
+        val units = wireDetails.respondingUnits.orEmpty()
+            .mapNotNull { it?.trim()?.uppercase() }
+            .filter { it.isNotEmpty() }
+
+        binding.chipGroupUnits.removeAllViews()
+
+        if (units.isEmpty()) {
+            binding.tvUnitsCount.gone()
+            binding.llUnitsLegend.gone()
+            binding.chipGroupUnits.gone()
+            binding.tvNoUnits.visible()
+            return
+        }
+
+        binding.tvUnitsCount.text = units.size.toString()
+        binding.tvUnitsCount.visible()
+        binding.llUnitsLegend.visible()
+        binding.chipGroupUnits.visible()
+        binding.tvNoUnits.gone()
+
+        val density = resources.displayMetrics.density
+        val padH = (8 * density).toInt()
+        val padV = (4 * density).toInt()
+
+        units.forEach { unit ->
+            val category = UnitCategory.classify(unit)
+            val chip = TextView(this).apply {
+                text = unit
+                textSize = 12f
+                typeface = ResourcesCompat.getFont(context, R.font.poppins_semibold)
+                setTextColor(ContextCompat.getColor(context, category.fgColorRes))
+                background = ContextCompat.getDrawable(context, R.drawable.fw_chip_bg)
+                backgroundTintList = ContextCompat.getColorStateList(context, category.bgColorRes)
+                setPadding(padH, padV, padH, padV)
+            }
+            binding.chipGroupUnits.addView(chip)
+        }
+    }
+
+    private fun setupMapTypeToggle() {
+        val segments = mapOf(
+            binding.tvMapHybrid to GoogleMap.MAP_TYPE_HYBRID,
+            binding.tvMapStreet to GoogleMap.MAP_TYPE_NORMAL,
+            binding.tvMapSatellite to GoogleMap.MAP_TYPE_SATELLITE
+        )
+        segments.forEach { (segmentView, mapType) ->
+            segmentView.setOnClickListener {
+                if (!::mMap.isInitialized) return@setOnClickListener
+                mMap.mapType = mapType
+                segments.keys.forEach { seg ->
+                    val selected = seg == segmentView
+                    seg.background = if (selected)
+                        ContextCompat.getDrawable(this, R.drawable.fw_map_seg_selected)
+                    else null
+                    seg.setTextColor(
+                        ContextCompat.getColor(this, if (selected) R.color.fw_text else R.color.white)
+                    )
+                }
+            }
+        }
     }
 
     private fun clickEvent() {
+        binding.toolbar.tvToolbarTitle.text = getString(R.string.incident_title)
+        binding.toolbar.tvToolbarTitle.visible()
+        setupMapTypeToggle()
         binding.toolbar.ivFeed.setOnClickListener {
             val intent = Intent(this,FeedsActivity::class.java)
             startActivity(intent)
@@ -167,6 +283,7 @@ class WireDetailActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        mMap.mapType = GoogleMap.MAP_TYPE_HYBRID
         if(!wireDetails.latitude.isNullOrEmpty() && !wireDetails.longitude.isNullOrEmpty()) {
 
             val latLng = LatLng(
@@ -186,9 +303,7 @@ class WireDetailActivity : AppCompatActivity(), OnMapReadyCallback {
                     )
             )
 
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(18.0f))
-
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17.0f))
         }
     }
 

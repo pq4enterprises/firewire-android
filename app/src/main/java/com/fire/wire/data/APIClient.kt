@@ -21,8 +21,11 @@ import java.util.concurrent.TimeUnit
 class APIClient (val context: Context) {
 
     companion object {
+        // production API — same host the iOS app uses
+        const val BASE_URL = "https://api.nycfirewireapp.com"
+        // dead hosts from the old dev team, kept for reference:
         //const val BASE_URL = "https://firewire-api.atomgroups.com"
-        const val BASE_URL = "https://dev-firewire-api.atomgroups.work"
+        //const val BASE_URL = "https://dev-firewire-api.atomgroups.work"
         var isXml=false
     }
 

@@ -20,6 +20,20 @@
         android:tint="@color/black"
         app:drawableStartCompat="@drawable/ic_back" />
 
+    <TextView
+        android:id="@+id/tvToolbarTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_bold"
+        android:textColor="@color/fw_text"
+        android:textSize="18sp"
+        android:letterSpacing="0.05"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/ivFeed"
         android:layout_width="wrap_content"
