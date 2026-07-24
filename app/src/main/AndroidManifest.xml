@@ -58,6 +58,7 @@
 
         <activity android:name=".activity.MapsActivity"
             android:exported="true"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.FireWire.map"/>
 
         <activity android:name=".activity.NavigationMenuActivity"
@@ -85,7 +86,8 @@
             android:exported="true"/>
 
         <activity android:name=".activity.FeedFilterActivity"
-            android:exported="true"/>
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize"/>
 
         <meta-data
             android:name="com.google.android.gms.wallet.api.enabled"

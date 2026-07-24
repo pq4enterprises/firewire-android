@@ -77,7 +77,7 @@ class CommentsFragment: Fragment() ,ImageDataListener {
                 if(response.data?.code=="comment_added") {
                    showSnackbar(binding.cvComment,response.data.message.toString())
                     binding.etComment.setText("")
-                    binding.ivPhoto.setImageResource(R.drawable.ic_camera)
+                    binding.ivPhoto.setImageResource(R.drawable.fw_ic_camera)
                 }else{
                     showAlert(response.data?.message.toString())
                 }
@@ -108,6 +108,10 @@ class CommentsFragment: Fragment() ,ImageDataListener {
     }
 
     private fun clickEvents() {
+        // design screen 10 · COMMENTS: in-screen BACK affordance mirrors system back
+        binding.tvBack.setOnClickListener {
+            requireActivity().onBackPressed()
+        }
         binding.ivPhoto.setOnClickListener {
             val bottomSheetFragment = BottomSheetFragment(this)
             bottomSheetFragment.show(parentFragmentManager, bottomSheetFragment.tag)
@@ -193,10 +197,35 @@ class CommentsFragment: Fragment() ,ImageDataListener {
                 bindingItem.tvProfileName.text= it.userId?.firstName.plus(" ").plus(it.userId?.lastName)
                 bindingItem.tvComments.text= it.comment
 
+                // timestamp comes back from the comments API (same field iOS shows)
+                val time= it.createdAt?.takeIf { t-> t.isNotEmpty() }
+                    ?.let { t-> DateUtils.getFormattedDateOfFireWire(t) } ?: ""
+                bindingItem.tvDateTime.text= time
+                if(time.isEmpty()) bindingItem.tvDateTime.gone() else bindingItem.tvDateTime.visible()
+
+                // replies arrive nested on the list response; display-only until
+                // reply composing is wired on Android
+                val replyCount= it.replies?.size ?: 0
+                when{
+                    replyCount==1 -> {
+                        bindingItem.tvReplies.text= getString(R.string.fw_reply_count)
+                        bindingItem.tvReplies.visible()
+                    }
+                    replyCount>1 -> {
+                        bindingItem.tvReplies.text= getString(R.string.fw_replies_count,replyCount.toString())
+                        bindingItem.tvReplies.visible()
+                    }
+                    else -> bindingItem.tvReplies.gone()
+                }
+
                 if(!it.userId?.img.isNullOrEmpty())
                 Glide.with(this)
                     .load(it.userId?.img)
                     .into(bindingItem.profileImage)
+                else
+                    // recycled row: clear any stale avatar so the red-tint
+                    // person fallback underneath shows through
+                    bindingItem.profileImage.setImageDrawable(null)
 
                 if(it.img?.isNotEmpty() == true) bindingItem.rvImages.visible() else bindingItem.rvImages.gone()
 

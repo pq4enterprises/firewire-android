@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- line camera (comment composer photo button), design screen 10 · COMMENTS -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="22dp"
+    android:height="22dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="@color/fw_text">
+    <path
+        android:pathData="M3,9.5a2.5,2.5 0 0,1 2.5,-2.5h13a2.5,2.5 0 0,1 2.5,2.5v8a2.5,2.5 0 0,1 -2.5,2.5h-13a2.5,2.5 0 0,1 -2.5,-2.5z"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="1.8"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M12,13.5m-3.6,0a3.6,3.6 0 1,0 7.2,0a3.6,3.6 0 1,0 -7.2,0"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="1.8" />
+    <path
+        android:pathData="M8,7l1.5,-2.5h5L16,7"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="1.8"
+        android:strokeLineJoin="round" />
+</vector>
