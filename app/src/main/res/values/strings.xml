@@ -35,6 +35,9 @@
     <string name="done">Done</string>
     <string name="select_all">Select All</string>
     <string name="posts_listed">%s Posts Listed</string>
+    <string name="wire_updated_at">Updated %s</string>
+    <string name="news_site_link">NYCFIREWIRE.NET</string>
+    <string name="menu_post">POST</string>
     <string name="feed_areas">Feed Areas</string>
     <string name="filter">Filter</string>
     <string name="add_comment">Add a comment</string>

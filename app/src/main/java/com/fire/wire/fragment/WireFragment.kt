@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.fire.wire.R
 import com.fire.wire.ReplaceCallback
+import com.fire.wire.activity.AreasAlertsActivity
 import com.fire.wire.activity.LoginNewActivity
 import com.fire.wire.activity.WireDetailActivity
 import com.fire.wire.adapter.setUpAdapter
@@ -35,6 +36,9 @@ import com.fire.wire.utils.IntentUtils.BUN_WIRE_DETAILS
 import com.fire.wire.utils.IntentUtils.FILTER_DATA
 import com.fire.wire.viewModel.FireWireViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 @AndroidEntryPoint
@@ -147,7 +151,11 @@ class WireFragment: Fragment() {
             binding.tvNoData.visible()
             binding.rvMainFilter.gone()
         }
-        binding.tvWireTotal.text= getString(R.string.posts_listed, incidentList.size.toString())
+        // sheet bar shows when the feed was last loaded (design: "UPDATED 2:41 PM")
+        binding.tvWireTotal.text= getString(
+            R.string.wire_updated_at,
+            SimpleDateFormat("h:mm a", Locale.US).format(Date())
+        )
         binding.rvMainFilter.setUpAdapter(
             incidentList,
             R.layout.item_wire,
@@ -185,6 +193,20 @@ class WireFragment: Fragment() {
                 }
 
                 bindingItem.tvAddress.text= it.address
+
+                // muted locality line under the address (iOS parity):
+                // "CITY/TOWN, SUB-LOCALITY" from field3Value + first subLocality name
+                val localityParts= ArrayList<String>()
+                if(!it.field3Value.isNullOrEmpty()) localityParts.add(it.field3Value)
+                val subLocalityName= it.subLocalityDetails?.firstOrNull()?.name
+                if(!subLocalityName.isNullOrEmpty()) localityParts.add(subLocalityName)
+                if(localityParts.isNotEmpty()){
+                    bindingItem.tvLocality.text= localityParts.joinToString(", ")
+                    bindingItem.tvLocality.visible()
+                }else{
+                    bindingItem.tvLocality.gone()
+                }
+
                 // design-system card shows bare counts inside the star/comment chips
                 bindingItem.tvRateCount.text= if(it.likeCount.isNullOrEmpty()) "0" else it.likeCount
                 val count= if(it.commentCount.isNullOrEmpty())"0" else it.commentCount
@@ -234,8 +256,10 @@ class WireFragment: Fragment() {
     }
 
     private fun clickEvents() {
+        // FEED AREAS now opens the redesigned Areas & Alerts screen (the old
+        // Personalization-era FilterFragment flow is retired)
         binding.tvFilter.setOnClickListener {
-            callback?.replaceFragment(NAV_FILTER,"")
+            startActivity(Intent(requireContext(), AreasAlertsActivity::class.java))
         }
 
 

@@ -33,17 +33,18 @@
         app:layout_constraintTop_toBottomOf="@+id/v_handle"
         app:layout_constraintRight_toRightOf="parent">
 
+        <!-- last-updated readout (uppercase monospace, muted) -->
         <TextView
             android:id="@+id/tv_wire_total"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:textAllCaps="true"
-            android:textColor="@color/fw_text"
-            android:textSize="@dimen/fw_text_section"
-            android:fontFamily="@font/poppins_bold"
-            android:letterSpacing="0.02"
-            tools:text="268 POSTS LISTED" />
+            android:textColor="@color/fw_muted"
+            android:textSize="@dimen/fw_text_caption"
+            android:fontFamily="monospace"
+            android:letterSpacing="0.05"
+            tools:text="UPDATED 2:41 PM" />
 
         <TextView
             android:id="@+id/tv_filter"

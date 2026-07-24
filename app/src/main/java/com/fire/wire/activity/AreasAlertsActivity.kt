@@ -52,6 +52,9 @@ class AreasAlertsActivity : BaseActivity() {
 
     private val groups = ArrayList<AreaGroup>()
 
+    // collapsible region headers (scanner-screen pattern); default expanded
+    private val expandedGroups = HashMap<String, Boolean>()
+
     // server state at load time, for change detection on SAVE
     private var initialFeedIds = setOf<String>()
     private var initialAlertIds = setOf<String>()
@@ -207,10 +210,22 @@ class AreasAlertsActivity : BaseActivity() {
             groups,
             R.layout.item_area_group,
             ItemAreaGroupBinding::inflate,
-            { group, _, groupBinding ->
+            { group, pos, groupBinding ->
                 groupBinding.tvRegion.text = group.name
                 updateSelectAllLabel(group, groupBinding)
 
+                // collapsible dropdown, mirroring the scanner region headers:
+                // rotating chevron, tap the header to toggle, default expanded
+                val expanded = expandedGroups[group.localityId] ?: true
+                groupBinding.ivChevron.rotation = if (expanded) 90f else 0f
+                groupBinding.llRowsCard.visibility =
+                    if (expanded) android.view.View.VISIBLE else android.view.View.GONE
+                groupBinding.llGroupHeader.setOnClickListener {
+                    expandedGroups[group.localityId] = !(expandedGroups[group.localityId] ?: true)
+                    binding.rvGroups.adapter?.notifyItemChanged(pos)
+                }
+
+                // SELECT ALL consumes its own tap — it never collapses the group
                 groupBinding.tvSelectAll.setOnClickListener {
                     val allOn = group.rows.all { it.feedOn }
                     group.rows.forEach { it.feedOn = !allOn }

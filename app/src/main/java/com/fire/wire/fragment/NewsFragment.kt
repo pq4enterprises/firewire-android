@@ -34,13 +34,14 @@ import org.jsoup.nodes.Element
 @AndroidEntryPoint
 class NewsFragment:Fragment() {
 
+    companion object{
+        private const val NEWS_SITE_URL= "https://nycfirewire.net/news/"
+        fun newInstance()= NewsFragment().putArgs {  }
+    }
+
     private lateinit var binding: BottomSheetNewsBinding
     private var callback: ReplaceCallback?=null
     private lateinit var vm: FireWireViewModel
-
-    companion object{
-        fun newInstance()= NewsFragment().putArgs {  }
-    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -79,8 +80,6 @@ class NewsFragment:Fragment() {
             ResourceState.LOADING -> binding.progress.visible()
             ResourceState.SUCCESS -> {
                 binding.progress.gone()
-                val totalNews= response.data?.channel?.itemList?.size.toString()
-                binding.tvNewsTotal.text= getString(R.string.news_listed, totalNews)
                 val list= response.data?.channel?.itemList?:ArrayList()
                 setupAdapter(ArrayList(list))
 
@@ -149,10 +148,10 @@ class NewsFragment:Fragment() {
     }
 
     private fun clickEvent() {
-        binding.tvFilter.setOnClickListener {
-            callback?.replaceFragment(NAV_FILTER,"")
+        // sheet-bar link out to the FireWire news site
+        binding.tvNewsTotal.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse(NEWS_SITE_URL)))
         }
-
     }
 
     fun showAlert(message: String? = "") {

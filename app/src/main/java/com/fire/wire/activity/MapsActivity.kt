@@ -23,7 +23,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import com.fire.wire.ReplaceCallback
 import com.fire.wire.databinding.ActivityHomeBinding
-import com.fire.wire.fragment.FilterFragment
 import com.fire.wire.fragment.NewsFragment
 import com.fire.wire.fragment.WireFragment
 import com.fire.wire.model.incident.response.Incident
@@ -236,6 +235,10 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback,Callba
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
+        // main feed map defaults to hybrid imagery (incident detail keeps its
+        // own Hybrid/Street/Satellite toggle)
+        mMap.mapType = GoogleMap.MAP_TYPE_HYBRID
+        // night styling only applies to MAP_TYPE_NORMAL; harmless under hybrid
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_in_night));
     }
 
@@ -289,9 +292,6 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback,Callba
 
     override fun replaceFragment(receivingType: String, data: Any) {
         when(receivingType){
-            NAV_FILTER ->{
-                displayFragment(FilterFragment.newInstance(),true)
-            }
             NAV_WIRE->{
                 displayFragment(WireFragment.newInstance(incidentList, data as Bundle),false)
             }

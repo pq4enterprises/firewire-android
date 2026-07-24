@@ -38,17 +38,20 @@
         app:layout_constraintTop_toBottomOf="@+id/v_handle"
         app:layout_constraintRight_toRightOf="parent">
 
+        <!-- red uppercase link to the FireWire news site -->
         <TextView
             android:id="@+id/tv_news_total"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:text="@string/news_site_link"
             android:textAllCaps="true"
-            android:textColor="@color/fw_text"
+            android:textColor="@color/fw_red"
             android:textSize="@dimen/fw_text_section"
             android:fontFamily="@font/poppins_bold"
-            android:letterSpacing="0.02"
-            tools:text="15 STORIES LISTED" />
+            android:letterSpacing="0.02" />
 
         <TextView
             android:id="@+id/tvFilter"
