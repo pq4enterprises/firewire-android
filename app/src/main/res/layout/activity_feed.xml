@@ -1,102 +1,455 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Scanner screen — "Instrument Panel" (Direction 1A, 2026 design system).
+    Fixed dark receiver console on top, collapsible region feed list below.
+    IDs are load-bearing: FeedsActivity binds tv_close (back), tvFilter,
+    rv_feed, tv_no_data, progress plus the console readout views.
+-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/white"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fw_background">
 
-
+    <!-- header: back / SCANNER / live count -->
     <RelativeLayout
         android:id="@+id/rl_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingLeft="6dp"
+        android:paddingRight="16dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/white">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/tvFilter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dis_16"
-            android:layout_marginLeft="@dimen/text_16"
-            android:gravity="center"
-            android:paddingTop="@dimen/dis_20"
-            android:paddingEnd="@dimen/dis_20"
-            android:text="@string/filter"
-            android:fontFamily="@font/poppins_bold"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_16"
-            android:visibility="visible" />
+        <ImageView
+            android:id="@+id/tv_close"
+            android:layout_width="@dimen/fw_touch_target"
+            android:layout_height="@dimen/fw_touch_target"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/close"
+            android:padding="10dp"
+            android:src="@drawable/fw_ic_chevron_left" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:fontFamily="@font/teko_regular"
-            android:paddingTop="@dimen/dis_20"
-            android:paddingBottom="@dimen/dis_16"
-            android:text="@string/feeds"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_24"
-            android:textStyle="bold" />
+            android:fontFamily="@font/poppins_bold"
+            android:letterSpacing="0.12"
+            android:text="@string/scanner_title"
+            android:textAllCaps="true"
+            android:textColor="@color/fw_text"
+            android:textSize="@dimen/fw_text_toolbar" />
 
-        <TextView
-            android:id="@+id/tv_close"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/dis_16"
-            android:drawablePadding="@dimen/dis_10"
-            android:fontFamily="@font/poppins_bold"
-            android:paddingTop="@dimen/dis_20"
-            android:paddingBottom="@dimen/dis_16"
-            android:text="@string/close"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_16"
-            app:drawableStartCompat="@drawable/ic_close" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
+            <View
+                android:id="@+id/v_live_dot"
+                android:layout_width="7dp"
+                android:layout_height="7dp"
+                android:background="@drawable/fw_scanner_dot"
+                android:backgroundTint="@color/fw_success" />
+
+            <TextView
+                android:id="@+id/tv_live_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:fontFamily="monospace"
+                android:textStyle="bold"
+                android:textColor="@color/fw_success"
+                android:textSize="@dimen/fw_text_chip"
+                tools:text="10" />
+        </LinearLayout>
     </RelativeLayout>
+
+    <!-- ===== instrument console (fixed dark face in both modes) ===== -->
+    <LinearLayout
+        android:id="@+id/ll_console"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/fw_screen_margin"
+        android:layout_marginRight="@dimen/fw_screen_margin"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/fw_scanner_console_bg"
+        android:orientation="vertical"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="15dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rl_toolbar">
+
+        <!-- top strip -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="9dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:fontFamily="monospace"
+                android:letterSpacing="0.2"
+                android:text="@string/scanner_receiver_lock"
+                android:textAllCaps="true"
+                android:textColor="@color/fw_scanner_console_label"
+                android:textSize="9sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <View
+                    android:id="@+id/v_status_dot"
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/fw_scanner_dot"
+                    android:backgroundTint="@color/fw_warning" />
+
+                <TextView
+                    android:id="@+id/tv_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:fontFamily="monospace"
+                    android:letterSpacing="0.15"
+                    android:text="@string/scanner_standby"
+                    android:textAllCaps="true"
+                    android:textColor="@color/fw_warning"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fw_hairline_width"
+            android:background="@color/fw_scanner_console_divider" />
+
+        <!-- channel name -->
+        <TextView
+            android:id="@+id/tv_channel_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/poppins_bold"
+            android:maxLines="1"
+            android:text="@string/scanner_no_channel"
+            android:textAllCaps="true"
+            android:textColor="@color/fw_scanner_console_text"
+            android:textSize="20sp" />
+
+        <!-- data readout grid -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="11dp"
+            android:background="@drawable/fw_scanner_grid_bg"
+            android:orientation="horizontal"
+            android:padding="1dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/fw_scanner_cell_bg"
+                android:orientation="vertical"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="9dp"
+                android:paddingBottom="9dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:letterSpacing="0.1"
+                    android:text="@string/scanner_region"
+                    android:textAllCaps="true"
+                    android:textColor="@color/fw_scanner_console_label"
+                    android:textSize="8sp" />
+
+                <TextView
+                    android:id="@+id/tv_readout_region"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:ellipsize="end"
+                    android:fontFamily="monospace"
+                    android:maxLines="1"
+                    android:text="@string/fw_dash"
+                    android:textAllCaps="true"
+                    android:textColor="@color/fw_warning"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginStart="1dp"
+                android:background="@drawable/fw_scanner_cell_bg"
+                android:orientation="vertical"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="9dp"
+                android:paddingBottom="9dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:letterSpacing="0.1"
+                    android:text="@string/scanner_source"
+                    android:textAllCaps="true"
+                    android:textColor="@color/fw_scanner_console_label"
+                    android:textSize="8sp" />
+
+                <TextView
+                    android:id="@+id/tv_readout_source"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:ellipsize="end"
+                    android:fontFamily="monospace"
+                    android:maxLines="1"
+                    android:text="@string/fw_dash"
+                    android:textAllCaps="true"
+                    android:textColor="@color/fw_warning"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginStart="1dp"
+                android:background="@drawable/fw_scanner_cell_bg"
+                android:orientation="vertical"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="9dp"
+                android:paddingBottom="9dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:letterSpacing="0.1"
+                    android:text="@string/scanner_status"
+                    android:textAllCaps="true"
+                    android:textColor="@color/fw_scanner_console_label"
+                    android:textSize="8sp" />
+
+                <TextView
+                    android:id="@+id/tv_readout_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:ellipsize="end"
+                    android:fontFamily="monospace"
+                    android:maxLines="1"
+                    android:text="@string/scanner_standby"
+                    android:textAllCaps="true"
+                    android:textColor="@color/fw_warning"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- LED signal meter -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="34dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:letterSpacing="0.15"
+                android:text="@string/scanner_sig"
+                android:textAllCaps="true"
+                android:textColor="@color/fw_scanner_console_label"
+                android:textSize="8sp" />
+
+            <!-- 16 LED segments added in code -->
+            <LinearLayout
+                android:id="@+id/ll_signal"
+                android:layout_width="0dp"
+                android:layout_height="14dp"
+                android:layout_weight="1"
+                android:orientation="horizontal" />
+        </LinearLayout>
+
+        <!-- waveform (bars added in code, animated while receiving) -->
+        <LinearLayout
+            android:id="@+id/ll_wave"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="12dp"
+            android:alpha="0.28"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" />
+
+        <!-- transport -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_meta_feeds"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:textColor="@color/fw_scanner_console_muted"
+                    android:textSize="9sp"
+                    tools:text="FEEDS 10" />
+
+                <TextView
+                    android:id="@+id/tv_meta_regions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:fontFamily="monospace"
+                    android:textColor="@color/fw_scanner_console_muted"
+                    android:textSize="9sp"
+                    tools:text="REGIONS 2" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/btn_transport"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:alpha="0.4"
+                android:background="@drawable/fw_circle_bg"
+                android:backgroundTint="@color/fw_red">
+
+                <ImageView
+                    android:id="@+id/iv_transport"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/scanner_title"
+                    android:src="@drawable/fw_ic_play"
+                    app:tint="@color/white" />
+            </FrameLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <!-- list header row: section label + filter -->
+    <RelativeLayout
+        android:id="@+id/rl_list_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ll_console">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:fontFamily="monospace"
+            android:letterSpacing="0.15"
+            android:text="@string/scanner_dispatch_feeds"
+            android:textAllCaps="true"
+            android:textColor="@color/fw_muted"
+            android:textSize="@dimen/fw_text_chip"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvFilter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:fontFamily="monospace"
+            android:gravity="center_vertical"
+            android:letterSpacing="0.15"
+            android:minHeight="@dimen/fw_touch_target"
+            android:paddingStart="16dp"
+            android:paddingEnd="2dp"
+            android:text="@string/filter"
+            android:textAllCaps="true"
+            android:textColor="@color/fw_red"
+            android:textSize="@dimen/fw_text_chip"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <!-- collapsible region groups -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_feed"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingLeft="@dimen/fw_screen_margin"
+        android:paddingRight="@dimen/fw_screen_margin"
+        android:paddingBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rl_list_header"
+        tools:listitem="@layout/item_main_feed" />
+
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:theme="@style/redProgress"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-   <LinearLayout
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       app:layout_constraintLeft_toLeftOf="parent"
-       app:layout_constraintTop_toBottomOf="@+id/rl_toolbar"
-       app:layout_constraintRight_toRightOf="parent">
-       <androidx.recyclerview.widget.RecyclerView
-           android:id="@+id/rv_feed"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:layout_marginTop="@dimen/dis_5"
-           tools:listitem="@layout/item_main_feed"
-          android:layout_marginBottom="@dimen/dis_50"/>
-   </LinearLayout>
-
-
-
 
     <TextView
         android:id="@+id/tv_no_data"
-        android:text="@string/no_data_found"
-        android:visibility="gone"
-        android:textColor="@color/choose_text_color"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_semibold"
+        android:text="@string/no_data_found"
+        android:textAllCaps="true"
+        android:textColor="@color/fw_muted"
+        android:textSize="@dimen/fw_text_body"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

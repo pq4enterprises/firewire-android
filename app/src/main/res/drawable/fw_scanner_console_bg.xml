@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- scanner instrument console: fixed dark face with red bezel (Direction 1A) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <gradient
+        android:angle="270"
+        android:startColor="@color/fw_scanner_console_top"
+        android:endColor="@color/fw_scanner_console_bottom" />
+    <corners android:radius="@dimen/fw_corner_card" />
+    <stroke android:width="@dimen/fw_hairline_width" android:color="@color/fw_scanner_console_border" />
+</shape>

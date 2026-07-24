@@ -71,4 +71,25 @@
     <!-- solid swatch for the map legend dot (chip background is tinted) -->
     <color name="fw_unit_soc_legend">@color/fw_orange</color>
 
+    <!--
+        Scanner "Instrument Panel" console (Direction 1A).
+        The receiver console is a fixed dark hardware face in BOTH light and
+        dark mode (like the map segment control); no values-night overrides.
+    -->
+    <color name="fw_scanner_console_top">#12141B</color>
+    <color name="fw_scanner_console_bottom">#0C0D12</color>
+    <!-- fw_red at 34% -->
+    <color name="fw_scanner_console_border">#57E5342A</color>
+    <color name="fw_scanner_cell">#0B0C11</color>
+    <!-- 6% white grid lines between readout cells -->
+    <color name="fw_scanner_grid_line">#0FFFFFFF</color>
+    <!-- 7% white divider under the console top strip -->
+    <color name="fw_scanner_console_divider">#12FFFFFF</color>
+    <color name="fw_scanner_console_text">#FFFFFF</color>
+    <color name="fw_scanner_console_muted">#8B93A1</color>
+    <color name="fw_scanner_console_label">#5B6270</color>
+    <!-- 9% white unlit LED segment -->
+    <color name="fw_scanner_seg_off">#17FFFFFF</color>
+    <color name="fw_scanner_wave_top">#4ADE80</color>
+
 </resources>
