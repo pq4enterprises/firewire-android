@@ -145,7 +145,9 @@ class UpdateProfileActivity:BaseActivity(),ImageDataListener {
     }
 
     private fun initUi() {
-        binding.toolbar.tvTitle.text = getString(R.string.update_profile)
+        binding.toolbar.tvToolbarTitle.text = getString(R.string.edit_profile).uppercase()
+        binding.toolbar.tvToolbarTitle.visible()
+        binding.toolbar.ivFeed.gone()
     }
 
     private fun clickEvent() {
@@ -157,7 +159,7 @@ class UpdateProfileActivity:BaseActivity(),ImageDataListener {
             createRequestFormat()
         }
 
-        binding.toolbar.tvBack.setOnClickListener {
+        binding.toolbar.ivMenu.setOnClickListener {
             finish()
         }
 

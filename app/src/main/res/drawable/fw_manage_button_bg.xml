@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- outlined MANAGE SUBSCRIPTION button on the subscribed premium card -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@android:color/transparent" />
+    <corners android:radius="@dimen/fw_corner_medium" />
+    <stroke android:width="2dp" android:color="@color/fw_dark_red" />
+</shape>

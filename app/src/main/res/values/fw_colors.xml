@@ -33,6 +33,16 @@
     <color name="fw_info_tint">#DDEBFF</color>
     <color name="fw_success_tint">#D6F2DF</color>
 
+    <!-- premium subscription card (gold): fixed palette from the mockup,
+         identical in both modes — text on it is always dark -->
+    <color name="fw_gold_start">#F7D97A</color>
+    <color name="fw_gold_end">#F2C64B</color>
+    <!-- rgb(120,80,10) at 45% / 28% -->
+    <color name="fw_gold_border">#7378500A</color>
+    <color name="fw_gold_divider">#4778500A</color>
+    <color name="fw_gold_text">#1A1206</color>
+    <color name="fw_gold_muted">#5B4A12</color>
+
     <!-- map overlays: drawn over map imagery, same in both modes -->
     <color name="fw_map_overlay">#8C000000</color>
     <color name="fw_map_segment_bg">#80000000</color>

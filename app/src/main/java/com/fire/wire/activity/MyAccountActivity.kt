@@ -1,15 +1,30 @@
 package com.fire.wire.activity
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.android.billingclient.api.*
 import com.bumptech.glide.Glide
+import com.fire.wire.R
 import com.fire.wire.databinding.ActivityMyAccountBinding
+import com.fire.wire.model.user.request.DeleteUser
+import com.fire.wire.model.user.response.CommonResponse
 import com.fire.wire.model.user.response.UserDetails
 import com.fire.wire.prefs
+import com.fire.wire.resource.Resource
+import com.fire.wire.resource.ResourceState
+import com.fire.wire.utils.Constants
 import com.fire.wire.utils.Constants.SUB_PRODUCT_ID
 import com.fire.wire.utils.IntentUtils.UPDATE_PROFILE
+import com.fire.wire.utils.gone
 import com.fire.wire.utils.showToast
+import com.fire.wire.utils.startNewActivity
+import com.fire.wire.utils.visible
+import com.fire.wire.viewModel.FireWireViewModel
 import com.google.android.gms.common.util.CollectionUtils.listOf
 import com.google.android.gms.wallet.*
 import com.onesignal.OneSignal
@@ -23,6 +38,7 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener,PurchaseHisto
     private  var skuItem:ProductDetails?=null
     private lateinit var binding: ActivityMyAccountBinding
     private lateinit var paymentsClient: PaymentsClient
+    private lateinit var vm: FireWireViewModel
     private var isPurchased= false
 
     //private var isGpayAvailable= false
@@ -37,12 +53,77 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener,PurchaseHisto
         super.onCreate(savedInstanceState)
         binding = ActivityMyAccountBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        vm = ViewModelProvider(this).get(FireWireViewModel::class.java)
         //paymentsClient = createPaymentsClient(this)
 
 
+        initToolbar()
         initExtra()
+        initApiCall()
         clickEvent()
         initUi()
+    }
+
+    private fun initToolbar() {
+        binding.toolbar.tvToolbarTitle.text = getString(R.string.my_account).uppercase()
+        binding.toolbar.tvToolbarTitle.visible()
+        binding.toolbar.ivFeed.gone()
+        binding.toolbar.ivMenu.setOnClickListener {
+            finish()
+        }
+    }
+
+    private fun initApiCall() {
+        vm.deleteUserLiveData.observe(this, Observer {
+            updateDeleteUser(it)
+        })
+    }
+
+    private fun updateDeleteUser(response: Resource<CommonResponse>) {
+        when(response.state){
+            ResourceState.LOADING -> binding.progress.visible()
+            ResourceState.SUCCESS -> {
+                binding.progress.gone()
+                if(response.data?.code== Constants.CODE_SUCCESS || response.data?.code=="profile_updated") {
+                    startNewActivity(LoginNewActivity::class.java)
+                }else{
+                    showAlert(response.data?.message.toString())
+                }
+            }
+            ResourceState.ERROR -> {
+                binding.progress.gone()
+                showAlert(response.message)
+                if(response.message==getString(R.string.token_expired)) {
+                    startNewActivity(LoginNewActivity::class.java)
+                }
+            }
+            else -> {}
+        }
+    }
+
+    /**
+     * Premium vs basic: mirrors the server-side check (anything other than
+     * an empty role or "basic_user" is a premium role), plus the in-session
+     * flag set right after a successful, acknowledged purchase.
+     */
+    private fun isPremium(): Boolean {
+        val role = userDetails.role ?: ""
+        return isPurchased || (role.isNotEmpty() && role != "basic_user")
+    }
+
+    /** Shows the subscribed or non-subscribed variant of the premium card. */
+    private fun renderSubscriptionState() {
+        if (isPremium()) {
+            binding.llPriceHeader.gone()
+            binding.btnGetNow.gone()
+            binding.llSubscribedHeader.visible()
+            binding.btnManageSubscription.visible()
+        } else {
+            binding.llSubscribedHeader.gone()
+            binding.btnManageSubscription.gone()
+            binding.llPriceHeader.visible()
+            binding.btnGetNow.visible()
+        }
     }
 
     override fun onResume() {
@@ -59,6 +140,7 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener,PurchaseHisto
         userDetails = intent.getParcelableExtra(UPDATE_PROFILE) ?: UserDetails()
         binding.tvProfileName.text = userDetails.firstName.plus(" ").plus(userDetails.lastName)
         binding.tvProfileEmail.text = userDetails.email
+        renderSubscriptionState()
     }
 
     private fun initUi() {
@@ -226,13 +308,21 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener,PurchaseHisto
 
 
     private fun clickEvent() {
-        binding.tvBack.setOnClickListener {
-            finish()
-        }
         binding.tvUpdateProfile.setOnClickListener {
-            val intent = Intent(this, UpdateProfileActivity::class.java)
-            intent.putExtra(UPDATE_PROFILE, userDetails)
-            startActivity(intent)
+            moveToEditProfile()
+        }
+        binding.tvEditProfile.setOnClickListener {
+            moveToEditProfile()
+        }
+        binding.tvAreasAlerts.setOnClickListener {
+            startActivity(Intent(this, AreasAlertsActivity::class.java))
+        }
+        binding.btnManageSubscription.setOnClickListener {
+            // Google Play subscription management for this app's subscription
+            moveToLink("https://play.google.com/store/account/subscriptions?sku=$SUB_PRODUCT_ID&package=$packageName")
+        }
+        binding.tvDeleteAccount.setOnClickListener {
+            showAlertDialogButtonClicked(getString(R.string.confirm_delete))
         }
 
         binding.btnGetNow.setOnClickListener {
@@ -279,6 +369,37 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener,PurchaseHisto
         //ButtonConstants.ButtonType = SUBSCRIBE
     }
 
+    private fun moveToEditProfile() {
+        val intent = Intent(this, UpdateProfileActivity::class.java)
+        intent.putExtra(UPDATE_PROFILE, userDetails)
+        startActivity(intent)
+    }
+
+    private fun showAlertDialogButtonClicked(msg: String) {
+        val builder = AlertDialog.Builder(this)
+
+        // custom layout with the delete-reason field (same flow as the menu screen)
+        val customLayout = layoutInflater.inflate(R.layout.dialog_custom_alert, null)
+        builder.setView(customLayout)
+
+        builder.setTitle(resources.getString(R.string.app_name))
+        builder.setMessage(msg)
+
+        builder.setPositiveButton("OK") { _: DialogInterface?, _: Int ->
+            val editText: EditText = customLayout.findViewById(R.id.editText)
+            if(editText.text.toString().isEmpty()){
+                showToast(this,"Kindly enter your reason")
+            }else{
+                val request= DeleteUser(true, editText.text.toString())
+                vm.deleteUser(request)
+            }
+        }
+        builder.setNegativeButton(android.R.string.cancel) { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.create().show()
+    }
+
 
     private fun acknowledgePurchase(purchaseToken: String) {
         val params = AcknowledgePurchaseParams.newBuilder()
@@ -290,6 +411,7 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener,PurchaseHisto
                 println("debugMessa:"+debugMessage)
                 showToast(this,"Item Purchased")
                 isPurchased=true
+                runOnUiThread { renderSubscriptionState() }
             }
         }
     }

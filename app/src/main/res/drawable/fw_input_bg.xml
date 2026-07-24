@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- rounded field fill for edit-profile inputs (design screen 12 · EDIT PROFILE) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/fw_surface2" />
+    <corners android:radius="@dimen/fw_corner_medium" />
+</shape>

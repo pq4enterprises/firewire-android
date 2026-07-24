@@ -1,174 +1,288 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- EDIT PROFILE — design screen 12 · EDIT PROFILE: avatar + CHANGE PHOTO,
+     field card, pinned SAVE AND UPDATE / CHANGE PASSWORD? footer -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/fw_background">
 
     <include
         android:id="@+id/toolbar"
-        layout="@layout/toolbar_third_layout"
+        layout="@layout/toolbar_secondary_layout"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"/>
+        app:layout_constraintLeft_toLeftOf="parent" />
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintVertical_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/dis_10"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintBottom_toTopOf="@+id/ll_save_bar"
         app:layout_constraintLeft_toLeftOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/dis_16"
+            android:paddingRight="@dimen/dis_16">
+
+            <!-- avatar + camera badge -->
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/dis_16">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/iv_profile"
+                    android:layout_width="86dp"
+                    android:layout_height="86dp"
+                    android:src="@drawable/ic_user_profile_empty" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="bottom|end"
+                    android:padding="7dp"
+                    android:background="@drawable/fw_circle_bg"
+                    android:backgroundTint="@color/fw_red"
+                    android:src="@drawable/ic_camera"
+                    app:tint="@color/white" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tv_change_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:padding="@dimen/dis_10"
+                android:fontFamily="@font/poppins_bold"
+                android:textSize="@dimen/fw_text_caption"
+                android:textColor="@color/fw_red"
+                android:textAllCaps="true"
+                android:letterSpacing="0.05"
+                android:text="@string/change_photo" />
+
+            <!-- field card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dis_5"
+                android:orientation="vertical"
+                android:padding="@dimen/dis_16"
+                android:background="@drawable/fw_card_bg">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="6dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/TextAppearance.FireWire.Subtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:letterSpacing="0.08"
+                            android:text="@string/first_name" />
+
+                        <EditText
+                            android:id="@+id/et_first_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_marginTop="7dp"
+                            android:paddingLeft="14dp"
+                            android:paddingRight="14dp"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:background="@drawable/fw_input_bg"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="@dimen/fw_text_section"
+                            android:textColor="@color/fw_text"
+                            android:textColorHint="@color/fw_muted" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="6dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/TextAppearance.FireWire.Subtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:letterSpacing="0.08"
+                            android:text="@string/last_name" />
+
+                        <EditText
+                            android:id="@+id/et_last_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_marginTop="7dp"
+                            android:paddingLeft="14dp"
+                            android:paddingRight="14dp"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:background="@drawable/fw_input_bg"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="@dimen/fw_text_section"
+                            android:textColor="@color/fw_text"
+                            android:textColorHint="@color/fw_muted" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    style="@style/TextAppearance.FireWire.Subtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:letterSpacing="0.08"
+                    android:text="@string/email_address" />
+
+                <EditText
+                    android:id="@+id/et_email_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="7dp"
+                    android:paddingLeft="14dp"
+                    android:paddingRight="14dp"
+                    android:inputType="textEmailAddress"
+                    android:maxLines="1"
+                    android:enabled="false"
+                    android:focusableInTouchMode="false"
+                    android:clickable="false"
+                    android:background="@drawable/fw_input_bg"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textSize="@dimen/fw_text_section"
+                    android:textColor="@color/fw_muted"
+                    android:textColorHint="@color/fw_muted" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="6dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/TextAppearance.FireWire.Subtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:letterSpacing="0.08"
+                            android:text="@string/phone_num" />
+
+                        <EditText
+                            android:id="@+id/et_phone_no"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_marginTop="7dp"
+                            android:paddingLeft="14dp"
+                            android:paddingRight="14dp"
+                            android:inputType="phone"
+                            android:maxLines="1"
+                            android:background="@drawable/fw_input_bg"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="@dimen/fw_text_section"
+                            android:textColor="@color/fw_text"
+                            android:textColorHint="@color/fw_muted" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="6dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/TextAppearance.FireWire.Subtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:letterSpacing="0.08"
+                            android:text="@string/title_position" />
+
+                        <EditText
+                            android:id="@+id/et_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_marginTop="7dp"
+                            android:paddingLeft="14dp"
+                            android:paddingRight="14dp"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:background="@drawable/fw_input_bg"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:textSize="@dimen/fw_text_section"
+                            android:textColor="@color/fw_text"
+                            android:textColorHint="@color/fw_muted" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- pinned footer: SAVE AND UPDATE + CHANGE PASSWORD? -->
     <LinearLayout
+        android:id="@+id/ll_save_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/fw_surface"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/iv_profile"
-        android:layout_width="98dp"
-        android:layout_height="98dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/dis_20"
-        android:src="@drawable/ic_user_profile_empty"/>
-    <TextView
-        android:id="@+id/tv_change_img"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/app_red"
-        android:textSize="@dimen/text_16"
-        android:text="@string/change"
-        android:layout_gravity="center"
-        android:padding="@dimen/dis_10"
-        android:fontFamily="@font/poppins_medium"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fw_hairline_width"
+            android:background="@color/fw_hairline" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/text_12"
-        android:layout_marginStart="@dimen/dis_16"
-        android:textColor="@color/email_text"
-        android:fontFamily="@font/poppins_regular"
-        android:text="@string/first_name"/>
-    <EditText
-        android:id="@+id/et_first_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="text"
-        android:paddingStart="@dimen/dis_16"
-        android:paddingEnd="@dimen/dis_16"
-        android:layout_marginStart="@dimen/dis_16"
-        android:layout_marginEnd="@dimen/dis_16"
-        android:layout_marginTop="@dimen/dis_3"
-        android:background="@drawable/ic_rectangle_edit"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/text_12"
-        android:layout_marginTop="@dimen/dis_20"
-        android:layout_marginStart="@dimen/dis_16"
-        android:textColor="@color/email_text"
-        android:fontFamily="@font/poppins_regular"
-        android:text="@string/last_name"/>
-    <EditText
-        android:id="@+id/et_last_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dis_16"
-        android:layout_marginEnd="@dimen/dis_16"
-        android:paddingStart="@dimen/dis_16"
-        android:paddingEnd="@dimen/dis_16"
-        android:layout_marginTop="@dimen/dis_3"
-        android:inputType="text"
-        android:background="@drawable/ic_rectangle_edit"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/text_12"
-        android:layout_marginTop="@dimen/dis_20"
-        android:layout_marginStart="@dimen/dis_16"
-        android:textColor="@color/email_text"
-        android:fontFamily="@font/poppins_regular"
-        android:text="@string/email_address"/>
-    <EditText
-        android:id="@+id/et_email_address"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dis_16"
-        android:layout_marginEnd="@dimen/dis_16"
-        android:paddingStart="@dimen/dis_16"
-        android:paddingEnd="@dimen/dis_16"
-        android:enabled="false"
-        android:focusableInTouchMode="false"
-        android:clickable="false"
-        android:layout_marginTop="@dimen/dis_3"
-        android:inputType="textEmailAddress"
-        android:background="@drawable/ic_rectangle_edit"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/text_12"
-        android:layout_marginTop="@dimen/dis_20"
-        android:layout_marginStart="@dimen/dis_16"
-        android:textColor="@color/email_text"
-        android:fontFamily="@font/poppins_regular"
-        android:text="@string/phone_num"/>
-    <EditText
-        android:id="@+id/et_phone_no"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dis_16"
-        android:layout_marginEnd="@dimen/dis_16"
-        android:layout_marginTop="@dimen/dis_3"
-        android:paddingStart="@dimen/dis_16"
-        android:paddingEnd="@dimen/dis_16"
-        android:inputType="phone"
-        android:background="@drawable/ic_rectangle_edit"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/text_12"
-        android:layout_marginTop="@dimen/dis_20"
-        android:layout_marginStart="@dimen/dis_16"
-        android:textColor="@color/email_text"
-        android:fontFamily="@font/poppins_regular"
-        android:text="@string/title_position"/>
-    <EditText
-        android:id="@+id/et_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/dis_16"
-        android:layout_marginEnd="@dimen/dis_16"
-        android:layout_marginTop="@dimen/dis_3"
-        android:inputType="text"
-        android:paddingStart="@dimen/dis_16"
-        android:paddingEnd="@dimen/dis_16"
-        android:background="@drawable/ic_rectangle_edit"/>
-    <Button
-        android:id="@+id/btn_update"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/dis_10"
-        android:textColor="@color/white"
-        android:textSize="@dimen/text_16"
-        android:fontFamily="@font/poppins_regular"
-        android:textAllCaps="false"
-        android:layout_marginTop="@dimen/dis_16"
-        android:layout_marginStart="@dimen/dis_16"
-        android:layout_marginEnd="@dimen/dis_16"
-        android:text="@string/save_update"/>
+        <TextView
+            android:id="@+id/btn_update"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/fw_button_bg"
+            android:gravity="center"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="@dimen/fw_text_section"
+            android:textColor="@color/white"
+            android:textAllCaps="true"
+            android:letterSpacing="0.08"
+            android:text="@string/save_update" />
+
         <TextView
             android:id="@+id/tv_change_password"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/app_red"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp"
             android:gravity="center"
-            android:textSize="@dimen/text_16"
-            android:fontFamily="@font/poppins_medium"
-            android:layout_gravity="center"
-            android:padding="@dimen/dis_30"
-            android:layout_marginBottom="@dimen/dis_50"
-            android:text="@string/change_password"/>
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="@dimen/fw_text_body"
+            android:textColor="@color/fw_red"
+            android:textAllCaps="true"
+            android:letterSpacing="0.04"
+            android:text="@string/change_password" />
     </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="wrap_content"
@@ -179,4 +293,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

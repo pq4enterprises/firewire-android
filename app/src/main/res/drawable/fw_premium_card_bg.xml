@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- gold premium-subscription card: vertical gold gradient with a dashed
+     border, per design screens 07 · PROFILE / 08 · SUBSCRIBED -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <gradient
+        android:angle="270"
+        android:startColor="@color/fw_gold_start"
+        android:endColor="@color/fw_gold_end" />
+    <corners android:radius="18dp" />
+    <stroke
+        android:width="2dp"
+        android:color="@color/fw_gold_border"
+        android:dashWidth="7dp"
+        android:dashGap="5dp" />
+</shape>

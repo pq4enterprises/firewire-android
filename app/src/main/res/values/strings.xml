@@ -87,6 +87,13 @@
     <string name="add_free">An Ad-Free app experience</string>
     <string name="custom_notification">Custom notifications (specific units, boros, incident types, etc.) and more to come!</string>
     <string name="get_now">Get Now</string>
+    <string name="fw_price_month">$5.99</string>
+    <string name="fw_active">Active</string>
+    <string name="fw_premium_account">Premium Account</string>
+    <string name="fw_you_have_access">You Have Access To</string>
+    <string name="fw_manage_subscription">Manage Subscription</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="change_photo">Change Photo</string>
     <string name="terms_of_service">Terms Of Service</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="sign_out">Sign Out</string>
