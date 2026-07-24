@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.widget.ImageViewCompat
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -18,6 +19,7 @@ import com.fire.wire.R
 import com.fire.wire.ReplaceCallback
 import com.fire.wire.activity.AreasAlertsActivity
 import com.fire.wire.activity.LoginNewActivity
+import com.fire.wire.activity.MapsActivity
 import com.fire.wire.activity.WireDetailActivity
 import com.fire.wire.adapter.setUpAdapter
 import com.fire.wire.callback.CallbackFunctions
@@ -255,11 +257,17 @@ class WireFragment: Fragment() {
         callbackFunctions= context as? CallbackFunctions
     }
 
+    // Returning from Areas & Alerts re-fetches the feed so new area selections show immediately
+    private val areasAlertsLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            (activity as? MapsActivity)?.refreshFeed()
+        }
+
     private fun clickEvents() {
         // FEED AREAS now opens the redesigned Areas & Alerts screen (the old
         // Personalization-era FilterFragment flow is retired)
         binding.tvFilter.setOnClickListener {
-            startActivity(Intent(requireContext(), AreasAlertsActivity::class.java))
+            areasAlertsLauncher.launch(Intent(requireContext(), AreasAlertsActivity::class.java))
         }
 
 

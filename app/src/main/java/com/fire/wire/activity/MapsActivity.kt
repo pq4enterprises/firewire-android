@@ -105,6 +105,11 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback,Callba
         })
     }
 
+    // Re-fetch the feed with the user's saved areas (observer from callApi stays registered)
+    fun refreshFeed() {
+        vm.getIncidentList(ArrayList(), ArrayList())
+    }
+
     private fun updateIncidentList(response: Resource<IncidentResponse>?) {
         when(response?.state){
             ResourceState.LOADING -> binding.progress.visible()
@@ -130,6 +135,7 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback,Callba
     }
 
     private fun formLatLng() {
+        locationArrayList.clear()
         incidentList.forEach {
             val latLng = LatLng(it.latitude?.toDouble()?:0.0, it.longitude?.toDouble()?:0.0)
             locationArrayList.add(latLng)
