@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- soft red circle behind the person icon when a commenter has no avatar,
+     design screen 10 · COMMENTS -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <solid android:color="@color/fw_red_tint" />
+</shape>

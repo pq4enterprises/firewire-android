@@ -41,6 +41,11 @@
     <string name="feed_areas">Feed Areas</string>
     <string name="filter">Filter</string>
     <string name="add_comment">Add a comment</string>
+    <!-- design screen 10 · COMMENTS: hint is literally uppercase (textAllCaps on
+         an EditText would also uppercase the typed text) -->
+    <string name="fw_add_comment">ADD A COMMENT</string>
+    <string name="fw_reply_count">1 Reply</string>
+    <string name="fw_replies_count">%1$s Replies</string>
     <string name="take_photo">Take Photo</string>
     <string name="cancel">Cancel</string>
     <string name="gallery">Gallery</string>

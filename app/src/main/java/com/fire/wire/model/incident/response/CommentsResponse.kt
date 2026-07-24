@@ -14,7 +14,11 @@ data class Comment(
    var _id:String?="",
    var userId:UserDetail?=null,
    var img:List<String>?=null,
-   var comment:String?=""
+   var comment:String?="",
+   // returned by GET api/app/incident/comment/{incidentId} (same payload iOS
+   // parses); surfaced by the 2026 design-system comment row
+   var createdAt:String?="",
+   var replies:List<Comment>?=null
 )
 
 data class UserDetail(
