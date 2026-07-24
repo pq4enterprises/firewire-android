@@ -3,6 +3,7 @@ import com.fire.wire.model.incident.request.AddCommentRequest
 import com.fire.wire.model.incident.response.CommentsResponse
 import com.fire.wire.model.incident.response.IncidentByIdResponse
 import com.fire.wire.model.incident.response.IncidentResponse
+import com.fire.wire.model.link.LinkResponse
 import com.fire.wire.model.locality.LocalityResponse
 import com.fire.wire.model.user.request.*
 import com.fire.wire.model.user.response.*
@@ -35,6 +36,10 @@ interface ApiEndPoints {
 
     @GET("api/app/locality?sortBy=createdAt&sortDir=desc")
     suspend fun getLocalityList():Response<LocalityResponse>
+
+    // show=true is required: without it the server paginates and caps results at 10
+    @GET("api/app/link?show=true")
+    suspend fun getLinks():Response<LinkResponse>
 
     @GET("api/app/incident/comment/{incidentId}")
     suspend fun getComments(@Path("incidentId") incidentId: String): Response<CommentsResponse>

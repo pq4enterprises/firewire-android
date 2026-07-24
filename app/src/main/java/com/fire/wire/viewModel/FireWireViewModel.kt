@@ -9,6 +9,7 @@ import com.fire.wire.model.incident.request.AddCommentRequest
 import com.fire.wire.model.incident.response.CommentsResponse
 import com.fire.wire.model.incident.response.IncidentByIdResponse
 import com.fire.wire.model.incident.response.IncidentResponse
+import com.fire.wire.model.link.LinkResponse
 import com.fire.wire.model.locality.LocalityResponse
 import com.fire.wire.model.user.request.*
 import com.fire.wire.model.user.response.CommonResponse
@@ -31,6 +32,7 @@ class FireWireViewModel @Inject constructor(val context: Application) : AndroidV
     val incidentLiveData = MutableLiveData<Resource<IncidentResponse>>()
     val incidentByIdLiveData = MutableLiveData<Resource<IncidentByIdResponse>>()
     val localityLiveData = MutableLiveData<Resource<LocalityResponse>>()
+    val linkLiveData = MutableLiveData<Resource<LinkResponse>>()
     val commentsLiveData = MutableLiveData<Resource<CommentsResponse>>()
     val userLiveData = MutableLiveData<Resource<UserResponse>>()
     val updateProfileLiveData = MutableLiveData<Resource<CommonResponse>>()
@@ -63,6 +65,12 @@ class FireWireViewModel @Inject constructor(val context: Application) : AndroidV
     fun getLocalityList(){
         viewModelScope.launch {
             fireWireRepo.getLocalityList(localityLiveData)
+        }
+    }
+
+    fun getLinks(){
+        viewModelScope.launch {
+            fireWireRepo.getLinks(linkLiveData)
         }
     }
 

@@ -18,8 +18,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 
 import android.content.res.ColorStateList
 import androidx.core.content.ContextCompat
+import com.fire.wire.adapter.Kadapter
 import com.fire.wire.adapter.setUpAdapter
 import com.fire.wire.databinding.ItemMenuTileBinding
+import com.fire.wire.model.link.LinkResponse
 import com.fire.wire.model.user.request.DeleteUser
 import com.fire.wire.model.user.response.CommonResponse
 import android.content.DialogInterface
@@ -34,9 +36,16 @@ import com.fire.wire.utils.*
 @AndroidEntryPoint
 class NavigationMenuActivity: BaseActivity() {
 
+    companion object {
+        private const val GRID_TOTAL_SPANS = 6
+        private const val MAX_TILES_PER_ROW = 3
+    }
+
     private lateinit var binding: ActivityNavigationMenuBinding
     private lateinit var vm: FireWireViewModel
     private var userDetails= UserDetails()
+    private val gridList = ArrayList<GridItems>()
+    private var gridAdapter: Kadapter<GridItems, ItemMenuTileBinding>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +73,12 @@ class NavigationMenuActivity: BaseActivity() {
 
         vm.deleteUserLiveData.observe(this, Observer {
             updateDeleteUser(it)
+        })
+
+        // shortcut tiles: fetch server links without blocking the static menu
+        vm.getLinks()
+        vm.linkLiveData.observe(this, Observer {
+            updateShortcutsFromLinks(it)
         })
     }
 
@@ -118,50 +133,110 @@ class NavigationMenuActivity: BaseActivity() {
         binding.tvEmail.text= data.email
     }
 
+    private fun personalizationTile() = GridItems(
+        getString(R.string.personalization), R.drawable.fw_ic_gear,
+        R.color.fw_success, R.color.fw_success_tint,
+        isPersonalization = true
+    )
+
+    private fun defaultShortcutTiles() = listOf(
+        GridItems(getString(R.string.submit_tip), R.drawable.fw_ic_alert,
+            R.color.fw_orange, R.color.fw_orange_tint,
+            url = "https://nycfirewire.net/send-a-tip/"),
+        GridItems(getString(R.string.fw_chicago_podcast), R.drawable.fw_ic_podcast,
+            R.color.fw_text, R.color.fw_surface2,
+            url = "https://www.chicagosbraveststories.com"),
+        GridItems(getString(R.string.fw_firewire_website), R.drawable.fw_ic_globe,
+            R.color.fw_red, R.color.fw_red_tint,
+            url = "https://nycfirewire.net/"),
+        GridItems(getString(R.string.fw_contact), R.drawable.fw_ic_mail,
+            R.color.fw_info, R.color.fw_info_tint,
+            url = "https://nycfirewire.net/contact/"),
+        personalizationTile()
+    )
+
     private fun setupShortcutsGrid() {
-        val gridItems = listOf(
-            GridItems(getString(R.string.submit_tip), R.drawable.fw_ic_alert,
-                R.color.fw_orange, R.color.fw_orange_tint),
-            GridItems(getString(R.string.fw_chicago_podcast), R.drawable.fw_ic_podcast,
-                R.color.fw_text, R.color.fw_surface2),
-            GridItems(getString(R.string.fw_firewire_website), R.drawable.fw_ic_globe,
-                R.color.fw_red, R.color.fw_red_tint),
-            GridItems(getString(R.string.fw_contact), R.drawable.fw_ic_mail,
-                R.color.fw_info, R.color.fw_info_tint),
-            GridItems(getString(R.string.personalization), R.drawable.fw_ic_gear,
-                R.color.fw_success, R.color.fw_success_tint)
-        )
+        gridList.clear()
+        gridList.addAll(defaultShortcutTiles())
 
-        val gridList= ArrayList(gridItems)
-
-        // mockup grid: 2 wide tiles on the first row, 3 on the second
-        val manager = GridLayoutManager(this, 6)
+        // Balanced grid over a 6-span row: up to 3 tiles per row, smaller rows
+        // first — 5 tiles keeps the mockup's 2+3 layout, and any other count
+        // (1, 3, 4, 6, 8...) fills clean rows with the same spacing.
+        val manager = GridLayoutManager(this, GRID_TOTAL_SPANS)
         manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-            override fun getSpanSize(position: Int) = if (position < 2) 3 else 2
+            override fun getSpanSize(position: Int): Int {
+                val count = gridList.size
+                if (count <= 0 || position >= count) return GRID_TOTAL_SPANS
+                val rows = (count + MAX_TILES_PER_ROW - 1) / MAX_TILES_PER_ROW
+                val base = count / rows
+                val extra = count % rows
+                // first (rows - extra) rows hold `base` tiles, the rest base + 1
+                var index = 0
+                for (row in 0 until rows) {
+                    val tilesInRow = if (row < rows - extra) base else base + 1
+                    if (position < index + tilesInRow) return GRID_TOTAL_SPANS / tilesInRow
+                    index += tilesInRow
+                }
+                return GRID_TOTAL_SPANS
+            }
         }
 
-        binding.gvData.setUpAdapter(
+        gridAdapter = binding.gvData.setUpAdapter(
             gridList,
             R.layout.item_menu_tile,
             ItemMenuTileBinding::inflate,
-            { it,pos,bindingItem->
-                bindingItem.ivIcon.setImageResource(it.image)
-                bindingItem.ivIcon.imageTintList = ColorStateList.valueOf(
-                    ContextCompat.getColor(this@NavigationMenuActivity, it.iconTint))
-                bindingItem.ivIcon.backgroundTintList = ColorStateList.valueOf(
-                    ContextCompat.getColor(this@NavigationMenuActivity, it.iconBg))
+            { it,_,bindingItem->
+                if (!it.imageUrl.isNullOrEmpty()) {
+                    // server-provided icon: untinted image on a neutral circle
+                    bindingItem.ivIcon.imageTintList = null
+                    bindingItem.ivIcon.backgroundTintList = ColorStateList.valueOf(
+                        ContextCompat.getColor(this@NavigationMenuActivity, R.color.fw_surface2))
+                    Glide.with(this@NavigationMenuActivity)
+                        .load(it.imageUrl)
+                        .into(bindingItem.ivIcon)
+                } else {
+                    bindingItem.ivIcon.setImageResource(it.image)
+                    bindingItem.ivIcon.imageTintList = ColorStateList.valueOf(
+                        ContextCompat.getColor(this@NavigationMenuActivity, it.iconTint))
+                    bindingItem.ivIcon.backgroundTintList = ColorStateList.valueOf(
+                        ContextCompat.getColor(this@NavigationMenuActivity, it.iconBg))
+                }
                 bindingItem.tvTitle.text= it.title
-                bindingItem.tileRoot.setOnClickListener {
-                    when(pos){
-                        0-> moveToLink("https://nycfirewire.net/send-a-tip/")
-                        1-> moveToLink("https://www.chicagosbraveststories.com")
-                        2-> moveToLink("https://nycfirewire.net/")
-                        3-> moveToLink("https://nycfirewire.net/contact/")
-                        4-> moveToPersonalActivity()
+                bindingItem.tileRoot.setOnClickListener { _ ->
+                    when {
+                        it.isPersonalization -> moveToPersonalActivity()
+                        !it.url.isNullOrEmpty() -> moveToLink(it.url!!)
                     }
                 }
             },{}, manager = manager)
 
+    }
+
+    /**
+     * Non-blocking: the static tiles above are shown immediately; when the
+     * Link API responds with at least one link, the four external-URL tiles
+     * are replaced by the server links (Personalization always stays, last).
+     * On error or an empty list the static tiles remain untouched.
+     */
+    private fun updateShortcutsFromLinks(response: Resource<LinkResponse>) {
+        if (response.state != ResourceState.SUCCESS) return
+        val links = response.data?.data?.data.orEmpty()
+            .filter { !it.url.isNullOrEmpty() && !it.name.isNullOrEmpty() }
+        if (links.isEmpty()) return
+
+        gridList.clear()
+        links.sortedBy { it.sort ?: 0 }.forEach { link ->
+            gridList.add(
+                GridItems(
+                    link.name?.uppercase(), R.drawable.fw_ic_globe,
+                    R.color.fw_text, R.color.fw_surface2,
+                    url = link.url,
+                    imageUrl = link.imageUrl
+                )
+            )
+        }
+        gridList.add(personalizationTile())
+        gridAdapter?.notifyDataSetChanged()
     }
 
 

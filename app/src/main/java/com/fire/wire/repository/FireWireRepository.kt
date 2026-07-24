@@ -13,6 +13,7 @@ import com.fire.wire.model.incident.response.CommentsResponse
 import com.fire.wire.model.incident.response.FilterData
 import com.fire.wire.model.incident.response.IncidentByIdResponse
 import com.fire.wire.model.incident.response.IncidentResponse
+import com.fire.wire.model.link.LinkResponse
 import com.fire.wire.model.locality.LocalityResponse
 import com.fire.wire.model.user.request.*
 import com.fire.wire.model.user.response.CommonResponse
@@ -102,6 +103,23 @@ class FireWireRepository @Inject constructor(
         }
     }
 
+
+    suspend fun getLinks(
+        liveData: MutableLiveData<Resource<LinkResponse>>
+    ) {
+        liveData.setLoading()
+        try {
+            val result = apiEndPoint.getLinks()
+            if (result.isSuccessful) {
+                liveData.setSuccess(result.body())
+            } else {
+                liveData.setError(errorHandling(result))
+            }
+
+        } catch (e: Exception) {
+            liveData.setError(e.message.toString())
+        }
+    }
 
     suspend fun getCommentsList(
         liveData: MutableLiveData<Resource<CommentsResponse>>,
