@@ -189,7 +189,7 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback,Callba
             override fun onStateChanged(view: View, newState: Int) {
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
-                        binding.appBarLayout.setBackgroundColor(resources.getColor(R.color.transparent_color))
+                        binding.appBarLayout.setBackgroundColor(resources.getColor(R.color.fw_surface))
                         binding.cvList.visible()
                         binding.cvMap.gone()
                         transparentToolbar()
@@ -199,14 +199,14 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback,Callba
                         binding.llTopView.visible()
                     }
                     BottomSheetBehavior.STATE_COLLAPSED -> {
-                        binding.appBarLayout.setBackgroundColor(resources.getColor(R.color.transparent_color))
+                        binding.appBarLayout.setBackgroundColor(resources.getColor(R.color.fw_surface))
                         binding.appBarLayout.visible()
                         binding.cvList.gone()
                         binding.cvMap.visible()
                         transparentToolbar()
                     }
                     BottomSheetBehavior.STATE_SETTLING -> {
-                        binding.appBarLayout.setBackgroundColor(resources.getColor(R.color.transparent_color))
+                        binding.appBarLayout.setBackgroundColor(resources.getColor(R.color.fw_surface))
                         transparentToolbar()
                         binding.cvMap.visible()
                     }
@@ -329,16 +329,18 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback,Callba
         ImageViewCompat.setImageTintList(this, ColorStateList.valueOf(ContextCompat.getColor(context, colorRes)))
         }
 
+    // 2026 design system: header is always a solid surface bar with text-tinted
+    // icons (both light and dark mode); only the sheet-state side effects differ.
     private fun whiteToolbar(){
-        binding.appBarLayout.setBackgroundColor(resources.getColor(R.color.white))
-        binding.toolbarLayout.ivFeed.setTint(R.color.black)
-        binding.toolbarLayout.ivMenu.setTint(R.color.black)
+        binding.appBarLayout.setBackgroundColor(resources.getColor(R.color.fw_surface))
+        binding.toolbarLayout.ivFeed.setTint(R.color.fw_text)
+        binding.toolbarLayout.ivMenu.setTint(R.color.fw_text)
     }
 
     private fun transparentToolbar(){
-        binding.appBarLayout.setBackgroundColor(resources.getColor(R.color.transparent_color))
-        binding.toolbarLayout.ivFeed.setTint(R.color.white)
-        binding.toolbarLayout.ivMenu.setTint(R.color.white)
+        binding.appBarLayout.setBackgroundColor(resources.getColor(R.color.fw_surface))
+        binding.toolbarLayout.ivFeed.setTint(R.color.fw_text)
+        binding.toolbarLayout.ivMenu.setTint(R.color.fw_text)
         binding.llTopView.gone()
     }
 

@@ -2,11 +2,14 @@ package com.fire.wire.fragment
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
+import androidx.core.widget.ImageViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -159,6 +162,9 @@ class WireFragment: Fragment() {
                 if(it.isLiked)
                 bindingItem.ivRating.setImageResource(R.drawable.ic_rating_red)
                 else bindingItem.ivRating.setImageResource(R.drawable.ic_rating)
+                // design-system tint: red when starred, muted otherwise (dark-mode safe)
+                ImageViewCompat.setImageTintList(bindingItem.ivRating, ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), if(it.isLiked) R.color.fw_red else R.color.fw_muted)))
 
                 bindingItem.ivRating.setOnClickListener { view->
                     isLikeSingle= !it.isLiked
@@ -170,21 +176,19 @@ class WireFragment: Fragment() {
                 bindingItem.tvDateTime.text= DateUtils.getFormattedDateOfFireWire(it.createdAt.toString())
 
                 if(it.featuredImageUrl.isNullOrEmpty()){
-                    bindingItem.ivBanner.gone()
+                    bindingItem.cardBanner.gone()
                 }else{
                     Glide.with(this)
                         .load(it.featuredImageUrl)
                         .into(bindingItem.ivBanner)
-                    bindingItem.ivBanner.visible()
+                    bindingItem.cardBanner.visible()
                 }
 
                 bindingItem.tvAddress.text= it.address
-                bindingItem.tvRateCount.text= getString(R.string.star,it.likeCount)
+                // design-system card shows bare counts inside the star/comment chips
+                bindingItem.tvRateCount.text= if(it.likeCount.isNullOrEmpty()) "0" else it.likeCount
                 val count= if(it.commentCount.isNullOrEmpty())"0" else it.commentCount
-
-                if(count.toInt()>1)
-                bindingItem.tvCommentCount.text= getString(R.string.comments,count)
-                else bindingItem.tvCommentCount.text= getString(R.string.comment,count)
+                bindingItem.tvCommentCount.text= count
 
                 bindingItem.ivCommand.setOnClickListener { view->
                     callback?.replaceFragment(NAV_COMMENT_LIST,it._id.toString())

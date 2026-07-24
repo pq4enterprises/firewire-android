@@ -1,123 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    WIRE / NEWS segmented toggle (2026 design system).
+    IDs are load-bearing: MapsActivity swaps visibility of cv_wire / cv_news
+    (selected pills) and tv_wire / tv_news (unselected labels).
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    <androidx.constraintlayout.widget.ConstraintLayout
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:weightSum="2">
-        <androidx.cardview.widget.CardView
-            android:layout_width="wrap_content"
-            android:layout_height="45dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:cardCornerRadius="100dp"
-            app:cardBackgroundColor="#EFEFEF">
-           <androidx.constraintlayout.widget.ConstraintLayout
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content">
-               <FrameLayout
-                   android:id="@+id/fl1"
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-                   app:layout_constraintHorizontal_weight="1"
-                   app:layout_constraintTop_toTopOf="parent"
-                   app:layout_constraintBottom_toBottomOf="parent"
-                   app:layout_constraintEnd_toStartOf="@+id/fl2"
-                   app:layout_constraintStart_toStartOf="parent">
-                   <TextView
-                       android:id="@+id/tv_wire"
-                       android:layout_width="match_parent"
-                       android:layout_height="match_parent"
-                       android:gravity="center"
-                       android:textColor="@color/black"
-                       android:visibility="visible"
-                       android:textSize="@dimen/text_14"
-                       android:layout_gravity="center"
-                       android:paddingRight="@dimen/dis_30"
-                       android:paddingLeft="@dimen/dis_30"
-                       android:paddingTop="@dimen/dis_5"
-                       android:paddingBottom="@dimen/dis_5"
-                       android:text="@string/wire"/>
-                   <androidx.cardview.widget.CardView
-                       android:id="@+id/cv_wire"
-                       android:layout_width="wrap_content"
-                       android:layout_height="42dp"
-                       app:cardCornerRadius="@dimen/dis_30"
-                       android:visibility="visible"
-                       android:layout_marginTop="1dp"
-                       android:layout_marginBottom="1dp"
-                       app:cardBackgroundColor="@color/white">
-                       <TextView
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
-                           android:paddingLeft="@dimen/dis_30"
-                           android:paddingTop="@dimen/dis_10"
-                           android:paddingBottom="@dimen/dis_10"
-                           android:textColor="@color/app_red"
-                           android:textSize="@dimen/text_14"
-                           android:fontFamily="@font/poppins_medium"
-                           android:paddingRight="@dimen/dis_30"
-                           android:text="@string/wire"/>
+        android:layout_height="46dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:orientation="horizontal"
+        android:background="@drawable/fw_toggle_track_bg"
+        android:padding="4dp">
 
-                   </androidx.cardview.widget.CardView>
-               </FrameLayout>
-               <FrameLayout
-                   android:id="@+id/fl2"
-                   app:layout_constraintStart_toEndOf="@+id/fl1"
-                   app:layout_constraintEnd_toEndOf="parent"
-                   app:layout_constraintTop_toTopOf="parent"
-                   app:layout_constraintHorizontal_weight="1"
-                   app:layout_constraintBottom_toBottomOf="parent"
-                   android:layout_width="match_parent"
-                   android:layout_height="match_parent">
-                   <TextView
-                       android:id="@+id/tv_news"
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:gravity="center"
-                       android:textColor="@color/black"
-                       android:paddingRight="@dimen/dis_30"
-                       android:paddingLeft="@dimen/dis_30"
-                       android:paddingTop="@dimen/dis_10"
-                       android:paddingBottom="@dimen/dis_10"
-                       android:visibility="visible"
-                       android:textSize="@dimen/text_14"
-                       android:layout_gravity="center"
-                       android:text="@string/news"/>
-                   <androidx.cardview.widget.CardView
-                       android:id="@+id/cv_news"
-                       android:layout_width="wrap_content"
-                       android:layout_height="42dp"
-                       app:cardCornerRadius="@dimen/dis_30"
-                       android:visibility="gone"
-                       android:layout_marginTop="1dp"
-                       android:layout_marginBottom="1dp"
-                       app:cardBackgroundColor="@color/white">
-                       <TextView
-                           android:layout_width="wrap_content"
-                           android:layout_height="match_parent"
-                           android:paddingRight="@dimen/dis_30"
-                           android:paddingLeft="@dimen/dis_30"
-                           android:paddingTop="@dimen/dis_10"
-                           android:paddingBottom="@dimen/dis_10"
-                           android:textColor="@color/app_red"
-                           android:textSize="@dimen/text_14"
-                           android:fontFamily="@font/poppins_medium"
-                           android:text="@string/news"/>
+        <FrameLayout
+            android:id="@+id/fl1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
 
-                   </androidx.cardview.widget.CardView>
-               </FrameLayout>
-           </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/tv_wire"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:visibility="visible"
+                android:text="@string/wire"
+                android:textAllCaps="true"
+                android:letterSpacing="0.04"
+                android:textColor="@color/fw_muted"
+                android:textSize="@dimen/fw_text_section"
+                android:fontFamily="@font/poppins_bold"/>
 
-        </androidx.cardview.widget.CardView>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_wire"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible"
+                app:cardCornerRadius="@dimen/fw_corner_segment"
+                app:cardElevation="1dp"
+                app:cardBackgroundColor="@color/fw_surface">
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/wire"
+                    android:textAllCaps="true"
+                    android:letterSpacing="0.04"
+                    android:textColor="@color/fw_text"
+                    android:textSize="@dimen/fw_text_section"
+                    android:fontFamily="@font/poppins_bold"/>
+            </androidx.cardview.widget.CardView>
+        </FrameLayout>
 
+        <FrameLayout
+            android:id="@+id/fl2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp">
+
+            <TextView
+                android:id="@+id/tv_news"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:visibility="visible"
+                android:text="@string/news"
+                android:textAllCaps="true"
+                android:letterSpacing="0.04"
+                android:textColor="@color/fw_muted"
+                android:textSize="@dimen/fw_text_section"
+                android:fontFamily="@font/poppins_bold"/>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_news"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                app:cardCornerRadius="@dimen/fw_corner_segment"
+                app:cardElevation="1dp"
+                app:cardBackgroundColor="@color/fw_surface">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/news"
+                    android:textAllCaps="true"
+                    android:letterSpacing="0.04"
+                    android:textColor="@color/fw_text"
+                    android:textSize="@dimen/fw_text_section"
+                    android:fontFamily="@font/poppins_bold"/>
+            </androidx.cardview.widget.CardView>
+        </FrameLayout>
+    </LinearLayout>
 
 </LinearLayout>
