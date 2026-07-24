@@ -195,24 +195,8 @@
                         android:layout_height="match_parent"
                         tools:context=".activity.MapsActivity" />
 
-                    <TextView
-                        android:id="@+id/tv_address"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start|top"
-                        android:layout_margin="10dp"
-                        android:background="@drawable/fw_map_chip_bg"
-                        android:paddingLeft="@dimen/fw_chip_pad_h"
-                        android:paddingRight="@dimen/fw_chip_pad_h"
-                        android:paddingTop="@dimen/fw_badge_pad_v"
-                        android:paddingBottom="@dimen/fw_badge_pad_v"
-                        android:textAllCaps="true"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/fw_text_caption"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:maxLines="1"
-                        android:ellipsize="end"
-                        tools:text="235 E 42ND ST"/>
+                    <!-- (address chip removed — the pin alone marks the spot;
+                         the address already headlines the summary card) -->
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -506,15 +490,31 @@
                 app:iconGravity="textStart"/>
         </LinearLayout>
 
+        <!-- footer watermark, two segments per the share-card mockup
+             (design screen 11 · SHARE CARD): tagline line + handle line -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="8dp"
             android:gravity="center"
             android:text="@string/fw_watermark"
             android:fontFamily="monospace"
+            android:textStyle="bold"
+            android:letterSpacing="0.2"
             android:textSize="@dimen/fw_text_watermark"
             android:textColor="@color/fw_muted"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:paddingBottom="8dp"
+            android:gravity="center"
+            android:text="@string/fw_watermark_handle"
+            android:fontFamily="monospace"
+            android:textStyle="bold"
+            android:letterSpacing="0.2"
+            android:textSize="@dimen/fw_text_watermark"
+            android:textColor="@color/fw_red"/>
     </LinearLayout>
 
     <ProgressBar

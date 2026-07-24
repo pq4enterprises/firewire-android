@@ -112,6 +112,10 @@ class FeedsActivity : BaseActivity(), ScannerPlaybackService.Listener {
 
                 }
 
+                // iOS region order (FeedsListViewModel.groupFeedDataByLocality):
+                // groups sorted by locality name DESCENDING
+                groupMainList.sortWith(compareByDescending { it.feedStateName })
+
                 feedsGroupList= groupMainList
                 updateConsoleTotals(groupMainList)
                 setupAdapter(groupMainList)
@@ -148,11 +152,15 @@ class FeedsActivity : BaseActivity(), ScannerPlaybackService.Listener {
                 val feedSongList= ArrayList(it.feedUrlList?:ArrayList())
                 bindingItem.tvFeedCount.text= getString(R.string.scanner_feed_count, feedSongList.size)
 
-                val expanded= expandedRegions[regionName] ?: true
+                // groups default COLLAPSED (iOS ScannerViewController parity);
+                // the region holding the actively-playing feed auto-expands so
+                // the live row stays reachable
+                val hasActiveFeed= feedSongList.any { f-> ScannerPlaybackService.isActiveFeed(f.feedUrl) }
+                val expanded= expandedRegions[regionName] ?: hasActiveFeed
                 bindingItem.ivChevron.rotation= if(expanded) 90f else 0f
                 bindingItem.rvFeedSong.visibility= if(expanded) View.VISIBLE else View.GONE
                 bindingItem.llRegionHeader.setOnClickListener {
-                    expandedRegions[regionName]= !(expandedRegions[regionName] ?: true)
+                    expandedRegions[regionName]= !expanded
                     binding.rvFeed.adapter?.notifyItemChanged(pos)
                 }
 
@@ -237,6 +245,8 @@ class FeedsActivity : BaseActivity(), ScannerPlaybackService.Listener {
             launchPaywall()
             return
         }
+        // keep the live row visible even if its group was collapsed (iOS parity)
+        if(region.isNotEmpty()) expandedRegions[region]= true
         setNowMonitoring(feed, region)
         ScannerPlaybackService.play(this, feed.feedName, feed.feedUrl, region)
     }
@@ -438,6 +448,10 @@ class FeedsActivity : BaseActivity(), ScannerPlaybackService.Listener {
             val url= ScannerPlaybackService.currentFeedUrl
             if(name != null && url != null) {
                 setNowMonitoring(FeedsItem(name, url), ScannerPlaybackService.currentRegion ?: "")
+            }
+            // auto-expand the group that contains the live feed (iOS parity)
+            ScannerPlaybackService.currentRegion?.takeIf { it.isNotEmpty() }?.let {
+                expandedRegions[it]= true
             }
         }
         renderPlaybackState(state)

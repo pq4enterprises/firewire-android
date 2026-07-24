@@ -40,10 +40,7 @@ class NavigationMenuActivity: BaseActivity() {
         private const val GRID_TOTAL_SPANS = 6
         private const val MAX_TILES_PER_ROW = 3
 
-        /** Production admin portal (REACT_APP_PUBLIC_URL in firewire-admin .env.live). */
-        private const val ADMIN_PORTAL_URL = "https://admin.nycfirewireapp.com/"
-
-        /** Roles that see the POST tile — mirrors iOS FWUserDefaults.isAdminUser(). */
+        /** Roles that see the POST header action — mirrors iOS FWUserDefaults.isAdminUser(). */
         private val ADMIN_ROLES = listOf("admin", "sub_admin", "super")
     }
 
@@ -53,7 +50,7 @@ class NavigationMenuActivity: BaseActivity() {
     private val gridList = ArrayList<GridItems>()
     private var gridAdapter: Kadapter<GridItems, ItemMenuTileBinding>? = null
 
-    /** Admin-only POST tile flag; set once the user-details call resolves the role. */
+    /** Admin-only POST header action; set once the user-details call resolves the role. */
     private var isAdmin = false
 
     /** Last server-driven Link tiles (null/empty -> static defaults are shown). */
@@ -126,10 +123,9 @@ class NavigationMenuActivity: BaseActivity() {
                     userDetails= it1.data?:UserDetails()
                     bindProfileDetails(userDetails)
 
-                    // admin-gated POST tile (iOS parity: role drives visibility)
-                    val wasAdmin = isAdmin
+                    // admin-gated POST header action (iOS parity: role drives visibility)
                     isAdmin = ADMIN_ROLES.contains(userDetails.role)
-                    if (isAdmin != wasAdmin) composeTiles()
+                    if (isAdmin) binding.tvPost.visible() else binding.tvPost.gone()
                 }
             }
             ResourceState.ERROR -> {
@@ -155,13 +151,6 @@ class NavigationMenuActivity: BaseActivity() {
         isPersonalization = true
     )
 
-    /** Built-in tile (never part of the server Link tiles): admins only. */
-    private fun postTile() = GridItems(
-        getString(R.string.menu_post), R.drawable.fw_ic_flame,
-        R.color.fw_red, R.color.fw_red_tint,
-        url = ADMIN_PORTAL_URL
-    )
-
     private fun defaultShortcutTiles() = listOf(
         GridItems(getString(R.string.submit_tip), R.drawable.fw_ic_alert,
             R.color.fw_orange, R.color.fw_orange_tint,
@@ -181,12 +170,11 @@ class NavigationMenuActivity: BaseActivity() {
     /**
      * Single source of truth for the grid contents: server Link tiles when
      * available (else the static defaults, which already end with
-     * Areas &amp; Alerts), plus the built-in tiles — Areas &amp; Alerts after
-     * server links, and the admin-only POST tile first.
+     * Areas &amp; Alerts), plus the built-in Areas &amp; Alerts tile after
+     * server links. (Admin POST moved to the header, iOS parity.)
      */
     private fun composeTiles() {
         gridList.clear()
-        if (isAdmin) gridList.add(postTile())
         val links = serverLinkTiles
         if (links.isNullOrEmpty()) {
             gridList.addAll(defaultShortcutTiles())
@@ -282,6 +270,13 @@ class NavigationMenuActivity: BaseActivity() {
 
         binding.tvClose.setOnClickListener {
             finish()
+        }
+
+        // iOS parity: POST opens the portal's authenticated create-incident URL
+        // in an IN-APP WebView (never the external browser — the URL carries
+        // the auth token, which must not land in browser history)
+        binding.tvPost.setOnClickListener {
+            startActivity(Intent(this, PostWebViewActivity::class.java))
         }
 
         binding.cvProfile.setOnClickListener {

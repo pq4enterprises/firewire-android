@@ -99,6 +99,11 @@
             android:exported="true"
             android:windowSoftInputMode="adjustResize"/>
 
+        <!-- admin POST: in-app WebView over the portal's tokenized create-incident form -->
+        <activity android:name=".activity.PostWebViewActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
+
         <!-- scanner audio keeps streaming when the app is backgrounded -->
         <service
             android:name=".service.ScannerPlaybackService"

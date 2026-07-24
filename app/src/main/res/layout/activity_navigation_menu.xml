@@ -8,7 +8,8 @@
     android:layout_height="match_parent"
     android:background="@color/fw_background">
 
-    <!-- header: flame mark centered, CLOSE at the end -->
+    <!-- header: admin-only POST at the start (iOS MenuViewController parity),
+         flame mark centered, CLOSE at the end -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
@@ -16,6 +17,25 @@
         android:minHeight="@dimen/fw_touch_target"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent">
+
+        <TextView
+            android:id="@+id/tv_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/fw_touch_target"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/fw_card_pad"
+            android:paddingRight="@dimen/fw_card_pad"
+            android:text="@string/menu_post"
+            android:textAllCaps="true"
+            android:textColor="@color/fw_text"
+            android:textSize="@dimen/fw_text_section"
+            android:fontFamily="@font/poppins_bold"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ImageView
             android:id="@+id/iv_logo"

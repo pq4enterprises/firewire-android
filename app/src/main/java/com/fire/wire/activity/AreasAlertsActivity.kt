@@ -54,7 +54,9 @@ class AreasAlertsActivity : BaseActivity() {
 
     private val groups = ArrayList<AreaGroup>()
 
-    // collapsible region headers (scanner-screen pattern); default expanded
+    // collapsible region headers (scanner-screen pattern); default COLLAPSED —
+    // SELECT ALL and SAVE operate on the data model, so they keep working for
+    // groups whose rows aren't currently on screen
     private val expandedGroups = HashMap<String, Boolean>()
 
     // server state at load time, for change detection on SAVE
@@ -217,13 +219,13 @@ class AreasAlertsActivity : BaseActivity() {
                 updateSelectAllLabel(group, groupBinding)
 
                 // collapsible dropdown, mirroring the scanner region headers:
-                // rotating chevron, tap the header to toggle, default expanded
-                val expanded = expandedGroups[group.localityId] ?: true
+                // rotating chevron, tap the header to toggle, default collapsed
+                val expanded = expandedGroups[group.localityId] ?: false
                 groupBinding.ivChevron.rotation = if (expanded) 90f else 0f
                 groupBinding.llRowsCard.visibility =
                     if (expanded) android.view.View.VISIBLE else android.view.View.GONE
                 groupBinding.llGroupHeader.setOnClickListener {
-                    expandedGroups[group.localityId] = !(expandedGroups[group.localityId] ?: true)
+                    expandedGroups[group.localityId] = !expanded
                     binding.rvGroups.adapter?.notifyItemChanged(pos)
                 }
 

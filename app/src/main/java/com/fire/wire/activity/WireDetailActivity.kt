@@ -142,7 +142,6 @@ class WireDetailActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // address is the headline; field3 (city/town) is the subtitle; field2 is the description
         binding.tvTitle.text= wireDetails.address
-        binding.tvAddress.text= wireDetails.address
 
         // sub-locality (e.g. borough) comes populated in the list response;
         // the deployed by-ID API only returns the raw id

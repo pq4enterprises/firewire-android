@@ -135,6 +135,9 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback,Callba
     }
 
     private fun formLatLng() {
+        // the feed can resolve before the map does; onMapReady re-runs this
+        if (!::mMap.isInitialized) return
+
         locationArrayList.clear()
         incidentList.forEach {
             val latLng = LatLng(it.latitude?.toDouble()?:0.0, it.longitude?.toDouble()?:0.0)
@@ -143,10 +146,9 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback,Callba
         mMap.clear()
 
         locationArrayList.forEachIndexed { i, latLng ->
-
             mMap.addMarker(
                 MarkerOptions()
-                    .position(locationArrayList[i])
+                    .position(latLng)
                     .title(incidentList[i].address)
                     .icon(
                         BitmapFromVector(
@@ -155,12 +157,14 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback,Callba
                         )
                     )
             )
-
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(18.0f))
-
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(locationArrayList[i]))
         }
 
+        // iOS parity (IncidentsViewController.addMapMarkers): frame the feed on
+        // the FIRST (newest) incident at zoom 15 — a single camera move, not
+        // the old per-marker zoom-18 walk that ended on the oldest marker.
+        locationArrayList.firstOrNull()?.let {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(it, FEED_MAP_ZOOM))
+        }
     }
 
     private fun initViews() {
@@ -246,6 +250,9 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback,Callba
         mMap.mapType = GoogleMap.MAP_TYPE_HYBRID
         // night styling only applies to MAP_TYPE_NORMAL; harmless under hybrid
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_in_night));
+
+        // incidents may have loaded before the map was ready
+        if (incidentList.isNotEmpty()) formLatLng()
     }
 
     private fun onChangeOption(){
@@ -399,6 +406,11 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback,Callba
         this.incidentList= incidentList
         locationArrayList.clear()
         formLatLng()
+    }
+
+    companion object {
+        /** iOS feed map zoom (IncidentsViewController: GMSCameraPosition zoom 15.0). */
+        private const val FEED_MAP_ZOOM = 15.0f
     }
 
     val clickListener = object : INotificationClickListener {

@@ -44,8 +44,12 @@
     <!-- design screen 10 · COMMENTS: hint is literally uppercase (textAllCaps on
          an EditText would also uppercase the typed text) -->
     <string name="fw_add_comment">ADD A COMMENT</string>
+    <string name="fw_reply">Reply</string>
     <string name="fw_reply_count">1 Reply</string>
     <string name="fw_replies_count">%1$s Replies</string>
+    <string name="fw_hide_replies">Hide Replies</string>
+    <!-- composer pre-fill when replying; trailing space is intentional -->
+    <string name="fw_mention_prefix">"@%1$s "</string>
     <string name="take_photo">Take Photo</string>
     <string name="cancel">Cancel</string>
     <string name="gallery">Gallery</string>
@@ -65,7 +69,8 @@
     <string name="units_rescue">RESCUE/SOC</string>
     <string name="units_command">COMMAND</string>
     <string name="units_empty">NO UNITS LISTED</string>
-    <string name="fw_watermark">FIRE WIRE · @NYCFIREWIRE</string>
+    <string name="fw_watermark">FIRE WIRE - THE BRAVEST NEWS NETWORK</string>
+    <string name="fw_watermark_handle">@NYCFIREWIRE</string>
     <string name="fw_shortcuts">SHORTCUTS</string>
     <string name="fw_chicago_podcast">Chicago Podcast</string>
     <string name="fw_firewire_website">FireWire Website</string>
