@@ -169,10 +169,29 @@ class AreasAlertsActivity : BaseActivity() {
                 groups.add(AreaGroup(localityId, locality.name ?: "", rows))
             }
         }
+        groups.sortWith(compareBy({ regionRank(it.name) }, { it.name.uppercase() }))
         initialFeedIds = feedIds
         initialAlertIds = alertCheckedSubIds.toSet()
 
         setupAdapter()
+    }
+
+    // Region display priority — first match wins; unlisted regions follow alphabetically.
+    // Adjust this list to change the on-screen order. Future: drive from a
+    // portal-managed Locality.sort field once the backend adds one.
+    private val regionOrder = listOf(
+        "NEW YORK CITY",
+        "LONG ISLAND",
+        "USA",
+        "UNITED STATES",
+        "CANADA",
+        "EUROPE",
+        "UNITED KINGDOM"
+    )
+
+    private fun regionRank(name: String): Int {
+        val i = regionOrder.indexOf(name.trim().uppercase())
+        return if (i >= 0) i else regionOrder.size
     }
 
     private fun setupAdapter() {
