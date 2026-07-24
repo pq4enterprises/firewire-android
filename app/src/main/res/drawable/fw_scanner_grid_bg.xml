@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- readout grid track: 1dp padding shows through as cell separators -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/fw_scanner_grid_line" />
+    <corners android:radius="@dimen/fw_corner_badge" />
+</shape>

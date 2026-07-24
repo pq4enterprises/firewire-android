@@ -132,5 +132,22 @@
     <string name="submit">Submit</string>
     <string name="enter_reason">Enter your reason</string>
 
+    <!-- scanner (Instrument Panel redesign) -->
+    <string name="scanner_title">Scanner</string>
+    <string name="fw_dash">—</string>
+    <string name="scanner_receiver_lock">RECEIVER \u00B7 CH LOCK</string>
+    <string name="scanner_no_channel">No channel</string>
+    <string name="scanner_select_feed_hint">Select a feed below</string>
+    <string name="scanner_region">Region</string>
+    <string name="scanner_source">Source</string>
+    <string name="scanner_status">Status</string>
+    <string name="scanner_sig">SIG</string>
+    <string name="scanner_standby">Standby</string>
+    <string name="scanner_rx">RX</string>
+    <string name="scanner_stream">Stream</string>
+    <string name="scanner_dispatch_feeds">Dispatch feeds</string>
+    <string name="scanner_feeds_meta">FEEDS %1$d</string>
+    <string name="scanner_regions_meta">REGIONS %1$d</string>
+    <string name="scanner_feed_count">%1$d FEEDS</string>
 
 </resources>
