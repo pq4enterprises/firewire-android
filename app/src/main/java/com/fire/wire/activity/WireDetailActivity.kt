@@ -17,6 +17,7 @@ import com.fire.wire.databinding.ActivityWireDetailBinding
 import com.fire.wire.model.incident.request.AddCommentRequest
 import com.fire.wire.model.incident.response.CommentsResponse
 import com.fire.wire.model.incident.response.Incident
+import com.fire.wire.model.incident.response.IncidentPoint
 import com.fire.wire.model.user.response.CommonResponse
 import com.fire.wire.prefs
 import com.fire.wire.resource.Resource
@@ -41,6 +42,10 @@ class WireDetailActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var vm: FireWireViewModel
     private var isLikeSingle=false
     var type="view"
+    // Nearby firehouses from the incident-by-id response; rendered as
+    // "Classic Pin" markers once both the data and the map are ready.
+    private var firehousePoints: List<IncidentPoint> = emptyList()
+    private var firehouseMarkersAdded = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,6 +93,8 @@ class WireDetailActivity : AppCompatActivity(), OnMapReadyCallback {
                     binding.tvSubLocality.visible()
                 }
                 bindUnits()
+                firehousePoints = detail.points.orEmpty()
+                addFirehouseMarkers()
             }
         })
         if (!wireDetails._id.isNullOrEmpty()) {
@@ -306,6 +313,31 @@ class WireDetailActivity : AppCompatActivity(), OnMapReadyCallback {
             )
 
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17.0f))
+        }
+        // the incident-by-id response can resolve before the map does
+        addFirehouseMarkers()
+    }
+
+    // Nearby firehouses: "Classic Pin" markers (red teardrop + firehouse
+    // glyph) with the station name baked into the marker bitmap in the
+    // design-system label style — iOS parity (MapManager.addMarkers /
+    // FirehouseMarker). The incident flame marker stays as-is.
+    private fun addFirehouseMarkers() {
+        if (!::mMap.isInitialized || firehouseMarkersAdded || firehousePoints.isEmpty()) return
+        firehouseMarkersAdded = true
+        firehousePoints.forEach { point ->
+            val lat = point.latitude?.toDoubleOrNull() ?: return@forEach
+            val lng = point.longitude?.toDoubleOrNull() ?: return@forEach
+            val composed = FirehouseMarker.composedIcon(this, point.name.orEmpty())
+            mMap.addMarker(
+                MarkerOptions()
+                    .position(LatLng(lat, lng))
+                    .title(point.name)
+                    .snippet(point.address)
+                    .icon(composed.descriptor)
+                    // pin tip on the coordinate; the label hangs below it
+                    .anchor(composed.anchorU, composed.anchorV)
+            )
         }
     }
 
