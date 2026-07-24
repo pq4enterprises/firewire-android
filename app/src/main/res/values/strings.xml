@@ -57,16 +57,9 @@
     <string name="units_command">COMMAND</string>
     <string name="units_empty">NO UNITS LISTED</string>
     <string name="fw_watermark">FIRE WIRE · @NYCFIREWIRE</string>
-    <string name="description">To everyone that’s been using the app, I’m sure you’re aware of some of the new additions already. For those that haven’t hopped on board yet, there’s a bunch of reasons to download now!
-        \n <b>SaltyWire:</b>
-        \n
-    If you’re a fan of the Gettin’ Salty Podcast and a fan of FireWire, you’re gonna love this!
-We’ve joined forces with Lou and Kubes to give you the ultimate experience. A subscription will get you access to the premium features on the FireWire app, and also never before seen premium content, documentaries, and training videos from the Gettin’ Salty guys. We will also be releasing our rewards program soon to give back to our loyal followers. Stay tuned!
-Check it out www.saltywire.com</string>
     <string name="feeds">Feeds</string>
     <string name="close">Close</string>
     <string name="my_account">My Account</string>
-    <string name="salt_text_desc">The Gettin’ Salty Experience</string>
     <string name="submit_tip">Submit A Tip</string>
     <string name="delete_account">Delete Account</string>
     <string name="feed_areas">Feed Areas</string>

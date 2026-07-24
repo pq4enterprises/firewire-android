@@ -114,10 +114,6 @@ class NavigationMenuActivity: BaseActivity() {
     private fun bindProfileDetails(data: UserDetails) {
         binding.tvName.text= data.firstName
         binding.tvEmail.text= data.email
-        binding.cvSalty.setOnClickListener {
-            moveToLink("https://saltywire.com/")
-        }
-
         val gridItems = listOf(
             GridItems("Submit\n" +
                     "A Tip", R.drawable.ic_tip_img),
