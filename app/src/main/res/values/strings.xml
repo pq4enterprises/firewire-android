@@ -79,6 +79,9 @@
     <string name="areas_alerts_select_all">Select All</string>
     <string name="areas_alerts_unselect_all">Unselect All</string>
     <string name="save">Save</string>
+    <string name="alert_sound">ALERT SOUND</string>
+    <string name="global_alert_sound">GLOBAL ALERT SOUND</string>
+    <string name="alert_sound_applies_to_all">APPLIES TO ALL ALERTS</string>
     <string name="settings_updated">Settings updated successfully!</string>
     <string name="feeds">Feeds</string>
     <string name="close">Close</string>
