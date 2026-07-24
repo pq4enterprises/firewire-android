@@ -44,6 +44,15 @@ data class SubLocality(
 
 ):Parcelable
 
+// incident-type notification option (returned by api/app/locality alongside
+// subLocality/unit; carried so saving alerts keeps existing selections intact)
+@Parcelize
+data class IncidentTypeItem(
+    var _id:String?="",
+    var optionName:String?="",
+    var isChecked:Boolean=false
+):Parcelable
+
 @Parcelize
 data class Locality(
     var _id:String?="",
@@ -53,6 +62,7 @@ data class Locality(
     var longitude:String?="",
     var subLocality:List<SubLocality>?=null,
     var unit:List<Unit>?=null,
+    var incidentType:List<IncidentTypeItem>?=null,
     var isChecked:Boolean=false
 ):Parcelable
 

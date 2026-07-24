@@ -41,7 +41,11 @@ class FireWireViewModel @Inject constructor(val context: Application) : AndroidV
     val imageUploadLiveData = MutableLiveData<Resource<CommonResponse>>()
     val feedLiveData = MutableLiveData<Resource<FeedResponse>>()
     val addCommentLiveData = MutableLiveData<Resource<CommonResponse>>()
-    val updateLocalityLiveData = MutableLiveData<Resource<CommonResponse>>()
+    // Areas & Alerts screen
+    val areaLocalityLiveData = MutableLiveData<Resource<LocalityResponse>>()
+    val alertLocalityLiveData = MutableLiveData<Resource<LocalityResponse>>()
+    val saveAreasLiveData = MutableLiveData<Resource<CommonResponse>>()
+    val saveAlertsLiveData = MutableLiveData<Resource<CommonResponse>>()
 
 
 
@@ -68,6 +72,31 @@ class FireWireViewModel @Inject constructor(val context: Application) : AndroidV
         }
     }
 
+    // Areas & Alerts screen: feed selections ("area") and alert selections ("notification")
+    fun getAreaLocalityList(){
+        viewModelScope.launch {
+            fireWireRepo.getLocalityListByType(areaLocalityLiveData, "area")
+        }
+    }
+
+    fun getAlertLocalityList(){
+        viewModelScope.launch {
+            fireWireRepo.getLocalityListByType(alertLocalityLiveData, "notification")
+        }
+    }
+
+    fun saveUserAreas(request: List<UserAreaItem>){
+        viewModelScope.launch {
+            fireWireRepo.setUserAreas(saveAreasLiveData, request)
+        }
+    }
+
+    fun saveUserNotifications(request: List<UserNotificationItem>){
+        viewModelScope.launch {
+            fireWireRepo.setUserNotifications(saveAlertsLiveData, request)
+        }
+    }
+
     fun getLinks(){
         viewModelScope.launch {
             fireWireRepo.getLinks(linkLiveData)
@@ -89,12 +118,6 @@ class FireWireViewModel @Inject constructor(val context: Application) : AndroidV
     fun updateProfileData(request: ProfileUpdateRequest){
         viewModelScope.launch {
             fireWireRepo.updateProfile(updateProfileLiveData,request)
-        }
-    }
-
-    fun updateLocalityProfile(request: LocalityUpdate){
-        viewModelScope.launch {
-            fireWireRepo.updateLocalityProfile(updateLocalityLiveData,request)
         }
     }
 

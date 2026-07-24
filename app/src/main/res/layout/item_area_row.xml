@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/fw_card_pad"
+        android:paddingRight="@dimen/fw_card_pad">
+
+        <TextView
+            android:id="@+id/tv_area_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/fw_text_section"
+            android:textColor="@color/fw_text"
+            android:textAllCaps="true"
+            tools:text="BRONX" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/sw_feed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:thumb="@drawable/fw_switch_thumb"
+            app:track="@drawable/fw_switch_track"
+            app:showText="false" />
+
+        <Space
+            android:layout_width="18dp"
+            android:layout_height="1dp" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/sw_alert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:thumb="@drawable/fw_switch_thumb"
+            app:track="@drawable/fw_switch_track"
+            app:showText="false" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fw_hairline_width"
+        android:layout_marginLeft="@dimen/fw_card_pad"
+        android:background="@color/fw_hairline" />
+
+</LinearLayout>

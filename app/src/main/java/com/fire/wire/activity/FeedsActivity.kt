@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.fire.wire.R
 import com.fire.wire.adapter.setUpAdapter
 import com.fire.wire.databinding.ActivityFeedBinding
-import com.fire.wire.databinding.ItemLocalityBinding
 import com.fire.wire.databinding.ItemMainFeedBinding
 import com.fire.wire.databinding.ItemSubFeedBinding
 import com.fire.wire.fragment.FeedFilterFragment

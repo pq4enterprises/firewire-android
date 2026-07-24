@@ -61,13 +61,21 @@
     <string name="fw_chicago_podcast">Chicago Podcast</string>
     <string name="fw_firewire_website">FireWire Website</string>
     <string name="fw_contact">Contact</string>
+
+    <!-- Areas & Alerts screen (2026 design system, screen 13) -->
+    <string name="areas_alerts">AREAS &amp; ALERTS</string>
+    <string name="areas_alerts_helper">Toggle an area into your feed, then use the bell to get push alerts for it. Feed without alerts is fine.</string>
+    <string name="areas_alerts_feed">FEED</string>
+    <string name="areas_alerts_alert">ALERT</string>
+    <string name="areas_alerts_select_all">Select All</string>
+    <string name="areas_alerts_unselect_all">Unselect All</string>
+    <string name="save">Save</string>
+    <string name="settings_updated">Settings updated successfully!</string>
     <string name="feeds">Feeds</string>
     <string name="close">Close</string>
     <string name="my_account">My Account</string>
     <string name="submit_tip">Submit A Tip</string>
     <string name="delete_account">Delete Account</string>
-    <string name="feed_areas">Feed Areas</string>
-    <string name="notifications">Notifications</string>
     <string name="choose_locality">Choose a locality</string>
     <string name="sub_locality">SubLocalities</string>
     <string name="update_profile">Update Profile</string>
@@ -85,9 +93,6 @@
     <string name="save_update">Save and Update</string>
     <string name="change_password">Change Password ?</string>
     <string name="view_list">View list</string>
-    <string name="title_activity_feeds">FeedsActivity</string>
-    <string name="title_activity_locality">NotificationLocality Activity</string>
-    <string name="title_activity_city">NotificationCityActivity</string>
     <string name="current_password">Current Password</string>
     <string name="new_password">New Password</string>
     <string name="change_password_text">Change Password</string>
@@ -110,7 +115,6 @@
     <string name="error_new_current_match">Current password and New password should not be same</string>
     <string name="error_confirm_current_match">New password and Confirm password should be same</string>
     <string name="confirm_delete">Do you want to delete your account?</string>
-    <string name="notification_setting">Notification Settings</string>
 
     <!--<string name="facebook_app_id">464876333289183</string>-->
     <string name="facebook_app_id">891535999464182</string>
@@ -124,7 +128,6 @@
     <string name="verify_otp">Verify OTP</string>
     <string name="reset_password">Reset Password</string>
     <string name="enter_otp">Kindly enter the OTP</string>
-    <string name="personalization">Personalization</string>
     <string name="submit">Submit</string>
     <string name="enter_reason">Enter your reason</string>
 

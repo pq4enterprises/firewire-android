@@ -11,9 +11,3 @@ data class ProfileUpdateRequest(
 
 )
 
-data class LocalityUpdate(
-    var locality:ArrayList<String>?=null,
-    var subLocality:ArrayList<String>?=null,
-    var unit:ArrayList<String>?=null,
-)
-

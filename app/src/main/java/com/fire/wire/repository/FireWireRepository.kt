@@ -104,6 +104,61 @@ class FireWireRepository @Inject constructor(
     }
 
 
+    // Areas & Alerts: type "area" flags feed selections, "notification" flags alert selections
+    suspend fun getLocalityListByType(
+        liveData: MutableLiveData<Resource<LocalityResponse>>,
+        type: String
+    ) {
+        liveData.setLoading()
+        try {
+            val result = apiEndPoint.getLocalityListByType("{\"type\":\"$type\"}")
+            if (result.isSuccessful) {
+                liveData.setSuccess(result.body())
+            } else {
+                liveData.setError(errorHandling(result))
+            }
+
+        } catch (e: Exception) {
+            liveData.setError(e.message.toString())
+        }
+    }
+
+    suspend fun setUserAreas(
+        liveData: MutableLiveData<Resource<CommonResponse>>,
+        request: List<UserAreaItem>
+    ) {
+        liveData.setLoading()
+        try {
+            val result = apiEndPoint.setUserAreas(request)
+            if (result.isSuccessful) {
+                liveData.setSuccess(result.body())
+            } else {
+                liveData.setError(errorHandling(result))
+            }
+
+        } catch (e: Exception) {
+            liveData.setError(e.message.toString())
+        }
+    }
+
+    suspend fun setUserNotifications(
+        liveData: MutableLiveData<Resource<CommonResponse>>,
+        request: List<UserNotificationItem>
+    ) {
+        liveData.setLoading()
+        try {
+            val result = apiEndPoint.setUserNotifications(request)
+            if (result.isSuccessful) {
+                liveData.setSuccess(result.body())
+            } else {
+                liveData.setError(errorHandling(result))
+            }
+
+        } catch (e: Exception) {
+            liveData.setError(e.message.toString())
+        }
+    }
+
     suspend fun getLinks(
         liveData: MutableLiveData<Resource<LinkResponse>>
     ) {
@@ -265,26 +320,6 @@ class FireWireRepository @Inject constructor(
             liveData.setError(e.message.toString())
         }
     }
-
-
-    suspend fun updateLocalityProfile(
-        liveData: MutableLiveData<Resource<CommonResponse>>,
-        request: LocalityUpdate
-    ) {
-        liveData.setLoading()
-        try {
-            val result = apiEndPoint.updateLocalityProfile(request)
-            if (result.isSuccessful) {
-                liveData.setSuccess(result.body())
-            } else {
-                liveData.setError(errorHandling(result))
-            }
-
-        } catch (e: Exception) {
-            liveData.setError(e.message.toString())
-        }
-    }
-
 
 
 

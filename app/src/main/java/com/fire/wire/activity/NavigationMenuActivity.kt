@@ -133,9 +133,9 @@ class NavigationMenuActivity: BaseActivity() {
         binding.tvEmail.text= data.email
     }
 
-    private fun personalizationTile() = GridItems(
-        getString(R.string.personalization), R.drawable.fw_ic_gear,
-        R.color.fw_success, R.color.fw_success_tint,
+    private fun areasAlertsTile() = GridItems(
+        getString(R.string.areas_alerts), R.drawable.fw_ic_bell,
+        R.color.fw_red, R.color.fw_red_tint,
         isPersonalization = true
     )
 
@@ -152,7 +152,7 @@ class NavigationMenuActivity: BaseActivity() {
         GridItems(getString(R.string.fw_contact), R.drawable.fw_ic_mail,
             R.color.fw_info, R.color.fw_info_tint,
             url = "https://nycfirewire.net/contact/"),
-        personalizationTile()
+        areasAlertsTile()
     )
 
     private fun setupShortcutsGrid() {
@@ -215,7 +215,7 @@ class NavigationMenuActivity: BaseActivity() {
     /**
      * Non-blocking: the static tiles above are shown immediately; when the
      * Link API responds with at least one link, the four external-URL tiles
-     * are replaced by the server links (Personalization always stays, last).
+     * are replaced by the server links (Areas &amp; Alerts always stays, last).
      * On error or an empty list the static tiles remain untouched.
      */
     private fun updateShortcutsFromLinks(response: Resource<LinkResponse>) {
@@ -235,7 +235,7 @@ class NavigationMenuActivity: BaseActivity() {
                 )
             )
         }
-        gridList.add(personalizationTile())
+        gridList.add(areasAlertsTile())
         gridAdapter?.notifyDataSetChanged()
     }
 
@@ -260,7 +260,7 @@ class NavigationMenuActivity: BaseActivity() {
     }
 
     private fun moveToPersonalActivity(){
-        val intent= Intent(this, PersonalizationActivity::class.java)
+        val intent= Intent(this, AreasAlertsActivity::class.java)
         startActivity(intent)
     }
 

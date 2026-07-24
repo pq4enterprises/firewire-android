@@ -37,6 +37,21 @@ interface ApiEndPoints {
     @GET("api/app/locality?sortBy=createdAt&sortDir=desc")
     suspend fun getLocalityList():Response<LocalityResponse>
 
+    // Areas & Alerts: locality tree with per-user isChecked flags.
+    // query {"type":"area"} marks feed (UserLocality) selections; anything else
+    // marks alert (Notification) selections. show=true disables the server's
+    // default pagination (10 localities per page).
+    @GET("api/app/locality?sortBy=createdAt&sortDir=desc&show=true")
+    suspend fun getLocalityListByType(@Query("query") query: String):Response<LocalityResponse>
+
+    // full feed-area selection set; server diffs against stored rows
+    @POST("api/app/user/area")
+    suspend fun setUserAreas(@Body request: List<UserAreaItem>):Response<CommonResponse>
+
+    // full alert selection set; server diffs against stored rows
+    @POST("api/app/user/notification")
+    suspend fun setUserNotifications(@Body request: List<UserNotificationItem>):Response<CommonResponse>
+
     // show=true is required: without it the server paginates and caps results at 10
     @GET("api/app/link?show=true")
     suspend fun getLinks():Response<LinkResponse>
@@ -80,10 +95,6 @@ interface ApiEndPoints {
 
     @POST("api/app/auth/social-login")
     suspend fun postGoogle(@Body request:SocialLoginRequest):Response<LoginResponse>
-
-    @PUT("api/app/user/profile")
-    suspend fun updateLocalityProfile(@Body request: LocalityUpdate):Response<CommonResponse>
-
 
    // https://firewire-api.atomgroups.com/api/app/incident?sortDir=desc&offset=1&limit=10&query={"search":"new", "locality" :["6729efb097dfc3f21f13bad9"], "subLocality": ["6731c44d477cc8909d1d0123"] }
 
