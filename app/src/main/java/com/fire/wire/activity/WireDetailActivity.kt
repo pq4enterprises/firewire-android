@@ -3,6 +3,7 @@ package com.fire.wire.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.TypedValue
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -209,15 +210,14 @@ class WireDetailActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.chipGroupUnits.visible()
         binding.tvNoUnits.gone()
 
-        val density = resources.displayMetrics.density
-        val padH = (8 * density).toInt()
-        val padV = (4 * density).toInt()
+        val padH = resources.getDimensionPixelSize(R.dimen.fw_unit_chip_pad_h)
+        val padV = resources.getDimensionPixelSize(R.dimen.fw_unit_chip_pad_v)
 
         units.forEach { unit ->
             val category = UnitCategory.classify(unit)
             val chip = TextView(this).apply {
                 text = unit
-                textSize = 12f
+                setTextSize(TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.fw_text_caption))
                 typeface = ResourcesCompat.getFont(context, R.font.poppins_semibold)
                 setTextColor(ContextCompat.getColor(context, category.fgColorRes))
                 background = ContextCompat.getDrawable(context, R.drawable.fw_chip_bg)
@@ -244,7 +244,10 @@ class WireDetailActivity : AppCompatActivity(), OnMapReadyCallback {
                         ContextCompat.getDrawable(this, R.drawable.fw_map_seg_selected)
                     else null
                     seg.setTextColor(
-                        ContextCompat.getColor(this, if (selected) R.color.fw_text else R.color.white)
+                        ContextCompat.getColor(
+                            this,
+                            if (selected) R.color.fw_map_seg_text_selected else R.color.white
+                        )
                     )
                 }
             }

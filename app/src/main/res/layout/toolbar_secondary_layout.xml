@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="?actionBarSize"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white">
+    android:background="@color/fw_surface">
     <TextView
         android:id="@+id/ivMenu"
         android:layout_width="wrap_content"
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppins_bold"
         android:textColor="@color/fw_text"
-        android:textSize="18sp"
+        android:textSize="@dimen/fw_text_toolbar"
         android:letterSpacing="0.05"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -43,7 +43,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:tint="@color/black"/>
+        android:tint="@color/fw_text"/>
 
     <TextView
         android:id="@+id/tv_share"

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    FireWire design-system text appearances (2026 design system).
+    Sizes/weights/colors derived from the incident detail screen. Use these
+    on new screens; existing incident views keep explicit attributes that
+    reference the same fw_* tokens.
+-->
+<resources>
+
+    <style name="TextAppearance.FireWire" parent="TextAppearance.AppCompat"/>
+
+    <!-- all-caps address headline -->
+    <style name="TextAppearance.FireWire.Title">
+        <item name="android:fontFamily">@font/poppins_bold</item>
+        <item name="android:textSize">@dimen/fw_text_title</item>
+        <item name="android:textColor">@color/fw_text</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <!-- card section header (e.g. UNITS) -->
+    <style name="TextAppearance.FireWire.Section">
+        <item name="android:fontFamily">@font/poppins_bold</item>
+        <item name="android:textSize">@dimen/fw_text_section</item>
+        <item name="android:textColor">@color/fw_text</item>
+    </style>
+
+    <!-- all-caps body copy (incident description) -->
+    <style name="TextAppearance.FireWire.Body">
+        <item name="android:fontFamily">@font/poppins_medium</item>
+        <item name="android:textSize">@dimen/fw_text_body</item>
+        <item name="android:textColor">@color/fw_text</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <!-- all-caps muted subtitle under the headline -->
+    <style name="TextAppearance.FireWire.Subtitle">
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="android:textSize">@dimen/fw_text_caption</item>
+        <item name="android:textColor">@color/fw_muted</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <!-- muted caption / helper text -->
+    <style name="TextAppearance.FireWire.Caption">
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="android:textSize">@dimen/fw_text_caption</item>
+        <item name="android:textColor">@color/fw_muted</item>
+    </style>
+
+    <!-- all-caps solid badge (alarm level, counts); background supplies color -->
+    <style name="TextAppearance.FireWire.Badge">
+        <item name="android:fontFamily">@font/poppins_bold</item>
+        <item name="android:textSize">@dimen/fw_text_caption</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <!-- small all-caps chip (signal chip, segments); color set per-use -->
+    <style name="TextAppearance.FireWire.Chip">
+        <item name="android:fontFamily">@font/poppins_bold</item>
+        <item name="android:textSize">@dimen/fw_text_chip</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <!-- tiny legend label -->
+    <style name="TextAppearance.FireWire.Legend">
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="android:textSize">@dimen/fw_text_legend</item>
+        <item name="android:textColor">@color/fw_muted</item>
+    </style>
+
+    <!-- monospace timestamp / watermark -->
+    <style name="TextAppearance.FireWire.Timestamp">
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textSize">@dimen/fw_text_chip</item>
+        <item name="android:textColor">@color/fw_muted</item>
+    </style>
+
+</resources>

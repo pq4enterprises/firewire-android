@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/fw_bg"
+    android:background="@color/fw_background"
     android:orientation="vertical">
 
     <include
@@ -26,8 +26,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dis_10"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp"
+            android:layout_marginLeft="@dimen/fw_screen_margin"
+            android:layout_marginRight="@dimen/fw_screen_margin"
             android:orientation="vertical">
 
             <!-- ===== summary card ===== -->
@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@drawable/fw_card_bg"
-                android:padding="14dp">
+                android:padding="@dimen/fw_card_pad">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -50,13 +50,13 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/fw_badge_bg"
                         android:backgroundTint="@color/fw_red"
-                        android:paddingLeft="11dp"
-                        android:paddingRight="11dp"
-                        android:paddingTop="5dp"
-                        android:paddingBottom="5dp"
+                        android:paddingLeft="@dimen/fw_badge_pad_h"
+                        android:paddingRight="@dimen/fw_badge_pad_h"
+                        android:paddingTop="@dimen/fw_badge_pad_v"
+                        android:paddingBottom="@dimen/fw_badge_pad_v"
                         android:textAllCaps="true"
                         android:textColor="@color/white"
-                        android:textSize="12sp"
+                        android:textSize="@dimen/fw_text_caption"
                         android:fontFamily="@font/poppins_bold"
                         tools:text="ALL HANDS"/>
 
@@ -67,13 +67,13 @@
                         android:layout_marginStart="8dp"
                         android:background="@drawable/fw_badge_bg"
                         android:backgroundTint="@color/fw_red_tint"
-                        android:paddingLeft="9dp"
-                        android:paddingRight="9dp"
-                        android:paddingTop="5dp"
-                        android:paddingBottom="5dp"
+                        android:paddingLeft="@dimen/fw_chip_pad_h"
+                        android:paddingRight="@dimen/fw_chip_pad_h"
+                        android:paddingTop="@dimen/fw_badge_pad_v"
+                        android:paddingBottom="@dimen/fw_badge_pad_v"
                         android:textAllCaps="true"
                         android:textColor="@color/fw_red"
-                        android:textSize="11sp"
+                        android:textSize="@dimen/fw_text_chip"
                         android:fontFamily="@font/poppins_bold"
                         android:visibility="gone"
                         tools:text="10-75"
@@ -88,7 +88,7 @@
                         android:ellipsize="end"
                         android:textAllCaps="true"
                         android:textColor="@color/fw_text"
-                        android:textSize="13sp"
+                        android:textSize="@dimen/fw_text_body"
                         android:fontFamily="@font/poppins_regular"
                         android:visibility="gone"
                         tools:text="BRONX"
@@ -102,14 +102,14 @@
                         android:gravity="end"
                         android:fontFamily="monospace"
                         android:textColor="@color/fw_muted"
-                        android:textSize="11sp"
+                        android:textSize="@dimen/fw_text_chip"
                         tools:text="07 JUL | 08:31 AM"/>
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="@dimen/fw_card_gap"
                     android:orientation="horizontal">
 
                     <LinearLayout
@@ -124,7 +124,7 @@
                             android:layout_height="wrap_content"
                             android:textAllCaps="true"
                             android:textColor="@color/fw_text"
-                            android:textSize="@dimen/text_22"
+                            android:textSize="@dimen/fw_text_title"
                             android:fontFamily="@font/poppins_bold"
                             tools:text="235 E 42ND ST"/>
 
@@ -134,7 +134,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:textAllCaps="true"
-                            android:textSize="12sp"
+                            android:textSize="@dimen/fw_text_caption"
                             android:textColor="@color/fw_muted"
                             android:fontFamily="@font/poppins_semibold"
                             tools:text="MIDTOWN MANHATTAN"/>
@@ -148,7 +148,7 @@
                             android:ellipsize="end"
                             android:textAllCaps="true"
                             android:textColor="@color/fw_text"
-                            android:textSize="13sp"
+                            android:textSize="@dimen/fw_text_body"
                             android:fontFamily="@font/poppins_medium"
                             tools:text="2 COLUMNS BUCKLED ON THE 21ST FLOOR · 34-STORY OFFICE BLDG · 75×100"/>
                     </LinearLayout>
@@ -158,7 +158,7 @@
                         android:layout_width="95dp"
                         android:layout_height="111dp"
                         android:layout_marginStart="12dp"
-                        app:cardCornerRadius="12dp"
+                        app:cardCornerRadius="@dimen/fw_corner_medium"
                         app:cardElevation="0dp"
                         app:strokeWidth="0dp"
                         android:visibility="gone"
@@ -178,10 +178,10 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="166dp"
-                android:layout_marginTop="10dp"
-                app:cardCornerRadius="16dp"
+                android:layout_marginTop="@dimen/fw_card_gap"
+                app:cardCornerRadius="@dimen/fw_corner_card"
                 app:cardElevation="0dp"
-                app:strokeWidth="1dp"
+                app:strokeWidth="@dimen/fw_hairline_width"
                 app:strokeColor="@color/fw_hairline">
 
                 <FrameLayout
@@ -202,13 +202,13 @@
                         android:layout_gravity="start|top"
                         android:layout_margin="10dp"
                         android:background="@drawable/fw_map_chip_bg"
-                        android:paddingLeft="9dp"
-                        android:paddingRight="9dp"
-                        android:paddingTop="5dp"
-                        android:paddingBottom="5dp"
+                        android:paddingLeft="@dimen/fw_chip_pad_h"
+                        android:paddingRight="@dimen/fw_chip_pad_h"
+                        android:paddingTop="@dimen/fw_badge_pad_v"
+                        android:paddingBottom="@dimen/fw_badge_pad_v"
                         android:textAllCaps="true"
                         android:textColor="@color/white"
-                        android:textSize="12sp"
+                        android:textSize="@dimen/fw_text_caption"
                         android:fontFamily="@font/poppins_semibold"
                         android:maxLines="1"
                         android:ellipsize="end"
@@ -220,7 +220,7 @@
                         android:layout_gravity="end|bottom"
                         android:layout_margin="8dp"
                         android:background="@drawable/fw_map_seg_bg"
-                        android:padding="3dp"
+                        android:padding="@dimen/fw_seg_track_pad"
                         android:orientation="horizontal">
 
                         <TextView
@@ -228,13 +228,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/fw_map_seg_selected"
-                            android:paddingLeft="10dp"
-                            android:paddingRight="10dp"
-                            android:paddingTop="6dp"
-                            android:paddingBottom="6dp"
+                            android:paddingLeft="@dimen/fw_seg_pad_h"
+                            android:paddingRight="@dimen/fw_seg_pad_h"
+                            android:paddingTop="@dimen/fw_seg_pad_v"
+                            android:paddingBottom="@dimen/fw_seg_pad_v"
                             android:text="@string/map_hybrid"
-                            android:textColor="@color/fw_text"
-                            android:textSize="11sp"
+                            android:textColor="@color/fw_map_seg_text_selected"
+                            android:textSize="@dimen/fw_text_chip"
                             android:fontFamily="@font/poppins_bold"/>
 
                         <TextView
@@ -243,13 +243,13 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="2dp"
                             android:background="@null"
-                            android:paddingLeft="10dp"
-                            android:paddingRight="10dp"
-                            android:paddingTop="6dp"
-                            android:paddingBottom="6dp"
+                            android:paddingLeft="@dimen/fw_seg_pad_h"
+                            android:paddingRight="@dimen/fw_seg_pad_h"
+                            android:paddingTop="@dimen/fw_seg_pad_v"
+                            android:paddingBottom="@dimen/fw_seg_pad_v"
                             android:text="@string/map_street"
                             android:textColor="@color/white"
-                            android:textSize="11sp"
+                            android:textSize="@dimen/fw_text_chip"
                             android:fontFamily="@font/poppins_bold"/>
 
                         <TextView
@@ -258,13 +258,13 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="2dp"
                             android:background="@null"
-                            android:paddingLeft="10dp"
-                            android:paddingRight="10dp"
-                            android:paddingTop="6dp"
-                            android:paddingBottom="6dp"
+                            android:paddingLeft="@dimen/fw_seg_pad_h"
+                            android:paddingRight="@dimen/fw_seg_pad_h"
+                            android:paddingTop="@dimen/fw_seg_pad_v"
+                            android:paddingBottom="@dimen/fw_seg_pad_v"
                             android:text="@string/map_satellite"
                             android:textColor="@color/white"
-                            android:textSize="11sp"
+                            android:textSize="@dimen/fw_text_chip"
                             android:fontFamily="@font/poppins_bold"/>
                     </LinearLayout>
                 </FrameLayout>
@@ -274,11 +274,11 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="@dimen/fw_card_gap"
                 android:orientation="vertical"
                 android:background="@drawable/fw_card_bg"
-                android:paddingLeft="14dp"
-                android:paddingRight="14dp"
+                android:paddingLeft="@dimen/fw_card_pad"
+                android:paddingRight="@dimen/fw_card_pad"
                 android:paddingTop="12dp"
                 android:paddingBottom="13dp">
 
@@ -293,7 +293,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/units_title"
                         android:textColor="@color/fw_text"
-                        android:textSize="15sp"
+                        android:textSize="@dimen/fw_text_section"
                         android:fontFamily="@font/poppins_bold"/>
 
                     <TextView
@@ -303,12 +303,12 @@
                         android:layout_marginStart="8dp"
                         android:background="@drawable/fw_badge_bg"
                         android:backgroundTint="@color/fw_red"
-                        android:paddingLeft="8dp"
-                        android:paddingRight="8dp"
-                        android:paddingTop="2dp"
-                        android:paddingBottom="2dp"
+                        android:paddingLeft="@dimen/fw_count_pad_h"
+                        android:paddingRight="@dimen/fw_count_pad_h"
+                        android:paddingTop="@dimen/fw_count_pad_v"
+                        android:paddingBottom="@dimen/fw_count_pad_v"
                         android:textColor="@color/white"
-                        android:textSize="12sp"
+                        android:textSize="@dimen/fw_text_caption"
                         android:fontFamily="@font/poppins_bold"
                         android:visibility="gone"
                         tools:text="46"
@@ -326,8 +326,8 @@
                     tools:visibility="visible">
 
                     <View
-                        android:layout_width="8dp"
-                        android:layout_height="8dp"
+                        android:layout_width="@dimen/fw_legend_dot_size"
+                        android:layout_height="@dimen/fw_legend_dot_size"
                         android:background="@drawable/fw_legend_dot"
                         android:backgroundTint="@color/fw_unit_engine_bg"/>
                     <TextView
@@ -336,12 +336,12 @@
                         android:layout_marginStart="4dp"
                         android:text="@string/units_engine"
                         android:textColor="@color/fw_muted"
-                        android:textSize="9sp"
+                        android:textSize="@dimen/fw_text_legend"
                         android:fontFamily="@font/poppins_semibold"/>
 
                     <View
-                        android:layout_width="8dp"
-                        android:layout_height="8dp"
+                        android:layout_width="@dimen/fw_legend_dot_size"
+                        android:layout_height="@dimen/fw_legend_dot_size"
                         android:layout_marginStart="10dp"
                         android:background="@drawable/fw_legend_dot"
                         android:backgroundTint="@color/fw_unit_truck_bg"/>
@@ -351,12 +351,12 @@
                         android:layout_marginStart="4dp"
                         android:text="@string/units_truck"
                         android:textColor="@color/fw_muted"
-                        android:textSize="9sp"
+                        android:textSize="@dimen/fw_text_legend"
                         android:fontFamily="@font/poppins_semibold"/>
 
                     <View
-                        android:layout_width="8dp"
-                        android:layout_height="8dp"
+                        android:layout_width="@dimen/fw_legend_dot_size"
+                        android:layout_height="@dimen/fw_legend_dot_size"
                         android:layout_marginStart="10dp"
                         android:background="@drawable/fw_legend_dot"
                         android:backgroundTint="@color/fw_unit_marine_bg"/>
@@ -366,12 +366,12 @@
                         android:layout_marginStart="4dp"
                         android:text="@string/units_marine"
                         android:textColor="@color/fw_muted"
-                        android:textSize="9sp"
+                        android:textSize="@dimen/fw_text_legend"
                         android:fontFamily="@font/poppins_semibold"/>
 
                     <View
-                        android:layout_width="8dp"
-                        android:layout_height="8dp"
+                        android:layout_width="@dimen/fw_legend_dot_size"
+                        android:layout_height="@dimen/fw_legend_dot_size"
                         android:layout_marginStart="10dp"
                         android:background="@drawable/fw_legend_dot"
                         android:backgroundTint="@color/fw_unit_chief_bg"/>
@@ -381,22 +381,22 @@
                         android:layout_marginStart="4dp"
                         android:text="@string/units_chief"
                         android:textColor="@color/fw_muted"
-                        android:textSize="9sp"
+                        android:textSize="@dimen/fw_text_legend"
                         android:fontFamily="@font/poppins_semibold"/>
 
                     <View
-                        android:layout_width="8dp"
-                        android:layout_height="8dp"
+                        android:layout_width="@dimen/fw_legend_dot_size"
+                        android:layout_height="@dimen/fw_legend_dot_size"
                         android:layout_marginStart="10dp"
                         android:background="@drawable/fw_legend_dot"
-                        android:backgroundTint="@color/fw_legend_soc"/>
+                        android:backgroundTint="@color/fw_unit_soc_legend"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
                         android:text="@string/units_soc"
                         android:textColor="@color/fw_muted"
-                        android:textSize="9sp"
+                        android:textSize="@dimen/fw_text_legend"
                         android:fontFamily="@font/poppins_semibold"/>
                 </LinearLayout>
 
@@ -404,18 +404,18 @@
                     android:id="@+id/chip_group_units"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    app:chipSpacingHorizontal="4dp"
-                    app:chipSpacingVertical="4dp"/>
+                    android:layout_marginTop="@dimen/fw_card_gap"
+                    app:chipSpacingHorizontal="@dimen/fw_chip_spacing"
+                    app:chipSpacingVertical="@dimen/fw_chip_spacing"/>
 
                 <TextView
                     android:id="@+id/tv_no_units"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="@dimen/fw_card_gap"
                     android:text="@string/units_empty"
                     android:textColor="@color/fw_muted"
-                    android:textSize="12sp"
+                    android:textSize="@dimen/fw_text_caption"
                     android:fontFamily="@font/poppins_semibold"
                     android:visibility="gone"/>
             </LinearLayout>
@@ -435,7 +435,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="@dimen/fw_hairline_width"
             android:background="@color/fw_hairline"/>
 
         <LinearLayout
@@ -444,8 +444,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:paddingLeft="14dp"
-            android:paddingRight="14dp"
+            android:paddingLeft="@dimen/fw_card_pad"
+            android:paddingRight="@dimen/fw_card_pad"
             android:paddingTop="8dp"
             android:paddingBottom="4dp">
 
@@ -460,7 +460,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
-                android:textSize="13sp"
+                android:textSize="@dimen/fw_text_body"
                 android:textColor="@color/fw_text"
                 android:fontFamily="@font/poppins_semibold"
                 tools:text="34"/>
@@ -477,7 +477,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
-                android:textSize="13sp"
+                android:textSize="@dimen/fw_text_body"
                 android:textColor="@color/fw_text"
                 android:fontFamily="@font/poppins_semibold"
                 tools:text="23"/>
@@ -496,11 +496,11 @@
                 android:paddingRight="18dp"
                 android:text="@string/share"
                 android:textColor="@color/white"
-                android:textSize="15sp"
+                android:textSize="@dimen/fw_text_section"
                 android:fontFamily="@font/poppins_bold"
                 android:textAllCaps="true"
                 app:backgroundTint="@color/fw_red"
-                app:cornerRadius="12dp"
+                app:cornerRadius="@dimen/fw_corner_medium"
                 app:icon="@drawable/ic_share"
                 app:iconTint="@color/white"
                 app:iconGravity="textStart"/>
@@ -513,7 +513,7 @@
             android:gravity="center"
             android:text="@string/fw_watermark"
             android:fontFamily="monospace"
-            android:textSize="10sp"
+            android:textSize="@dimen/fw_text_watermark"
             android:textColor="@color/fw_muted"/>
     </LinearLayout>
 

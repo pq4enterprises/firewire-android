@@ -17,7 +17,7 @@ enum class UnitCategory(val bgColorRes: Int, val fgColorRes: Int) {
     MARINE(R.color.fw_unit_marine_bg, R.color.fw_unit_marine_fg),
     CHIEF(R.color.fw_unit_chief_bg, R.color.fw_unit_chief_fg),
     SOC(R.color.fw_unit_soc_bg, R.color.fw_unit_soc_fg),
-    OTHER(R.color.fw_surface2, R.color.fw_muted);
+    OTHER(R.color.fw_unit_other_bg, R.color.fw_unit_other_fg);
 
     companion object {
         private val socPrefixes = listOf("SQUAD", "HAZMAT", "RAC", "SOC", "SATELLITE")
