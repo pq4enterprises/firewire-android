@@ -12,6 +12,8 @@ class Prefs(context: Context) {
     private val USER_ID = "user_id"
     private val FILTER_LIST = "filter_list"
     private val USER_IMG = "user_img"
+    private val ALERT_SOUND = "alert_sound"
+    private val USER_ROLE = "user_role"
 
     private val preferences: SharedPreferences = context.getSharedPreferences(APP_PREF,Context.MODE_PRIVATE)
 
@@ -35,4 +37,12 @@ class Prefs(context: Context) {
 
     var userImg:String? get() = preferences.getString(USER_IMG,"")
         set(value) = preferences.edit().putString(USER_IMG,value).apply()
+
+    // GLOBAL ALERT SOUND key (AlertSounds catalog); null = system default
+    var alertSound:String? get() = preferences.getString(ALERT_SOUND,null)
+        set(value) = preferences.edit().putString(ALERT_SOUND,value).apply()
+
+    // last known server role, cached for the premium gate on the sound screen
+    var userRole:String? get() = preferences.getString(USER_ROLE,"")
+        set(value) = preferences.edit().putString(USER_ROLE,value).apply()
 }

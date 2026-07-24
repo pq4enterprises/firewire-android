@@ -68,6 +68,9 @@
 
         <activity android:name=".activity.AreasAlertsActivity"
             android:exported="true"/>
+
+        <activity android:name=".activity.AlertSoundActivity"
+            android:exported="false"/>
         <activity android:name=".activity.WireDetailActivity"
             android:exported="true"/>
 
@@ -90,6 +93,12 @@
         <meta-data
             android:name="com.google.android.gms.wallet.api.enabled"
             android:value="true" />
+
+        <!-- OneSignal: re-targets incoming pushes onto the fw_alerts_* channel
+             carrying the user's GLOBAL ALERT SOUND choice -->
+        <meta-data
+            android:name="com.onesignal.NotificationServiceExtension"
+            android:value="com.fire.wire.notification.NotificationServiceExtension" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

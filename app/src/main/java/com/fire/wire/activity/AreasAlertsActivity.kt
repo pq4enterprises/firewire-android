@@ -15,6 +15,8 @@ import com.fire.wire.model.user.response.CommonResponse
 import com.fire.wire.prefs
 import com.fire.wire.resource.Resource
 import com.fire.wire.resource.ResourceState
+import android.content.Intent
+import com.fire.wire.utils.AlertSounds
 import com.fire.wire.utils.Constants
 import com.fire.wire.utils.gone
 import com.fire.wire.utils.visible
@@ -269,6 +271,15 @@ class AreasAlertsActivity : BaseActivity() {
         binding.btnSave.setOnClickListener {
             saveChanges()
         }
+        binding.cardAlertSound.setOnClickListener {
+            startActivity(Intent(this, AlertSoundActivity::class.java))
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // refresh after returning from the ALERT SOUND screen
+        binding.tvCurrentSound.text = AlertSounds.current(prefs).displayName
     }
 
     /** Commits only the changed selection sets, then finishes. */

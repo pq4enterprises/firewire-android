@@ -29,9 +29,65 @@
             android:paddingLeft="@dimen/fw_screen_margin"
             android:paddingRight="@dimen/fw_screen_margin">
 
-            <!-- TODO(alert-sound): the mockup's "GLOBAL ALERT SOUND" card goes here,
-                 navigating to design screen 14 · ALERT SOUND. Deferred on Android
-                 until the alert sound files are supplied. -->
+            <!-- GLOBAL ALERT SOUND card (design screen 13) -> AlertSoundActivity -->
+            <LinearLayout
+                android:id="@+id/card_alert_sound"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="12dp"
+                android:padding="@dimen/fw_card_pad"
+                android:background="@drawable/fw_card_bg"
+                android:foreground="?attr/selectableItemBackground">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:padding="10dp"
+                    android:background="@drawable/fw_icon_square_bg"
+                    android:src="@drawable/fw_ic_bell"
+                    app:tint="@color/fw_red"
+                    android:importantForAccessibility="no" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="13dp"
+                    android:layout_marginRight="13dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/fw_text_legend"
+                        android:textColor="@color/fw_muted"
+                        android:letterSpacing="0.1"
+                        android:text="@string/global_alert_sound" />
+
+                    <TextView
+                        android:id="@+id/tv_current_sound"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/poppins_bold"
+                        android:textSize="@dimen/fw_text_section"
+                        android:textColor="@color/fw_text"
+                        android:textAllCaps="true"
+                        tools:text="ENGINE, LADDER, BATTALION" />
+                </LinearLayout>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/fw_ic_chevron_right"
+                    android:importantForAccessibility="no" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/tv_helper"

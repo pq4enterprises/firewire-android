@@ -6,6 +6,7 @@ import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.facebook.FacebookSdk
 import com.facebook.appevents.AppEventsLogger
+import com.fire.wire.utils.AlertSounds
 import com.fire.wire.utils.Prefs
 import com.onesignal.OneSignal
 import com.onesignal.debug.LogLevel
@@ -41,6 +42,10 @@ class MyApplication : Application() , Configuration.Provider{
 
         instance = this
         prefs = Prefs(applicationContext)
+
+        // make sure the alert-sound notification channel exists before the
+        // first push arrives (and migrate stale fw_alerts_* channels)
+        AlertSounds.ensureChannel(this, prefs!!)
         FacebookSdk.sdkInitialize(applicationContext)
         AppEventsLogger.activateApp(this)
 

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ALERT SOUND row (design screen 14): play circle + name + selected check -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/row_sound"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="?attr/selectableItemBackground"
+        android:paddingLeft="@dimen/fw_card_pad"
+        android:paddingRight="@dimen/fw_card_pad">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:padding="10dp"
+            android:background="@drawable/fw_circle_bg"
+            android:src="@drawable/fw_ic_play"
+            app:tint="@color/fw_text"
+            android:importantForAccessibility="no" />
+
+        <TextView
+            android:id="@+id/tv_sound_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="13dp"
+            android:layout_marginRight="13dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/fw_text_section"
+            android:textColor="@color/fw_text"
+            android:textAllCaps="true"
+            tools:text="ENGINE, LADDER, BATTALION" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_selected"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:padding="5dp"
+            android:background="@drawable/fw_circle_bg"
+            android:backgroundTint="@color/fw_red"
+            android:src="@drawable/fw_ic_check"
+            app:tint="@color/white"
+            android:visibility="invisible"
+            android:importantForAccessibility="no"
+            tools:visibility="visible" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fw_hairline_width"
+        android:layout_marginLeft="@dimen/fw_card_pad"
+        android:background="@color/fw_hairline" />
+
+</LinearLayout>
