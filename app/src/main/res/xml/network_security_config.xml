@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Scanner feeds are live Icecast streams served over cleartext HTTP
+    (verified: http://52.73.63.36:8000/... returns audio/mpeg). Android
+    blocks cleartext traffic by default on API 28+, so in-app MediaPlayer
+    playback needs this exception. Feed hosts are admin-managed and can
+    change, so cleartext is permitted app-wide rather than pinned to one
+    host; the FireWire API itself is HTTPS and unaffected. If all feeds
+    ever move to HTTPS, delete this file and the networkSecurityConfig
+    attribute in AndroidManifest.xml.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>

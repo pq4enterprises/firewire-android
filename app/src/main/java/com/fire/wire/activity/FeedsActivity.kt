@@ -3,14 +3,12 @@ package com.fire.wire.activity
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Intent
-import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.fire.wire.R
@@ -18,31 +16,33 @@ import com.fire.wire.adapter.setUpAdapter
 import com.fire.wire.databinding.ActivityFeedBinding
 import com.fire.wire.databinding.ItemMainFeedBinding
 import com.fire.wire.databinding.ItemSubFeedBinding
-import com.fire.wire.fragment.FeedFilterFragment
 import com.fire.wire.model.user.response.FeedResponse
 import com.fire.wire.model.user.response.FeedsGroupList
 import com.fire.wire.model.user.response.FeedsItem
+import com.fire.wire.model.user.response.UserDetails
 import com.fire.wire.resource.Resource
 import com.fire.wire.resource.ResourceState
-import com.fire.wire.utils.Constants
+import com.fire.wire.service.ScannerPlaybackService
+import com.fire.wire.utils.IntentUtils.UPDATE_PROFILE
 import com.fire.wire.utils.gone
-import com.fire.wire.utils.replaceFragment
 import com.fire.wire.utils.visible
 import com.fire.wire.viewModel.FireWireViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class FeedsActivity : BaseActivity() {
+class FeedsActivity : BaseActivity(), ScannerPlaybackService.Listener {
     private lateinit var vm: FireWireViewModel
 
     private lateinit var binding: ActivityFeedBinding
     private var feedsGroupList= ArrayList<FeedsGroupList>()
-    private var mediaPlayer: MediaPlayer? = null
     private val mTAG= FeedsActivity::class.java.canonicalName
     private var localityIds= ArrayList<String>()
 
-    // instrument-console UI state (Direction 1A) — presentation only
+    // user details for the premium gate (fetched on create; see passesPremiumGate)
+    private var gateUserDetails: UserDetails? = null
+
+    // instrument-console UI state
     private var selectedFeed: FeedsItem? = null
     private var selectedRegion: String? = null
     private val expandedRegions = HashMap<String, Boolean>()
@@ -63,14 +63,6 @@ class FeedsActivity : BaseActivity() {
         initApiCall()
     }
 
-   /* override fun onResume() {
-        super.onResume()
-        initExtra()
-        clickEvent()
-        initApiCall()
-        binding.flMain.gone()
-    }*/
-
     private fun initExtra() {
         if(intent!=null){
             if(intent.hasExtra("LocalityId")){
@@ -84,6 +76,14 @@ class FeedsActivity : BaseActivity() {
         vm.getFeedList(localityIds)
         vm.feedLiveData.observe(this, Observer {
           updateFeedList(it)
+        })
+
+        // role needed for the premium gate (no spinner: fetched quietly)
+        vm.getUserDetails()
+        vm.userLiveData.observe(this, Observer {
+            if(it.state == ResourceState.SUCCESS) {
+                gateUserDetails= it.data?.data
+            }
         })
     }
 
@@ -165,6 +165,8 @@ class FeedsActivity : BaseActivity() {
                         subBindingItem.tvFeedMeta.text= sourceHost(it1.feedUrl)
 
                         val isSelected= selectedFeed?.feedUrl == it1.feedUrl && selectedFeed?.feedName == it1.feedName
+                        val isActive= ScannerPlaybackService.isActiveFeed(it1.feedUrl)
+
                         ViewCompat.setBackgroundTintList(
                             subBindingItem.ivPlay,
                             ContextCompat.getColorStateList(this@FeedsActivity, if(isSelected) R.color.fw_red else R.color.fw_success_tint)
@@ -172,34 +174,32 @@ class FeedsActivity : BaseActivity() {
                         subBindingItem.ivPlay.imageTintList=
                             ContextCompat.getColorStateList(this@FeedsActivity, if(isSelected) R.color.white else R.color.fw_success)
 
-                        subBindingItem.ivPlay.setOnClickListener {
-
-                            setNowMonitoring(it1, regionName)
-
-                            val videoUrl = it1.feedUrl
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl))
-                            startActivity(intent)
-
-
-
-                            /*subBindingItem.ivPause.visible()
+                        // real playback state drives the row icon (recycled views: always set both)
+                        if(isActive){
                             subBindingItem.ivPlay.gone()
-                            val mediaUrl = "http://52.73.63.36:8000/manhattan"
+                            subBindingItem.ivPause.visible()
+                        }else{
+                            subBindingItem.ivPause.gone()
+                            subBindingItem.ivPlay.visible()
+                        }
 
-                            mediaPlayer = MediaPlayer().apply {
-                                setDataSource(mediaUrl)
-                                prepareAsync() // Prepare asynchronously to avoid blocking the UI thread
-                                setOnPreparedListener {
-                                    start() // Start playing once prepared
-                                }
-                            }*/
+                        subBindingItem.ivPlay.setOnClickListener {
+                            startPlayback(it1, regionName)
                         }
 
                         subBindingItem.ivPause.setOnClickListener {
-                            mediaPlayer?.pause()
-                            subBindingItem.ivPlay.visible()
-                            subBindingItem.ivPause.gone()
+                            stopPlayback()
                         }
+
+                        /* Previous implementation launched the stream in the browser.
+                           Kept only as a fallback in case a feed format ever proves
+                           unplayable by the platform MediaPlayer (all known feeds are
+                           Icecast audio/mpeg streams, which MediaPlayer handles):
+
+                        val videoUrl = it1.feedUrl
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl))
+                        startActivity(intent)
+                        */
 
                     }
                 )
@@ -222,14 +222,64 @@ class FeedsActivity : BaseActivity() {
 
         binding.btnTransport.setOnClickListener {
             val feed= selectedFeed ?: return@setOnClickListener
-
-            val videoUrl = feed.feedUrl
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl))
-            startActivity(intent)
+            if(ScannerPlaybackService.isActiveFeed(feed.feedUrl)){
+                stopPlayback()
+            }else{
+                startPlayback(feed, selectedRegion ?: "")
+            }
         }
     }
 
-    // ===== instrument console (Direction 1A) — presentation only =====
+    // ===== playback control =====
+
+    private fun startPlayback(feed: FeedsItem, region: String) {
+        if(!passesPremiumGate()){
+            launchPaywall()
+            return
+        }
+        setNowMonitoring(feed, region)
+        ScannerPlaybackService.play(this, feed.feedName, feed.feedUrl, region)
+    }
+
+    private fun stopPlayback() {
+        ScannerPlaybackService.stop(this)
+    }
+
+    // =========================================================================
+    // PREMIUM GATE — parity with iOS, which blocks scanner playback for the
+    // "basic_user" role and shows the paywall. To remove the gate, delete
+    // passesPremiumGate()/launchPaywall() and the single check at the top of
+    // startPlayback() above.
+    // =========================================================================
+
+    /** Same rule as MyAccountActivity.isPremium(): any non-empty role other
+     *  than "basic_user" is premium. If the role hasn't loaded (or the fetch
+     *  failed) we do NOT block, to avoid locking out premium users on a slow
+     *  network — the server still protects premium-only content. */
+    private fun passesPremiumGate(): Boolean {
+        val role = gateUserDetails?.role ?: return true
+        return role.isNotEmpty() && role != "basic_user"
+    }
+
+    /** basic_user tapped play: send them to the account screen (merged paywall). */
+    private fun launchPaywall() {
+        val intent = Intent(this, MyAccountActivity::class.java)
+        gateUserDetails?.let { intent.putExtra(UPDATE_PROFILE, it) }
+        startActivity(intent)
+    }
+
+    // ===== ScannerPlaybackService.Listener (main thread) =====
+
+    override fun onPlaybackStateChanged(state: ScannerPlaybackService.State) {
+        renderPlaybackState(state)
+    }
+
+    override fun onPlaybackError(feedName: String?) {
+        renderPlaybackState(ScannerPlaybackService.State.IDLE)
+        showAlert(getString(R.string.scanner_feed_unavailable))
+    }
+
+    // ===== instrument console =====
 
     private fun updateConsoleTotals(groupMainList: ArrayList<FeedsGroupList>) {
         val totalFeeds= groupMainList.sumOf { it.feedUrlList?.size ?: 0 }
@@ -238,6 +288,8 @@ class FeedsActivity : BaseActivity() {
         binding.tvMetaRegions.text= getString(R.string.scanner_regions_meta, groupMainList.size)
     }
 
+    /** Locks the console readouts onto a feed. Status/wave/signal are driven
+     *  separately by renderPlaybackState from real MediaPlayer state. */
     private fun setNowMonitoring(feed: FeedsItem, region: String) {
         selectedFeed= feed
         selectedRegion= region
@@ -245,18 +297,48 @@ class FeedsActivity : BaseActivity() {
         binding.tvChannelName.text= feed.feedName
         binding.tvReadoutRegion.text= region
         binding.tvReadoutSource.text= sourceHost(feed.feedUrl)
-        binding.tvReadoutStatus.text= getString(R.string.scanner_rx)
-        binding.tvReadoutStatus.setTextColor(ContextCompat.getColor(this, R.color.fw_success))
-        binding.tvStatus.text= getString(R.string.scanner_rx)
-        binding.tvStatus.setTextColor(ContextCompat.getColor(this, R.color.fw_success))
+    }
+
+    /** Mirrors true playback state onto the console: STANDBY -> BUFFERING -> RX. */
+    private fun renderPlaybackState(state: ScannerPlaybackService.State) {
+        val statusText: String
+        val statusColor: Int
+        when (state) {
+            ScannerPlaybackService.State.PLAYING -> {
+                statusText= getString(R.string.scanner_rx)
+                statusColor= R.color.fw_success
+                litSignal(true)
+                startWave()
+                binding.ivTransport.setImageResource(R.drawable.fw_ic_pause)
+                binding.btnTransport.alpha= 1f
+            }
+            ScannerPlaybackService.State.BUFFERING -> {
+                statusText= getString(R.string.scanner_buffering)
+                statusColor= R.color.fw_warning
+                litSignal(false)
+                stopWave()
+                binding.ivTransport.setImageResource(R.drawable.fw_ic_pause)
+                binding.btnTransport.alpha= 1f
+            }
+            ScannerPlaybackService.State.IDLE -> {
+                statusText= getString(R.string.scanner_standby)
+                statusColor= R.color.fw_warning
+                litSignal(false)
+                stopWave()
+                binding.ivTransport.setImageResource(R.drawable.fw_ic_play)
+                binding.btnTransport.alpha= if(selectedFeed != null) 1f else 0.4f
+            }
+        }
+
+        binding.tvStatus.text= statusText
+        binding.tvStatus.setTextColor(ContextCompat.getColor(this, statusColor))
+        binding.tvReadoutStatus.text= statusText
+        binding.tvReadoutStatus.setTextColor(ContextCompat.getColor(this, statusColor))
         ViewCompat.setBackgroundTintList(
             binding.vStatusDot,
-            ContextCompat.getColorStateList(this, R.color.fw_success)
+            ContextCompat.getColorStateList(this, statusColor)
         )
-        binding.btnTransport.alpha= 1f
 
-        litSignal(true)
-        startWave()
         binding.rvFeed.adapter?.notifyDataSetChanged()
     }
 
@@ -331,26 +413,35 @@ class FeedsActivity : BaseActivity() {
         barViews.forEach { it.scaleY= WAVE_MIN }
     }
 
-    override fun onResume() {
-        super.onResume()
-        if(selectedFeed != null) startWave()
+    override fun onStart() {
+        super.onStart()
+        ScannerPlaybackService.listener= this
+        syncFromService()
     }
 
     override fun onStop() {
         super.onStop()
+        if(ScannerPlaybackService.listener === this) {
+            ScannerPlaybackService.listener= null
+        }
+        // Only the visuals stop here — audio keeps playing in the foreground service.
         stopWave()
-        mediaPlayer?.release()
     }
 
-    /*private fun displayFragment(fragment: Fragment, flag:Boolean){
-        replaceFragment(
-            fragment,
-            mTAG,
-            allowStateLoss = true,
-            containerViewId = R.id.fl_main,
-            allowBackStack = flag
-        )
-    }*/
+    /** Re-sync console + list with the service after (re)entering the screen —
+     *  playback may have continued in the background or been stopped from the
+     *  notification while we weren't listening. */
+    private fun syncFromService() {
+        val state= ScannerPlaybackService.state
+        if(state != ScannerPlaybackService.State.IDLE) {
+            val name= ScannerPlaybackService.currentFeedName
+            val url= ScannerPlaybackService.currentFeedUrl
+            if(name != null && url != null) {
+                setNowMonitoring(FeedsItem(name, url), ScannerPlaybackService.currentRegion ?: "")
+            }
+        }
+        renderPlaybackState(state)
+    }
 
     companion object {
         private const val SEG_COUNT= 16

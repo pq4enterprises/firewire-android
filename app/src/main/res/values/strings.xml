@@ -165,4 +165,11 @@
     <string name="scanner_regions_meta">REGIONS %1$d</string>
     <string name="scanner_feed_count">%1$d FEEDS</string>
 
+    <!-- scanner in-app playback -->
+    <string name="scanner_buffering">Buffering</string>
+    <string name="scanner_feed_unavailable">This feed is currently unavailable. Please try again later.</string>
+    <string name="scanner_playback_channel">Scanner playback</string>
+    <string name="scanner_notification_listening">Live scanner audio</string>
+    <string name="scanner_notification_stop">Stop</string>
+
 </resources>
