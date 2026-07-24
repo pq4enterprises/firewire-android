@@ -27,6 +27,12 @@
     <color name="fw_orange">#E0842F</color>
     <color name="fw_info">#2F6FE0</color>
 
+    <!-- soft accent fills behind tinted icons (menu shortcut tiles);
+         dark overrides in values-night use the accent at 20% alpha -->
+    <color name="fw_orange_tint">#FCE3C4</color>
+    <color name="fw_info_tint">#DDEBFF</color>
+    <color name="fw_success_tint">#D6F2DF</color>
+
     <!-- map overlays: drawn over map imagery, same in both modes -->
     <color name="fw_map_overlay">#8C000000</color>
     <color name="fw_map_segment_bg">#80000000</color>

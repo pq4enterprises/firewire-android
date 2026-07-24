@@ -57,6 +57,10 @@
     <string name="units_command">COMMAND</string>
     <string name="units_empty">NO UNITS LISTED</string>
     <string name="fw_watermark">FIRE WIRE · @NYCFIREWIRE</string>
+    <string name="fw_shortcuts">SHORTCUTS</string>
+    <string name="fw_chicago_podcast">Chicago Podcast</string>
+    <string name="fw_firewire_website">FireWire Website</string>
+    <string name="fw_contact">Contact</string>
     <string name="feeds">Feeds</string>
     <string name="close">Close</string>
     <string name="my_account">My Account</string>

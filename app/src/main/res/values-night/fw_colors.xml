@@ -17,6 +17,11 @@
     <!-- fw_red at 20% -->
     <color name="fw_red_tint">#33E5342A</color>
 
+    <!-- accent tints at 20% alpha (menu shortcut tiles) -->
+    <color name="fw_orange_tint">#33E0842F</color>
+    <color name="fw_info_tint">#332F6FE0</color>
+    <color name="fw_success_tint">#3317B26A</color>
+
     <!-- SOC unit chip: fw_orange at 20% background, lighter text -->
     <color name="fw_unit_soc_bg">#33E0842F</color>
     <color name="fw_unit_soc_fg">#F2B47C</color>

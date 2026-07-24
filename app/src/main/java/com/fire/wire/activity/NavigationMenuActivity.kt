@@ -16,8 +16,10 @@ import com.fire.wire.viewModel.FireWireViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.recyclerview.widget.GridLayoutManager
 
+import android.content.res.ColorStateList
+import androidx.core.content.ContextCompat
 import com.fire.wire.adapter.setUpAdapter
-import com.fire.wire.databinding.ItemGridSaltBinding
+import com.fire.wire.databinding.ItemMenuTileBinding
 import com.fire.wire.model.user.request.DeleteUser
 import com.fire.wire.model.user.response.CommonResponse
 import android.content.DialogInterface
@@ -114,44 +116,58 @@ class NavigationMenuActivity: BaseActivity() {
     private fun bindProfileDetails(data: UserDetails) {
         binding.tvName.text= data.firstName
         binding.tvEmail.text= data.email
+    }
+
+    private fun setupShortcutsGrid() {
         val gridItems = listOf(
-            GridItems("Submit\n" +
-                    "A Tip", R.drawable.ic_tip_img),
-            GridItems("Chicago\n" +
-                    "Podcast", R.drawable.ic_user_chicago),
-           /* GridItems("Pioneer\n" +
-                    "Applications", R.drawable.ic_launcher_foreground),*/
-            GridItems("FireWire\n" +
-                    "Website", R.drawable.ic_user_firewire),
-            GridItems("Contact", R.drawable.ic_user_email),
-            GridItems("Personalization", R.drawable.ic_user_personal)
+            GridItems(getString(R.string.submit_tip), R.drawable.fw_ic_alert,
+                R.color.fw_orange, R.color.fw_orange_tint),
+            GridItems(getString(R.string.fw_chicago_podcast), R.drawable.fw_ic_podcast,
+                R.color.fw_text, R.color.fw_surface2),
+            GridItems(getString(R.string.fw_firewire_website), R.drawable.fw_ic_globe,
+                R.color.fw_red, R.color.fw_red_tint),
+            GridItems(getString(R.string.fw_contact), R.drawable.fw_ic_mail,
+                R.color.fw_info, R.color.fw_info_tint),
+            GridItems(getString(R.string.personalization), R.drawable.fw_ic_gear,
+                R.color.fw_success, R.color.fw_success_tint)
         )
 
         val gridList= ArrayList(gridItems)
 
-        //binding.gvData.layoutManager = GridLayoutManager(this, 3)
+        // mockup grid: 2 wide tiles on the first row, 3 on the second
+        val manager = GridLayoutManager(this, 6)
+        manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int) = if (position < 2) 3 else 2
+        }
+
         binding.gvData.setUpAdapter(
             gridList,
-            R.layout.item_grid_salt,
-            ItemGridSaltBinding::inflate,
+            R.layout.item_menu_tile,
+            ItemMenuTileBinding::inflate,
             { it,pos,bindingItem->
-                bindingItem.ivLogo.setImageResource(it.image)
-                bindingItem.tvLogoName.text= it.title
-                bindingItem.cvLogo.setOnClickListener {
+                bindingItem.ivIcon.setImageResource(it.image)
+                bindingItem.ivIcon.imageTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(this@NavigationMenuActivity, it.iconTint))
+                bindingItem.ivIcon.backgroundTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(this@NavigationMenuActivity, it.iconBg))
+                bindingItem.tvTitle.text= it.title
+                bindingItem.tileRoot.setOnClickListener {
                     when(pos){
                         0-> moveToLink("https://nycfirewire.net/send-a-tip/")
                         1-> moveToLink("https://www.chicagosbraveststories.com")
-                        3-> moveToLink("https://nycfirewire.net/contact/")
                         2-> moveToLink("https://nycfirewire.net/")
+                        3-> moveToLink("https://nycfirewire.net/contact/")
                         4-> moveToPersonalActivity()
                     }
                 }
-            },{}, manager = GridLayoutManager(this, 3))
+            },{}, manager = manager)
 
     }
 
 
     private fun initUi() {
+        setupShortcutsGrid()
+
         binding.tvClose.setOnClickListener {
             finish()
         }

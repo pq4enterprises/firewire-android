@@ -33,6 +33,15 @@
     <dimen name="fw_seg_track_pad">3dp</dimen>
     <dimen name="fw_legend_dot_size">8dp</dimen>
 
+    <!-- menu screen -->
+    <dimen name="fw_avatar_size">54dp</dimen>       <!-- profile-card avatar circle -->
+    <dimen name="fw_tile_icon_circle">50dp</dimen>  <!-- shortcut-tile icon circle -->
+    <dimen name="fw_tile_icon">24dp</dimen>         <!-- icon inside the circle -->
+    <dimen name="fw_header_icon">30dp</dimen>       <!-- flame mark in screen header -->
+    <dimen name="fw_touch_target">44dp</dimen>      <!-- min tap height (delete/close) -->
+    <dimen name="fw_tile_gap">5dp</dimen>           <!-- half-gap around grid tiles -->
+    <dimen name="fw_tile_pad_v">18dp</dimen>        <!-- shortcut tile vertical padding -->
+
     <!-- type scale -->
     <dimen name="fw_text_title">22sp</dimen>      <!-- address headline -->
     <dimen name="fw_text_toolbar">18sp</dimen>

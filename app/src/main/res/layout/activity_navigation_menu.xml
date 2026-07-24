@@ -1,162 +1,191 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- navigation menu, 2026 design system: profile card, SHORTCUTS grid, DELETE ACCOUNT -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@drawable/ic_lite_red_bg">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fw_background">
+
+    <!-- header: flame mark centered, CLOSE at the end -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/fw_touch_target"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_logo"
+            android:layout_width="@dimen/fw_header_icon"
+            android:layout_height="@dimen/fw_header_icon"
+            android:src="@drawable/fw_ic_flame"
+            android:importantForAccessibility="no"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/fw_touch_target"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/fw_card_pad"
+            android:paddingRight="@dimen/fw_card_pad"
+            android:text="@string/close"
+            android:textAllCaps="true"
+            android:textColor="@color/fw_text"
+            android:textSize="@dimen/fw_text_section"
+            android:fontFamily="@font/poppins_bold"
+            android:drawablePadding="6dp"
+            app:drawableStartCompat="@drawable/fw_ic_close"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/fw_card_gap"
+        app:layout_constraintTop_toBottomOf="@+id/header"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <View
-                android:id="@+id/cl_top"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:background="@color/white"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/fw_screen_margin"
+            android:paddingRight="@dimen/fw_screen_margin"
+            android:paddingTop="@dimen/fw_card_gap">
 
-            </View>
-            <TextView
-                android:id="@+id/tv_close"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:padding="@dimen/dis_16"
-                android:textSize="@dimen/text_16"
-                android:fontFamily="@font/poppins_bold"
-                android:textColor="@color/black"
-                android:drawablePadding="@dimen/dis_10"
-                android:layout_marginEnd="@dimen/dis_16"
-                android:text="@string/close"
-                app:drawableStartCompat="@drawable/ic_close" />
-
-            <ImageView
-                android:id="@+id/iv_logo"
-                android:layout_width="70dp"
-                android:layout_height="75dp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginTop="@dimen/dis_30"
-                android:src="@drawable/ic_logo_red"/>
-            <ImageView
-                android:id="@+id/iv_lite_logo"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                app:layout_constraintDimensionRatio="1:1"
-                android:layout_marginTop="@dimen/dis_50"
-                app:layout_constraintTop_toBottomOf="@+id/cl_top"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:src="@drawable/ic_profile_page_logo_bg"/>
-            <androidx.cardview.widget.CardView
+            <!-- profile card -> MY ACCOUNT -->
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cv_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:cardCornerRadius="@dimen/dis_10"
-                app:cardElevation="@dimen/dis_5"
-                app:layout_constraintRight_toRightOf="parent"
-                android:layout_marginLeft="@dimen/dis_16"
-                android:layout_marginRight="@dimen/dis_16"
-                android:layout_marginTop="@dimen/dis_40"
-                app:layout_constraintTop_toBottomOf="@+id/iv_logo">
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/dis_16">
+                android:background="@drawable/fw_card_bg"
+                android:padding="@dimen/fw_card_pad">
+
+                <FrameLayout
+                    android:id="@+id/fl_avatar"
+                    android:layout_width="@dimen/fw_avatar_size"
+                    android:layout_height="@dimen/fw_avatar_size"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="12dp"
+                        android:background="@drawable/fw_circle_bg"
+                        android:backgroundTint="@color/fw_red_tint"
+                        android:src="@drawable/fw_ic_user"
+                        android:importantForAccessibility="no" />
+
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/profile_image"
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:src="@drawable/ic_user_profile_empty"
-                        app:civ_border_width="2dp"
-                        app:civ_border_color="#FFFFFFFF"/>
-                    <TextView
-                        android:id="@+id/tv_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:text="Henry Homes"
-                        android:textColor="@color/app_text_color"
-                        android:gravity="center"
-                        android:textSize="@dimen/text_18"
-                        android:fontFamily="@font/poppins_medium"
-                        android:layout_marginStart="@dimen/dis_16"
-                        app:layout_constraintTop_toTopOf="@+id/profile_image"
-                        app:layout_constraintLeft_toRightOf="@+id/profile_image"/>
-                    <TextView
-                        android:id="@+id/tv_email"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:text="Henry Homes"
-                        android:textColor="@color/grey_lite"
-                        android:textSize="@dimen/text_14"
-                        android:fontFamily="@font/inter_regular"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_name"
-                        app:layout_constraintLeft_toLeftOf="@+id/tv_name"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/my_account"
-                        android:textColor="@color/app_red"
-                        android:textSize="@dimen/text_14"
-                        android:fontFamily="@font/poppins_medium"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_email"
-                        app:layout_constraintLeft_toLeftOf="@+id/tv_name"/>
-                    <ImageView
-                        android:id="@+id/iv_right_arrow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_right_arrow"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:padding="@dimen/dis_10"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"/>
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </FrameLayout>
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
+                <TextView
+                    android:id="@+id/tv_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/fw_card_pad"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textAllCaps="true"
+                    android:textColor="@color/fw_text"
+                    android:textSize="@dimen/fw_text_toolbar"
+                    android:fontFamily="@font/poppins_bold"
+                    app:layout_constraintTop_toTopOf="@+id/fl_avatar"
+                    app:layout_constraintLeft_toRightOf="@+id/fl_avatar"
+                    app:layout_constraintRight_toLeftOf="@+id/iv_right_arrow"
+                    tools:text="FIREWIRE ADMIN" />
+
+                <TextView
+                    android:id="@+id/tv_email"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textColor="@color/fw_muted"
+                    android:textSize="@dimen/fw_text_caption"
+                    android:fontFamily="@font/poppins_medium"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_name"
+                    app:layout_constraintLeft_toLeftOf="@+id/tv_name"
+                    app:layout_constraintRight_toLeftOf="@+id/iv_right_arrow"
+                    tools:text="user@nycfirewire.net" />
+
+                <TextView
+                    android:id="@+id/tv_my_account"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/my_account"
+                    android:textAllCaps="true"
+                    android:textColor="@color/fw_red"
+                    android:textSize="@dimen/fw_text_caption"
+                    android:fontFamily="@font/poppins_bold"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_email"
+                    app:layout_constraintLeft_toLeftOf="@+id/tv_name" />
+
+                <ImageView
+                    android:id="@+id/iv_right_arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/fw_ic_chevron_right"
+                    android:importantForAccessibility="no"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- shortcuts -->
+            <TextView
+                android:id="@+id/tv_shortcuts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="2dp"
+                android:letterSpacing="0.15"
+                android:text="@string/fw_shortcuts"
+                android:textAppearance="@style/TextAppearance.FireWire.Timestamp"
+                android:fontFamily="monospace" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/gv_data"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:horizontalSpacing="@dimen/dis_16"
-                android:layout_marginLeft="@dimen/dis_16"
-                android:layout_marginRight="@dimen/dis_16"
-                android:layout_marginTop="@dimen/dis_20"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                tools:listitem="@layout/item_grid_salt"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cv_profile"
-                android:verticalSpacing="@dimen/dis_20" />
+                android:layout_marginTop="@dimen/fw_tile_gap"
+                android:layout_marginLeft="-5dp"
+                android:layout_marginRight="-5dp"
+                android:overScrollMode="never"
+                android:nestedScrollingEnabled="false"
+                tools:listitem="@layout/item_menu_tile" />
+
             <TextView
                 android:id="@+id/tv_delete"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/fw_card_gap"
+                android:minHeight="@dimen/fw_touch_target"
+                android:gravity="center"
                 android:text="@string/delete_account"
-                android:padding="@dimen/dis_20"
-                android:textColor="@color/app_red"
-                android:textSize="@dimen/text_16"
-                android:fontFamily="@font/poppins_bold"
-                app:layout_constraintTop_toBottomOf="@+id/gv_data"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"/>
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                android:textAllCaps="true"
+                android:textColor="@color/fw_red"
+                android:textSize="@dimen/fw_text_body"
+                android:fontFamily="@font/poppins_bold" />
+        </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
     <ProgressBar
