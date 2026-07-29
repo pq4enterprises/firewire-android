@@ -70,7 +70,6 @@
     <string name="units_command">COMMAND</string>
     <string name="units_empty">NO UNITS LISTED</string>
     <string name="fw_watermark">FIRE WIRE - THE BRAVEST NEWS NETWORK</string>
-    <string name="fw_watermark_handle">@NYCFIREWIRE</string>
     <string name="fw_shortcuts">SHORTCUTS</string>
     <string name="fw_chicago_podcast">Chicago Podcast</string>
     <string name="fw_firewire_website">FireWire Website</string>
