@@ -69,8 +69,11 @@ class LoginNewActivity:BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        initUi()
+        // initViewModel() MUST run first: initUi() calls vm.refreshToken(...) when
+        // launched with a REFRESH_TOKEN extra (the 401 interceptor path), and it also
+        // registers the observers that handle the refresh response.
         initViewModel()
+        initUi()
         clickEvent()
         callbackManager = CallbackManager.Factory.create();
 

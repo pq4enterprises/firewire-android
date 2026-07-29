@@ -265,13 +265,33 @@ class AreasAlertsActivity : BaseActivity() {
         )
     }
 
+    /**
+     * Premium gate, mirroring iOS AreasAlertsViewController.unlockPremiumFeatureIfValid()
+     * and AlertSoundActivity: only an explicit "basic_user" role is sent to the
+     * subscription screen. FEED switches stay ungated on both platforms.
+     */
+    private fun isBasicUser(): Boolean = (prefs.userRole ?: "") == "basic_user"
+
+    /** basic_user turned an alert on: send them to the merged paywall. */
+    private fun launchPaywall() {
+        startActivity(Intent(this, MyAccountActivity::class.java))
+    }
+
     /** ALERT switch is only live while FEED is on; shown off + dimmed otherwise. */
     private fun bindAlertSwitch(row: AreaRow, rowBinding: ItemAreaRowBinding) {
+        rowBinding.swAlert.setOnCheckedChangeListener(null)
         rowBinding.swAlert.isChecked = row.feedOn && row.alertOn
         rowBinding.swAlert.isEnabled = row.feedOn
         rowBinding.swAlert.alpha = if (row.feedOn) 1f else 0.4f
         if (row.feedOn) {
             rowBinding.swAlert.setOnCheckedChangeListener { _, checked ->
+                // Push alerts are a premium feature — same gate iOS applies.
+                if (checked && isBasicUser()) {
+                    row.alertOn = false
+                    bindAlertSwitch(row, rowBinding) // re-bind snaps the switch back off
+                    launchPaywall()
+                    return@setOnCheckedChangeListener
+                }
                 row.alertOn = checked
             }
         }
