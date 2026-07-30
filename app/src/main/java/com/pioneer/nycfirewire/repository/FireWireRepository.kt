@@ -49,11 +49,29 @@ import retrofit2.Response
 import javax.inject.Inject
 import com.pioneer.nycfirewire.R
 import com.pioneer.nycfirewire.model.incident.request.mainCommentRequest
+import com.pioneer.nycfirewire.model.link.LinkResponse
 
 class FireWireRepository @Inject constructor(
     private val apiEndPoint: ApiEndPoints,
     private val newsEndPoint: NewsEndPoint
 ) {
+
+    suspend fun getLinks(
+        liveData: MutableLiveData<Resource<LinkResponse>>
+    ) {
+        liveData.setLoading()
+        try {
+            val result = apiEndPoint.getLinks()
+            if (result.isSuccessful) {
+                liveData.setSuccess(result.body())
+            } else {
+                liveData.setError(errorHandling(result))
+            }
+        } catch (e: Exception) {
+            liveData.setError(e.message.toString())
+        }
+    }
+
 
     suspend fun getIncidentList(
         liveData: MutableLiveData<Resource<IncidentResponse>>,

@@ -35,8 +35,15 @@ import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
+import com.pioneer.nycfirewire.model.link.LinkResponse
 
 interface ApiEndPoints {
+
+    // Server-driven Menu shortcut tiles.
+    // show=true is required: without it the server paginates and caps results at 10.
+    @GET("api/app/link?show=true")
+    suspend fun getLinks():Response<LinkResponse>
+
 
 
     @POST("/api/app/auth/register")

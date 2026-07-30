@@ -41,10 +41,20 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
 import javax.inject.Inject
+import com.pioneer.nycfirewire.model.link.LinkResponse
 
 
 @HiltViewModel
 class FireWireViewModel @Inject constructor(val context: Application,val apiEndPoints: ApiEndPoints) : AndroidViewModel(context),PagingMetadataListener {
+
+    val linkLiveData = MutableLiveData<Resource<LinkResponse>>()
+
+    fun getLinks(){
+        viewModelScope.launch {
+            fireWireRepo.getLinks(linkLiveData)
+        }
+    }
+
 
     @Inject
     lateinit var fireWireRepo: FireWireRepository
