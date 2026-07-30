@@ -534,7 +534,10 @@ class CommentsFragment: Fragment() , ImageDataListener {
                 // --- Show replies count and setup nested replies ---
                 if (item.replies?.isNotEmpty() == true) {
                     bindingItem.tvMainTotalReplies.visible()
-                    bindingItem.tvMainTotalReplies.text = "${item.replies?.size} ${if (item.replies?.size?:0> 1) "Replies" else "Reply"}"
+                    val replyCount = item.replies?.size ?: 0
+                    bindingItem.tvMainTotalReplies.text =
+                        if (replyCount > 1) getString(R.string.fw_replies_count, replyCount.toString())
+                        else getString(R.string.fw_reply_count)
 
                     bindingItem.rvReplies.setUpAdapter(
                         item.replies as ArrayList,

@@ -12,7 +12,7 @@ import com.pioneer.nycfirewire.R
 object UiUtils {
 
     fun setReplyText(editText: EditText, username: String, context: Context) {
-        val replyTag = "@$username "
+        val replyTag = context.getString(R.string.fw_mention_prefix, username)
         val spannable = SpannableString(replyTag)
 
         // Apply color span only for @username lastname

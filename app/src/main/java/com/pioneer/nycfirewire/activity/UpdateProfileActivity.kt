@@ -53,7 +53,7 @@ class UpdateProfileActivity: BaseActivity(), ImageDataListener {
         if (result.resultCode == RESULT_OK) {
             binding.tvVerifyEmail.apply {
                 isClickable = false
-                text = "Verified"
+                text = getString(R.string.verified)
 
                 // 1. Change the icon to a success icon
                 setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_verified, 0, 0, 0)
@@ -147,7 +147,7 @@ class UpdateProfileActivity: BaseActivity(), ImageDataListener {
         if(profileDetails.emailVerified == true){
             binding.tvVerifyEmail.apply {
                 isClickable = false
-                text = "Verified"
+                text = getString(R.string.verified)
                 setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_verified, 0, 0, 0)
                 compoundDrawableTintList = ColorStateList.valueOf(
                     ContextCompat.getColor(this@UpdateProfileActivity, R.color.fw_success)

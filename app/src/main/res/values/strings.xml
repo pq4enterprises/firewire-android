@@ -1,10 +1,5 @@
 <resources>
     <string name="app_name">FireWire</string>
-    <string name="title_activity_maps">MapsActivity</string>
-    <string name="title_activity_splash">LoginActivity</string>
-    <string name="title_activity_login">SplashActivity</string>
-    <string name="title_activity_register">RegisterActivity</string>
-    <string name="title_activity_nav">NavigationMenuActivity</string>
     <string name="login_connect_with">Connect With</string>
     <string name="or">or</string>
     <string name="enter_email">Enter your email</string>
@@ -40,28 +35,16 @@
     <string name="take_photo">Take Photo</string>
     <string name="cancel">Cancel</string>
     <string name="gallery">Gallery</string>
-    <string name="news_listed">%s News are listed</string>
     <string name="share">Share</string>
-    <string name="description">To everyone that’s been using the app, I’m sure you’re aware of some of the new additions already. For those that haven’t hopped on board yet, there’s a bunch of reasons to download now!
-        \n <b>SaltyWire:</b>
-        \n
-    If you’re a fan of the Gettin’ Salty Podcast and a fan of FireWire, you’re gonna love this!
-We’ve joined forces with Lou and Kubes to give you the ultimate experience. A subscription will get you access to the premium features on the FireWire app, and also never before seen premium content, documentaries, and training videos from the Gettin’ Salty guys. We will also be releasing our rewards program soon to give back to our loyal followers. Stay tuned!
-Check it out www.saltywire.com</string>
-    <string name="feeds">Feeds</string>
     <string name="close">Close</string>
     <string name="my_account">My Account</string>
-    <string name="salt_text_desc">The Gettin’ Salty Experience</string>
     <string name="submit_tip">Submit A Tip</string>
     <string name="delete_account">Delete Account</string>
     <string name="feed_areas">Feed Areas</string>
-    <string name="notifications">Notifications</string>
-    <string name="choose_locality">Choose a locality</string>
     <string name="sub_locality">SubLocalities</string>
     <string name="update_profile">Update Profile</string>
     <string name="per_month">per month</string>
     <string name="full_access_text">Get Full Access With A Premium Account</string>
-    <string name="gain_access_text">With a premium account, you gain access to:</string>
     <string name="live_scanner">Our Live Scanner Feeds</string>
     <string name="add_free">An Ad-Free app experience</string>
     <string name="custom_notification">Custom notifications (specific units, boros, incident types, etc.) and more to come!</string>
@@ -69,11 +52,9 @@ Check it out www.saltywire.com</string>
     <string name="terms_of_service">Terms Of Service</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="sign_out">Sign Out</string>
-    <string name="change">Change</string>
     <string name="save_update">Save and Update</string>
     <string name="change_password">Change Password ?</string>
     <string name="view_list">View list</string>
-    <string name="title_activity_feeds">FeedsActivity</string>
     <string name="current_password">Current Password</string>
     <string name="new_password">New Password</string>
     <string name="change_password_text">Change Password</string>
@@ -82,7 +63,6 @@ Check it out www.saltywire.com</string>
     <string name="password_confirm_same">Password and confirm password should be same.</string>
     <string name="register_success">You are registered successfully!</string>
     <string name="password_length">Password should be minimum 8 characters long.</string>
-    <string name="stars">%s Likes</string>
     <string name="star">%s Like</string>
     <string name="comments">%s Comments</string>
     <string name="comment">%s Comment</string>
@@ -90,14 +70,12 @@ Check it out www.saltywire.com</string>
     <string name="view_map">View map</string>
     <string name="check_network_connection">Kindly check your network connection</string>
     <string name="token_expired">Unauthorized! Access Token was expired!</string>
-    <string name="units">Units</string>
     <string name="enter_current_password">Kindly enter current password</string>
     <string name="error_confirm_password">Kindly enter confirm password</string>
     <string name="error_new_password">Kindly enter new password</string>
     <string name="error_new_current_match">Current password and New password should not be same</string>
     <string name="error_confirm_current_match">New password and Confirm password should be same</string>
     <string name="confirm_delete">Do you want to delete your account?</string>
-    <string name="notification_setting">Notification Settings</string>
 
     <!--<string name="facebook_app_id">464876333289183</string>-->
     <string name="facebook_app_id">891535999464182</string>
@@ -105,40 +83,26 @@ Check it out www.saltywire.com</string>
    <!-- <string name="facebook_client_token">810746e29da1a9dec382f5158a422859</string>-->
     <string name="facebook_client_token">edf4d94539b2fde41f60e6b26be1e4ea</string>
     <string name="message_sent_email">OTP sent to your email.Kindly check</string>
-    <string name="enter_comment">Please enter your comments</string>
     <string name="otp">OTP</string>
     <string name="send_otp">Send OTP</string>
     <string name="verify_otp">Verify OTP</string>
     <string name="reset_password">Reset Password</string>
     <string name="enter_otp">Kindly enter the OTP</string>
-    <string name="personalization">Personalization</string>
-    <string name="submit">Submit</string>
     <string name="enter_reason">Enter your reason</string>
     <!--todo add client -->
  <string name="default_web_client_id">223386379375-p7fojocgfta2904jpios3qo17n7fdr1k.apps.googleusercontent.com</string>
    <!-- <string name="default_web_client_id">223386379375-jc0tqqm5ni6j057c5sf40clug2edkg5d.apps.googleusercontent.com</string>-->
     <string name="get_started">Get Started</string>
-    <string name="enable_mode">Dark Mode</string>
-    <string name="disable_mode">Disable Dark Mode</string>
-    <string name="register">Registration</string>
-    <string name="enter_your_reason">Kindly enter your reason</string>
     <string name="ok">OK</string>
 
     <string name="un_select_all">Unselect All</string>
-    <string name="comment_title">Comment</string>
     <string name="enter_valid_phone">Kindly enter valid phone number.</string>
-    <string name="incident_type">Incident Type</string>
-    <string name="select_sub_unit_type">Kindly select SubLocality, Unit and Incident type.</string>
-    <string name="subscribe">Subscribed</string>
     <string name="update_successfuly">Updated Successfully!</string>
     <string name="comment_reported_suucessfully">Comment reported successfully!</string>
     <string name="comment_deleted_suucessfully">Comment deleted successfully!</string>
     <string name="stop_listening">Stop Listening</string>
     <string name="stop_listening_msg">Are you sure you want to stop listening?</string>
-    <string name="post">POST</string>
     <string name="you_want_to_sign_out">Are you sure you want to signout?</string>
-    <string name="notification_souns">Notification Sounds</string>
-    <string name="menu">Menu</string>
     <string name="network_connection">No internet connection</string>
     <string name="reply">Reply</string>
     <string name="verify_email">Verify Email</string>
@@ -173,7 +137,6 @@ Check it out www.saltywire.com</string>
     <string name="fw_price_month">$5.99</string>
     <string name="fw_replies_count">%1$s Replies</string>
     <string name="fw_remove_featured_image">Remove Featured Image</string>
-    <string name="fw_reply">Reply</string>
     <string name="fw_reply_count">1 Reply</string>
     <string name="fw_report_comment">Report Comment</string>
     <string name="fw_set_featured_image">Set Featured Image</string>
@@ -188,20 +151,14 @@ Check it out www.saltywire.com</string>
     <string name="menu_post">POST</string>
     <string name="news_site_link">NYCFIREWIRE.NET</string>
     <string name="save">Save</string>
-    <string name="scanner_buffering">Buffering</string>
     <string name="scanner_dispatch_feeds">Dispatch feeds</string>
     <string name="scanner_feed_count">%1$d FEEDS</string>
-    <string name="scanner_feed_unavailable">This feed is currently unavailable. Please try again later.</string>
     <string name="scanner_feeds_meta">FEEDS %1$d</string>
     <string name="scanner_no_channel">No channel</string>
-    <string name="scanner_notification_listening">Live scanner audio</string>
-    <string name="scanner_notification_stop">Stop</string>
-    <string name="scanner_playback_channel">Scanner playback</string>
     <string name="scanner_receiver_lock">RECEIVER \u00B7 CH LOCK</string>
     <string name="scanner_region">Region</string>
     <string name="scanner_regions_meta">REGIONS %1$d</string>
     <string name="scanner_rx">RX</string>
-    <string name="scanner_select_feed_hint">Select a feed below</string>
     <string name="scanner_sig">SIG</string>
     <string name="scanner_source">Source</string>
     <string name="scanner_standby">Standby</string>
@@ -210,14 +167,10 @@ Check it out www.saltywire.com</string>
     <string name="scanner_title">Scanner</string>
     <string name="settings_updated">Settings updated successfully!</string>
     <string name="units_chief">CHIEF</string>
-    <string name="units_command">COMMAND</string>
     <string name="units_empty">NO UNITS LISTED</string>
     <string name="units_engine">ENGINE</string>
     <string name="units_marine">MARINE</string>
-    <string name="units_rescue">RESCUE/SOC</string>
     <string name="units_soc">SOC</string>
-    <string name="units_suppression">SUPPRESSION</string>
     <string name="units_title">UNITS</string>
     <string name="units_truck">TRUCK/RES</string>
-    <string name="wire_updated_at">Updated %s</string>
 </resources>
