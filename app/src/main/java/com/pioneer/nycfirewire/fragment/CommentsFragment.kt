@@ -73,6 +73,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
+import com.pioneer.nycfirewire.utils.Constants.COMMENTS_FRAGMENT
 
 
 @AndroidEntryPoint
@@ -142,7 +146,7 @@ class CommentsFragment: Fragment() , ImageDataListener {
 
     }
 
-   /* override fun onResume() {
+    override fun onResume() {
         super.onResume()
         val bundle = Bundle().apply {
             putString(FirebaseAnalytics.Param.SCREEN_NAME, COMMENTS_FRAGMENT)
@@ -150,7 +154,7 @@ class CommentsFragment: Fragment() , ImageDataListener {
         }
 
         Firebase.analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle)
-    }*/
+    }
 
     private fun updateCommentsData(response: Resource<CommonResponse>) {
         when(response.state){
@@ -163,7 +167,9 @@ class CommentsFragment: Fragment() , ImageDataListener {
                 if(response.data?.code=="comment_added") {
                    showSnackbar(binding.cvComment,response.data.message.toString())
                     binding.etComment.setText("")
-                    binding.ivPhoto.setImageResource(R.drawable.ic_camera)
+                    // must match the layout's icon; resetting to ic_camera left
+                    // the composer showing the pre-redesign glyph after posting
+                    binding.ivPhoto.setImageResource(R.drawable.fw_ic_camera)
                     if(isMainReply) {
                         isMainReply=false
                         isLastPage= false
@@ -551,7 +557,7 @@ class CommentsFragment: Fragment() , ImageDataListener {
                                 val imageRFilterList = replyItem.img?.filter { it.isNotBlank() }
                                 val filterRImg= ArrayList(imageRFilterList?: java.util.ArrayList())
                                 if (!filterRImg.isNullOrEmpty()) clickedCommentImage = filterRImg.get(0).toString() else clickedCommentImage=""
-                                showCustomDialog(replyItem.featuredImage)
+                                showCustomDialog(replyItem.featuredImage, replyItem.userId?._id == prefs.userId)
                             }
 
 
@@ -647,7 +653,7 @@ class CommentsFragment: Fragment() , ImageDataListener {
                 bindingItem.ivMenuDot.setOnClickListener{ view->
                     commentId= item._id.toString()
                     if (!item.img.isNullOrEmpty()) clickedCommentImage = item.img?.get(0).toString() else clickedCommentImage=""
-                    showCustomDialog(item.featuredImage)
+                    showCustomDialog(item.featuredImage, item.userId?._id == prefs.userId)
                 }
 
 
@@ -768,7 +774,7 @@ class CommentsFragment: Fragment() , ImageDataListener {
     }
 
 
-    private fun showCustomDialog(isfeatureImage: Boolean) {
+    private fun showCustomDialog(isfeatureImage: Boolean, isOwnComment: Boolean) {
         // Create a dialog builder
         val dialogBuilder = AlertDialog.Builder(requireContext())
 
@@ -786,13 +792,17 @@ class CommentsFragment: Fragment() , ImageDataListener {
 
 
 
-        if((prefs.userRole==USER_ADMIN || prefs.userRole==USER_SUPER || prefs.userRole==USER_SUB_ADMIN) ) {
+        val isModerator = prefs.userRole==USER_ADMIN || prefs.userRole==USER_SUPER || prefs.userRole==USER_SUB_ADMIN
+        if(isModerator) {
             if(clickedCommentImage.isNotEmpty()) buttonImageSet.visible() else buttonImageSet.gone()
             buttonDelete.visible()
         }else{
             buttonImageSet.gone()
-         buttonDelete.gone()
+            // authors can remove their own comment; everyone else still cannot
+            if(isOwnComment) buttonDelete.visible() else buttonDelete.gone()
         }
+        // reporting your own comment is not a thing
+        if(isOwnComment) buttonReport.gone() else buttonReport.visible()
 
 
         if(isfeatureImage){

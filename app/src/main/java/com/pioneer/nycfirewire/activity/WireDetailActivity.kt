@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import com.pioneer.nycfirewire.fragment.ImageDialogFragment
 import com.pioneer.nycfirewire.model.incident.request.AddCommentRequest
 import com.pioneer.nycfirewire.model.incident.response.CommentsResponse
 import com.pioneer.nycfirewire.model.incident.response.Incident
@@ -368,6 +369,12 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
             Glide.with(this)
                 .load(wireDetails.featuredImageUrl)
                 .into(binding.ivBanner)
+            // comment images have always opened full screen; the incident's own
+            // featured image never did, on either lineage
+            binding.ivBanner.setOnClickListener {
+                ImageDialogFragment.newInstance(wireDetails.featuredImageUrl.toString())
+                    .show(supportFragmentManager, "image_dialog")
+            }
         }
 
         bindUnits()

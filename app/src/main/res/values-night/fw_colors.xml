@@ -12,6 +12,10 @@
     <color name="fw_surface2">#252833</color>
     <color name="fw_text">#F4F5F8</color>
     <color name="fw_muted">#9AA0AC</color>
+
+    <!-- inverse again in dark mode, so the snackbar still separates -->
+    <color name="fw_snackbar_bg">#EFEFF2</color>
+    <color name="fw_snackbar_text">#15161B</color>
     <!-- 11% white -->
     <color name="fw_hairline">#1CFFFFFF</color>
     <!-- fw_red at 20% -->

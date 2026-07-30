@@ -6,6 +6,11 @@
         <item name="colorPrimaryVariant">@color/app_red</item>
         <item name="colorOnPrimary">@color/app_red</item>
         <item name="colorAccent">@color/app_red</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.FireWire.Dialog</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.FireWire.Dialog</item>
+        <item name="snackbarStyle">@style/Widget.FireWire.Snackbar</item>
+        <item name="snackbarTextViewStyle">@style/Widget.FireWire.Snackbar.TextView</item>
+        <item name="snackbarButtonStyle">@style/Widget.FireWire.Snackbar.Button</item>
         <item name="android:windowBackground">@color/app_red</item>
        <!-- <item name="android:windowFullscreen">true</item>-->
         <!--<item name="android:navigationBarColor">@android:color/transparent</item>-->

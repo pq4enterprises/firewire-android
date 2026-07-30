@@ -1,38 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Delete-account confirmation body, shown inside the themed AlertDialog.
+     IDs are load-bearing: NavigationMenuActivity binds editText, btn_cancel
+     and btn_ok. Buttons are AppCompatButton so android:background applies
+     under the MaterialComponents theme while staying Button subclasses for
+     the findViewById<Button> casts. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingLeft="20dp"
-    android:paddingRight="20dp">
+    android:paddingRight="20dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="4dp">
 
     <EditText
         android:id="@+id/editText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
+        android:paddingLeft="14dp"
+        android:paddingRight="14dp"
         android:hint="@string/enter_reason"
-        />
+        android:inputType="text"
+        android:maxLines="1"
+        android:background="@drawable/fw_input_bg"
+        android:fontFamily="@font/poppins_semibold"
+        android:textSize="@dimen/fw_text_section"
+        android:textColor="@color/fw_text"
+        android:textColorHint="@color/fw_muted" />
 
     <LinearLayout
         android:id="@+id/ll_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center">
-        <Button
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:layout_marginEnd="10dp"
-            android:layout_margin="@dimen/dis_20"
-            android:text="@string/cancel"/>
-        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="48dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/fw_button_outline_bg"
+            android:gravity="center"
+            android:text="@string/cancel"
+            android:textAllCaps="true"
+            android:letterSpacing="0.05"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="@dimen/fw_text_body"
+            android:textColor="@color/fw_muted" />
+
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_ok"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:layout_marginStart="10dp"
-            android:text="@string/ok"/>
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="48dp"
+            android:layout_marginStart="6dp"
+            android:background="@drawable/fw_button_bg"
+            android:gravity="center"
+            android:text="@string/ok"
+            android:textAllCaps="true"
+            android:letterSpacing="0.05"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="@dimen/fw_text_body"
+            android:textColor="@color/white" />
     </LinearLayout>
 </LinearLayout>

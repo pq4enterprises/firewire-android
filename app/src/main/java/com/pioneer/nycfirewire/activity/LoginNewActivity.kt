@@ -94,10 +94,10 @@ class LoginNewActivity: BaseActivity() {
 
     }
 
-/*    override fun onResume() {
+    override fun onResume() {
         super.onResume()
         analyticMethod(LOGIN,"LoginActivity")
-    }*/
+    }
 
     private fun initViewModel() {
         vm = ViewModelProvider(this).get(UserViewModel::class.java)

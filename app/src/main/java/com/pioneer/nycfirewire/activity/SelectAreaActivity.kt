@@ -50,10 +50,10 @@ class SelectAreaActivity : BaseActivity() {
         clickEvent()
     }
 
- /*   override fun onResume() {
+    override fun onResume() {
         super.onResume()
         analyticMethod(SELECT_AREA,"SelectAreaActivity")
-    }*/
+    }
 
     private fun initExtra() {
         isFromStart = intent.getBooleanExtra(FROM_START, false)

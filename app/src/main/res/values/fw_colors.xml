@@ -44,6 +44,10 @@
     <color name="fw_gold_muted">#5B4A12</color>
 
     <!-- map overlays: drawn over map imagery, same in both modes -->
+    <!-- snackbar / toast surface: inverse of the page surface -->
+    <color name="fw_snackbar_bg">#15161B</color>
+    <color name="fw_snackbar_text">#FFFFFF</color>
+
     <!-- fixed-dark scrim for photo heroes; same in both themes -->
     <color name="fw_scrim">#A6000000</color>
     <color name="fw_on_scrim_muted">#C8CDD6</color>

@@ -76,7 +76,7 @@ class FilterFragment : Fragment() {
         return binding.root
     }
 
-    /*override fun onResume() {
+    override fun onResume() {
         super.onResume()
         val bundle = Bundle().apply {
             putString(FirebaseAnalytics.Param.SCREEN_NAME, FILTER_FRAGMENT)
@@ -84,7 +84,7 @@ class FilterFragment : Fragment() {
         }
 
         Firebase.analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle)
-    }*/
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

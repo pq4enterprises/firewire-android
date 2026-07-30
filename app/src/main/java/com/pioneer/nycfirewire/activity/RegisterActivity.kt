@@ -62,10 +62,10 @@ class RegisterActivity : BaseActivity() {
 
     }
 
-  /*  override fun onResume() {
+    override fun onResume() {
         super.onResume()
         analyticMethod(REGISTRATION,"RegisterActivity")
-    }*/
+    }
 
     private fun initUi() {
         setMessageWithClickableLink(this,binding.tvHaveAccount)

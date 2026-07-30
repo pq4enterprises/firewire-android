@@ -61,10 +61,10 @@ class ForgotPasswordActivity : BaseActivity() {
         clickEvent()
     }
 
- /*   override fun onResume() {
+    override fun onResume() {
         super.onResume()
         analyticMethod(FORGOT_PASSWORD,"ForgotPasswordActivity")
-    }*/
+    }
 
     private fun sendOtp(){
         val email = binding.etEmailAddress.text.toString()

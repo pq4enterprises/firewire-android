@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- alert-dialog surface; inset so the rounded corners are not clipped by the
+     dialog window -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:insetLeft="20dp"
+    android:insetRight="20dp"
+    android:insetTop="12dp"
+    android:insetBottom="12dp">
+    <shape android:shape="rectangle">
+        <solid android:color="@color/fw_surface" />
+        <corners android:radius="@dimen/fw_corner_card" />
+        <stroke android:width="@dimen/fw_hairline_width" android:color="@color/fw_hairline" />
+    </shape>
+</inset>

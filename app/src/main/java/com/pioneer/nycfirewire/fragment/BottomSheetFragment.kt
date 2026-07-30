@@ -64,7 +64,7 @@ class BottomSheetFragment(clickListener: ImageDataListener) : BottomSheetDialogF
 
     }
 
-/*    override fun onResume() {
+    override fun onResume() {
         super.onResume()
         val bundle = Bundle().apply {
             putString(FirebaseAnalytics.Param.SCREEN_NAME, BOTTOM_SHEET_FRAGMENT)
@@ -72,7 +72,7 @@ class BottomSheetFragment(clickListener: ImageDataListener) : BottomSheetDialogF
         }
 
         Firebase.analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle)
-    }*/
+    }
 
 
     private val getCameraImage =

@@ -19,6 +19,7 @@ import com.pioneer.nycfirewire.databinding.ActivityNewsDetailBinding
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import com.pioneer.nycfirewire.utils.Constants.NEWS_DETAIL
 
 class NewsDetailActivity : BaseActivity() {
 
@@ -42,10 +43,10 @@ class NewsDetailActivity : BaseActivity() {
 
     }
 
-  /*  override fun onResume() {
+    override fun onResume() {
         super.onResume()
         analyticMethod(NEWS_DETAIL,"NewsDetailActivity")
-    }*/
+    }
 
     private fun initBinding(date: String, content: String) {
         binding.tvDateTime.text= DateUtils.convertDate(date)

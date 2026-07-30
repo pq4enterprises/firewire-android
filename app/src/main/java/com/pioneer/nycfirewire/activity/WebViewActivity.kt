@@ -10,6 +10,7 @@ import com.pioneer.nycfirewire.data.auth.ApiClient.Companion.BASE_INCIDENT_URL
 import com.pioneer.nycfirewire.prefs
 import com.pioneer.nycfirewire.utils.Constants.DARK
 import com.pioneer.nycfirewire.utils.Constants.LIGHT
+import com.pioneer.nycfirewire.utils.Constants.INCIDENT_POST
 
 class WebViewActivity : BaseActivity() {
 
@@ -56,10 +57,10 @@ class WebViewActivity : BaseActivity() {
 
     }
 
-  /*  override fun onResume() {
+    override fun onResume() {
         super.onResume()
         analyticMethod(INCIDENT_POST,"IncidentPostWebView")
-    }*/
+    }
 
     // Override onBackPressed to handle back navigation for the WebView
     override fun onBackPressed() {
