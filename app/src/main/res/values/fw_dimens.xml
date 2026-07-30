@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    FireWire design-system spacing / radius / type scale (2026 design system).
+    Values are the ones proven on the incident detail screen.
+-->
+<resources>
+
+    <!-- corner radii -->
+    <dimen name="fw_corner_card">16dp</dimen>
+    <dimen name="fw_corner_medium">12dp</dimen>   <!-- buttons, photo thumbnail -->
+    <dimen name="fw_corner_segment">9dp</dimen>   <!-- map segmented-control track -->
+    <dimen name="fw_corner_badge">8dp</dimen>     <!-- badges, map address chip -->
+    <dimen name="fw_corner_chip">7dp</dimen>      <!-- unit chips, selected segment -->
+    <dimen name="fw_corner_dot">2dp</dimen>       <!-- legend dot -->
+
+    <!-- spacing -->
+    <dimen name="fw_screen_margin">12dp</dimen>   <!-- horizontal page inset -->
+    <dimen name="fw_card_gap">10dp</dimen>        <!-- vertical rhythm between cards -->
+    <dimen name="fw_card_pad">14dp</dimen>        <!-- card interior padding -->
+    <dimen name="fw_hairline_width">1dp</dimen>
+
+    <!-- badge / chip paddings -->
+    <dimen name="fw_badge_pad_h">11dp</dimen>
+    <dimen name="fw_badge_pad_v">5dp</dimen>      <!-- shared by badges and small chips -->
+    <dimen name="fw_chip_pad_h">9dp</dimen>       <!-- signal chip, map address chip -->
+    <dimen name="fw_count_pad_h">8dp</dimen>      <!-- units count badge -->
+    <dimen name="fw_count_pad_v">2dp</dimen>
+    <dimen name="fw_unit_chip_pad_h">8dp</dimen>  <!-- unit chips (set in code) -->
+    <dimen name="fw_unit_chip_pad_v">4dp</dimen>
+    <dimen name="fw_chip_spacing">4dp</dimen>
+    <dimen name="fw_seg_pad_h">10dp</dimen>       <!-- map segment items -->
+    <dimen name="fw_seg_pad_v">6dp</dimen>
+    <dimen name="fw_seg_track_pad">3dp</dimen>
+    <dimen name="fw_legend_dot_size">8dp</dimen>
+
+    <!-- menu screen -->
+    <dimen name="fw_avatar_size">54dp</dimen>       <!-- profile-card avatar circle -->
+    <dimen name="fw_tile_icon_circle">50dp</dimen>  <!-- shortcut-tile icon circle -->
+    <dimen name="fw_tile_icon">24dp</dimen>         <!-- icon inside the circle -->
+    <dimen name="fw_header_icon">30dp</dimen>       <!-- flame mark in screen header -->
+    <dimen name="fw_touch_target">44dp</dimen>      <!-- min tap height (delete/close) -->
+    <dimen name="fw_tile_gap">5dp</dimen>           <!-- half-gap around grid tiles -->
+    <dimen name="fw_tile_pad_v">18dp</dimen>        <!-- shortcut tile vertical padding -->
+
+    <!-- type scale -->
+    <dimen name="fw_text_title">22sp</dimen>      <!-- address headline -->
+    <dimen name="fw_text_toolbar">18sp</dimen>
+    <dimen name="fw_text_section">15sp</dimen>    <!-- section headers, primary button -->
+    <dimen name="fw_text_body">13sp</dimen>
+    <dimen name="fw_text_caption">12sp</dimen>    <!-- badges, subtitles, unit chips -->
+    <dimen name="fw_text_chip">11sp</dimen>       <!-- signal chip, segments, timestamp -->
+    <dimen name="fw_text_watermark">10sp</dimen>
+    <dimen name="fw_text_legend">9sp</dimen>
+
+</resources>

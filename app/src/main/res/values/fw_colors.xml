@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    FireWire design-system color tokens (2026 design system).
+    Light values here; dark overrides in values-night/fw_colors.xml.
+    Must stay in sync with iOS FireWire/Theme/FireWireTheme.swift.
+-->
+<resources>
+
+    <!-- brand -->
+    <color name="fw_red">#E5342A</color>
+    <color name="fw_dark_red">#C42A20</color>
+
+    <!-- neutrals -->
+    <color name="fw_background">#EFEFF2</color>
+    <color name="fw_surface">#FFFFFF</color>
+    <color name="fw_surface2">#E7E8ED</color>
+    <color name="fw_text">#15161B</color>
+    <color name="fw_muted">#6C6F78</color>
+    <!-- 9% black in light / 11% white in dark -->
+    <color name="fw_hairline">#17000000</color>
+    <!-- soft red fill behind red text (signal chip) -->
+    <color name="fw_red_tint">#FDECEA</color>
+
+    <!-- semantic accents (same in both modes) -->
+    <color name="fw_success">#17B26A</color>
+    <color name="fw_warning">#F5B93C</color>
+    <color name="fw_orange">#E0842F</color>
+    <color name="fw_info">#2F6FE0</color>
+
+    <!-- soft accent fills behind tinted icons (menu shortcut tiles);
+         dark overrides in values-night use the accent at 20% alpha -->
+    <color name="fw_orange_tint">#FCE3C4</color>
+    <color name="fw_info_tint">#DDEBFF</color>
+    <color name="fw_success_tint">#D6F2DF</color>
+
+    <!-- premium subscription card (gold): fixed palette from the mockup,
+         identical in both modes — text on it is always dark -->
+    <color name="fw_gold_start">#F7D97A</color>
+    <color name="fw_gold_end">#F2C64B</color>
+    <!-- rgb(120,80,10) at 45% / 28% -->
+    <color name="fw_gold_border">#7378500A</color>
+    <color name="fw_gold_divider">#4778500A</color>
+    <color name="fw_gold_text">#1A1206</color>
+    <color name="fw_gold_muted">#5B4A12</color>
+
+    <!-- map overlays: drawn over map imagery, same in both modes -->
+    <color name="fw_map_overlay">#8C000000</color>
+    <color name="fw_map_segment_bg">#80000000</color>
+    <!-- selected map segment sits on a fixed white pill, so its text
+         stays dark in both modes (do NOT use fw_text here) -->
+    <color name="fw_map_seg_text_selected">#15161B</color>
+
+    <!--
+        Unit-category chip colors (responding-units card).
+        NOTE: product intends these to become admin-configurable from the
+        portal later; until then they are hardcoded here and must stay in
+        sync with iOS FireWireTheme / UnitCategory.
+    -->
+    <color name="fw_unit_engine_bg">#1C1C1E</color>
+    <color name="fw_unit_engine_fg">#FFFFFF</color>
+    <color name="fw_unit_truck_bg">@color/fw_red</color>
+    <color name="fw_unit_truck_fg">#000000</color>
+    <color name="fw_unit_marine_bg">#17B26A</color>
+    <color name="fw_unit_marine_fg">#000000</color>
+    <color name="fw_unit_chief_bg">#F7C948</color>
+    <color name="fw_unit_chief_fg">#000000</color>
+    <color name="fw_unit_soc_bg">#FCF0E4</color>
+    <color name="fw_unit_soc_fg">#B5661F</color>
+    <color name="fw_unit_other_bg">@color/fw_surface2</color>
+    <color name="fw_unit_other_fg">@color/fw_muted</color>
+    <!-- solid swatch for the map legend dot (chip background is tinted) -->
+    <color name="fw_unit_soc_legend">@color/fw_orange</color>
+
+    <!--
+        Scanner "Instrument Panel" console (Direction 1A).
+        The receiver console is a fixed dark hardware face in BOTH light and
+        dark mode (like the map segment control); no values-night overrides.
+    -->
+    <color name="fw_scanner_console_top">#12141B</color>
+    <color name="fw_scanner_console_bottom">#0C0D12</color>
+    <!-- fw_red at 34% -->
+    <color name="fw_scanner_console_border">#57E5342A</color>
+    <color name="fw_scanner_cell">#0B0C11</color>
+    <!-- 6% white grid lines between readout cells -->
+    <color name="fw_scanner_grid_line">#0FFFFFFF</color>
+    <!-- 7% white divider under the console top strip -->
+    <color name="fw_scanner_console_divider">#12FFFFFF</color>
+    <color name="fw_scanner_console_text">#FFFFFF</color>
+    <color name="fw_scanner_console_muted">#8B93A1</color>
+    <color name="fw_scanner_console_label">#5B6270</color>
+    <!-- 9% white unlit LED segment -->
+    <color name="fw_scanner_seg_off">#17FFFFFF</color>
+    <color name="fw_scanner_wave_top">#4ADE80</color>
+
+</resources>

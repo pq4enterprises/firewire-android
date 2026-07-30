@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- line speech bubble (replies count on a comment row), design screen 10 · COMMENTS -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="17dp"
+    android:height="17dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="@color/fw_muted">
+    <path
+        android:pathData="M4,5h16v11H9l-4,3.5V16H4z"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="1.7"
+        android:strokeLineJoin="round" />
+</vector>

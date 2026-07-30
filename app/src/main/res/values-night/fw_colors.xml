@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    FireWire design-system color tokens — dark-mode overrides.
+    Only tokens that differ from values/fw_colors.xml are listed; everything
+    else (fw_red, semantic accents, map overlays, most unit-chip colors)
+    inherits the light definition. Values mirror iOS FireWireTheme.swift.
+-->
+<resources>
+
+    <color name="fw_background">#0D0E12</color>
+    <color name="fw_surface">#181A21</color>
+    <color name="fw_surface2">#252833</color>
+    <color name="fw_text">#F4F5F8</color>
+    <color name="fw_muted">#9AA0AC</color>
+    <!-- 11% white -->
+    <color name="fw_hairline">#1CFFFFFF</color>
+    <!-- fw_red at 20% -->
+    <color name="fw_red_tint">#33E5342A</color>
+
+    <!-- accent tints at 20% alpha (menu shortcut tiles) -->
+    <color name="fw_orange_tint">#33E0842F</color>
+    <color name="fw_info_tint">#332F6FE0</color>
+    <color name="fw_success_tint">#3317B26A</color>
+
+    <!-- SOC unit chip: fw_orange at 20% background, lighter text -->
+    <color name="fw_unit_soc_bg">#33E0842F</color>
+    <color name="fw_unit_soc_fg">#F2B47C</color>
+
+</resources>
