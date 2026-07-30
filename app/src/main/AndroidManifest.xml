@@ -72,14 +72,6 @@
 
         <activity android:name=".activity.SelectAreaActivity"
             android:exported="true"/>
-
-        <activity android:name=".activity.NotificationLocalityActivity"
-            android:exported="true"/>
-
-        <activity android:name=".activity.NotificationCityActivityNew"
-            android:exported="true"/>
-        <activity android:name=".activity.NotificationCityActivity"
-            android:exported="true"/>
         <activity android:name=".activity.WireDetailActivity"
             android:exported="true"/>
 
@@ -92,9 +84,6 @@
             android:exported="true"/>
         <activity android:name=".activity.ChangePasswordActivity"
             android:windowSoftInputMode="adjustResize"
-            android:exported="true"/>
-
-        <activity android:name=".activity.PersonalizationActivity"
             android:exported="true"/>
 
         <activity android:name=".activity.AreasAlertsActivity" />

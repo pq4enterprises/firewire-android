@@ -74,8 +74,6 @@ Check it out www.saltywire.com</string>
     <string name="change_password">Change Password ?</string>
     <string name="view_list">View list</string>
     <string name="title_activity_feeds">FeedsActivity</string>
-    <string name="title_activity_locality">NotificationLocality Activity</string>
-    <string name="title_activity_city">NotificationCityActivity</string>
     <string name="current_password">Current Password</string>
     <string name="new_password">New Password</string>
     <string name="change_password_text">Change Password</string>
