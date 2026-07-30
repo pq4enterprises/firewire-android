@@ -266,10 +266,8 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener, PurchaseHist
         binding.tvUpdateProfile.setOnClickListener { moveToEditProfile() }
         binding.tvEditProfile.setOnClickListener { moveToEditProfile() }
 
-        // TEMPORARY: routes to this lineage's PersonalizationActivity until the
-        // Areas & Alerts consolidation lands (sequenced last).
         binding.tvAreasAlerts.setOnClickListener {
-            startActivity(Intent(this, PersonalizationActivity::class.java))
+            startActivity(Intent(this, AreasAlertsActivity::class.java))
         }
 
         binding.btnManageSubscription.setOnClickListener {

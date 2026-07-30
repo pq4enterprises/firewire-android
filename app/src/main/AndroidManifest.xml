@@ -97,6 +97,8 @@
         <activity android:name=".activity.PersonalizationActivity"
             android:exported="true"/>
 
+        <activity android:name=".activity.AreasAlertsActivity" />
+
         <activity android:name=".activity.ForgotPasswordActivity"
             android:exported="true"/>
 

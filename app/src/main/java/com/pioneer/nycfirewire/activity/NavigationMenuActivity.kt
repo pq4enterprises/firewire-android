@@ -310,13 +310,11 @@ class NavigationMenuActivity: BaseActivity() {
     }
 
     /**
-     * TEMPORARY: routes to this lineage's existing PersonalizationActivity.
-     * The Areas & Alerts consolidation — which replaces Personalization plus the
-     * Notification City/Locality screens with a single AreasAlertsActivity — is
-     * sequenced last, and this target switches over at that point.
+     * Areas & Alerts — the consolidated replacement for the old Personalization
+     * hub plus the Notification Locality / Notification City screens.
      */
     private fun moveToPersonalActivity(){
-        val intent= Intent(this, PersonalizationActivity::class.java)
+        val intent= Intent(this, AreasAlertsActivity::class.java)
         startActivity(intent)
     }
 

@@ -35,8 +35,25 @@ import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
 import com.pioneer.nycfirewire.model.link.LinkResponse
+import com.pioneer.nycfirewire.model.user.request.UserAreaItem
+import com.pioneer.nycfirewire.model.user.request.UserNotificationItem
 
 interface ApiEndPoints {
+
+    // Areas & Alerts: locality tree with per-user isChecked flags.
+    // query {"type":"area"} marks feed (UserLocality) selections; anything else
+    // marks alert (Notification) selections. show=true disables the server's
+    // default pagination (10 localities per page).
+    @GET("api/app/locality?sortBy=createdAt&sortDir=desc&show=true")
+    suspend fun getLocalityListByType(@Query("query") query: String):Response<LocalityResponse>
+
+    // full feed-area selection set; the server diffs against stored rows
+    @POST("api/app/user/area")
+    suspend fun setUserAreas(@Body request: List<UserAreaItem>):Response<CommonResponse>
+
+    // full alert selection set; the server diffs against stored rows
+    @POST("api/app/user/notification")
+    suspend fun setUserNotifications(@Body request: List<UserNotificationItem>):Response<CommonResponse>
 
     // Server-driven Menu shortcut tiles.
     // show=true is required: without it the server paginates and caps results at 10.

@@ -49,11 +49,50 @@ import javax.inject.Inject
 import com.pioneer.nycfirewire.R
 import com.pioneer.nycfirewire.model.incident.request.mainCommentRequest
 import com.pioneer.nycfirewire.model.link.LinkResponse
+import com.pioneer.nycfirewire.model.user.request.UserAreaItem
+import com.pioneer.nycfirewire.model.user.request.UserNotificationItem
 
 class FireWireRepository @Inject constructor(
     private val apiEndPoint: ApiEndPoints,
     private val newsEndPoint: NewsEndPoint
 ) {
+
+    // Areas & Alerts: type "area" flags feed selections, "notification" flags alerts
+    suspend fun getLocalityListByType(
+        liveData: MutableLiveData<Resource<LocalityResponse>>,
+        type: String
+    ) {
+        liveData.setLoading()
+        try {
+            val result = apiEndPoint.getLocalityListByType("{\"type\":\"$type\"}")
+            if (result.isSuccessful) liveData.setSuccess(result.body())
+            else liveData.setError(errorHandling(result))
+        } catch (e: Exception) { liveData.setError(e.message.toString()) }
+    }
+
+    suspend fun setUserAreas(
+        liveData: MutableLiveData<Resource<CommonResponse>>,
+        request: List<UserAreaItem>
+    ) {
+        liveData.setLoading()
+        try {
+            val result = apiEndPoint.setUserAreas(request)
+            if (result.isSuccessful) liveData.setSuccess(result.body())
+            else liveData.setError(errorHandling(result))
+        } catch (e: Exception) { liveData.setError(e.message.toString()) }
+    }
+
+    suspend fun setUserNotifications(
+        liveData: MutableLiveData<Resource<CommonResponse>>,
+        request: List<UserNotificationItem>
+    ) {
+        liveData.setLoading()
+        try {
+            val result = apiEndPoint.setUserNotifications(request)
+            if (result.isSuccessful) liveData.setSuccess(result.body())
+            else liveData.setError(errorHandling(result))
+        } catch (e: Exception) { liveData.setError(e.message.toString()) }
+    }
 
     suspend fun getLinks(
         liveData: MutableLiveData<Resource<LinkResponse>>
