@@ -1,60 +1,66 @@
 package com.pioneer.nycfirewire.activity
 
-import android.content.Intent
-import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import com.pioneer.nycfirewire.model.user.request.GridItems
-import com.pioneer.nycfirewire.model.user.response.UserDetails
-import com.pioneer.nycfirewire.model.user.response.UserResponse
-import com.pioneer.nycfirewire.resource.Resource
-import com.pioneer.nycfirewire.resource.ResourceState
-import com.pioneer.nycfirewire.utils.IntentUtils.UPDATE_PROFILE
-import com.pioneer.nycfirewire.viewModel.FireWireViewModel
-import dagger.hilt.android.AndroidEntryPoint
-import androidx.recyclerview.widget.GridLayoutManager
-
-import com.pioneer.nycfirewire.adapter.setUpAdapter
-import com.pioneer.nycfirewire.model.user.request.DeleteUser
-import com.pioneer.nycfirewire.model.user.response.CommonResponse
 import android.content.DialogInterface
+import android.content.Intent
+import android.content.res.ColorStateList
+import android.os.Bundle
 import android.widget.Button
-
 import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.lifecycle.observe
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.onesignal.OneSignal
-import com.pioneer.nycfirewire.prefs
 import com.pioneer.nycfirewire.R
+import com.pioneer.nycfirewire.adapter.Kadapter
+import com.pioneer.nycfirewire.adapter.setUpAdapter
 import com.pioneer.nycfirewire.databinding.ActivityNavigationMenuBinding
-import com.pioneer.nycfirewire.databinding.ItemGridSaltBinding
+import com.pioneer.nycfirewire.databinding.ItemMenuTileBinding
+import com.pioneer.nycfirewire.model.link.LinkResponse
+import com.pioneer.nycfirewire.model.user.request.DeleteUser
+import com.pioneer.nycfirewire.model.user.request.GridItems
+import com.pioneer.nycfirewire.model.user.response.CommonResponse
+import com.pioneer.nycfirewire.model.user.response.UserDetails
+import com.pioneer.nycfirewire.model.user.response.UserResponse
+import com.pioneer.nycfirewire.prefs
+import com.pioneer.nycfirewire.resource.Resource
+import com.pioneer.nycfirewire.resource.ResourceState
 import com.pioneer.nycfirewire.utils.Constants
 import com.pioneer.nycfirewire.utils.Constants.MENU
-import com.pioneer.nycfirewire.utils.Constants.MY_ACCOUNT
 import com.pioneer.nycfirewire.utils.Constants.USER_ADMIN
-import com.pioneer.nycfirewire.utils.Constants.USER_BASIC_USER
 import com.pioneer.nycfirewire.utils.Constants.USER_SUB_ADMIN
 import com.pioneer.nycfirewire.utils.Constants.USER_SUPER
 import com.pioneer.nycfirewire.utils.IntentUtils.FROM_ACCOUNT
 import com.pioneer.nycfirewire.utils.IntentUtils.NAVIGATION_MENU
-import com.pioneer.nycfirewire.utils.IntentUtils.OTHER
+import com.pioneer.nycfirewire.utils.IntentUtils.UPDATE_PROFILE
 import com.pioneer.nycfirewire.utils.NetworkUtils.isOnline
 import com.pioneer.nycfirewire.utils.gone
 import com.pioneer.nycfirewire.utils.showToast
 import com.pioneer.nycfirewire.utils.startNewActivity
 import com.pioneer.nycfirewire.utils.visible
-
+import com.pioneer.nycfirewire.viewModel.FireWireViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class NavigationMenuActivity: BaseActivity() {
 
+    companion object {
+        private const val GRID_TOTAL_SPANS = 6
+        private const val MAX_TILES_PER_ROW = 3
+    }
+
     private lateinit var binding: ActivityNavigationMenuBinding
     private lateinit var vm: FireWireViewModel
     private var userDetails= UserDetails()
+    private val gridList = ArrayList<GridItems>()
+    private var gridAdapter: Kadapter<GridItems, ItemMenuTileBinding>? = null
+
+    /** Last server-driven Link tiles (null/empty -> static defaults are shown). */
+    private var serverLinkTiles: List<GridItems>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,14 +70,6 @@ class NavigationMenuActivity: BaseActivity() {
 
         initUi()
         initApiCall()
-        clickEvent()
-    }
-
-    private fun clickEvent() {
-        binding.tvPost.setOnClickListener{
-            var intent= Intent(this,WebViewActivity::class.java)
-          startActivity(intent)
-        }
     }
 
     override fun onResume() {
@@ -79,13 +77,9 @@ class NavigationMenuActivity: BaseActivity() {
         analyticMethod(MENU, "NavigationMenuActivity")
 
         if(prefs.userImg?.isEmpty() == true) {
-            Glide.with(this)
-                .load(R.drawable.ic_user_profile_empty)
-                .into(binding.profileImage)
+            Glide.with(this).load(R.drawable.ic_user_profile_empty).into(binding.profileImage)
         }else{
-            Glide.with(this)
-                .load(prefs.userImg)
-                .into(binding.profileImage)
+            Glide.with(this).load(prefs.userImg).into(binding.profileImage)
         }
         if(prefs.userFirstName?.isNotEmpty() == true) {
             binding.tvName.text = prefs.userFirstName?.plus(" ").plus(prefs.userLastName)
@@ -96,13 +90,12 @@ class NavigationMenuActivity: BaseActivity() {
     private fun initApiCall() {
         if(isOnline(this)) {
             vm.getUserDetails()
-            vm.userLiveData.observe(this, Observer {
-                updateUserDetails(it)
-            })
+            vm.userLiveData.observe(this, Observer { updateUserDetails(it) })
+            vm.deleteUserLiveData.observe(this, Observer { updateDeleteUser(it) })
 
-            vm.deleteUserLiveData.observe(this, Observer {
-                updateDeleteUser(it)
-            })
+            // shortcut tiles: fetched without blocking the static menu
+            vm.getLinks()
+            vm.linkLiveData.observe(this, Observer { updateShortcutsFromLinks(it) })
         }else Toast.makeText(this, getString(R.string.check_network_connection), Toast.LENGTH_SHORT).show()
     }
 
@@ -113,7 +106,6 @@ class NavigationMenuActivity: BaseActivity() {
                 binding.progress.gone()
                 if(response.data?.code== Constants.CODE_SUCCESS || response.data?.code=="profile_updated") {
                     deleteOrLogout()
-
                 }else{
                     showAlert(response.data?.message.toString())
                 }
@@ -124,7 +116,6 @@ class NavigationMenuActivity: BaseActivity() {
                 if(response.message==getString(R.string.token_expired)) {
                     startNewActivity(LoginNewActivity::class.java)
                 }
-
             }
             else -> {}
         }
@@ -138,7 +129,6 @@ class NavigationMenuActivity: BaseActivity() {
                 response.data?.let { it1 ->
                     userDetails= it1.data?: UserDetails()
                     bindProfileDetails(userDetails)
-
                 }
             }
             ResourceState.ERROR -> {
@@ -147,16 +137,9 @@ class NavigationMenuActivity: BaseActivity() {
                 if(response.message==getString(R.string.token_expired)) {
                     startNewActivity(LoginNewActivity::class.java)
                 }
-
             }
             else -> {}
         }
-    }
-
-    private fun moveToPaymentPage(){
-        val intent = Intent(this, MyAccountActivity::class.java)
-        intent.putExtra(FROM_ACCOUNT, OTHER)
-        startActivity(intent)
     }
 
     private fun bindProfileDetails(data: UserDetails) {
@@ -165,77 +148,153 @@ class NavigationMenuActivity: BaseActivity() {
         prefs.userRole= data.role
         prefs.userImg= data.img
         if(data.img?.isEmpty() == true) {
-            Glide.with(this)
-                .load(R.drawable.ic_user_profile_empty)
-                .into(binding.profileImage)
+            Glide.with(this).load(R.drawable.ic_user_profile_empty).into(binding.profileImage)
         }else{
-            Glide.with(this)
-                .load(data.img)
-                .into(binding.profileImage)
+            Glide.with(this).load(data.img).into(binding.profileImage)
         }
 
-        binding.cvSalty.setOnClickListener {
-       /*     var intent = Intent(this, SaltyWireActivity::class.java)
-            startActivity(intent)*/
-
-            if(prefs.userRole==USER_BASIC_USER){
-                moveToPaymentPage()
-            }else{
-                var intent = Intent(this, SaltyWireActivity::class.java)
-                startActivity(intent)
-               // moveToLink("https://saltywire.com/")
-            }
-        }
-
-        val gridItems = listOf(
-            GridItems("Submit\n" +
-                    "A Tip", R.drawable.ic_tip_img),
-            GridItems("Chicago\n" +
-                    "Podcast", R.drawable.ic_user_chicago),
-           /* GridItems("Pioneer\n" +
-                    "Applications", R.drawable.ic_launcher_foreground),*/
-            GridItems("FireWire\n" +
-                    "Website", R.drawable.ic_user_firewire),
-            GridItems("Contact", R.drawable.ic_user_email),
-            GridItems("Personalization", R.drawable.ic_user_personal)
-        )
-
-        val gridList= ArrayList(gridItems)
-
-        //binding.gvData.layoutManager = GridLayoutManager(this, 3)
-        binding.gvData.setUpAdapter(
-            gridList,
-            R.layout.item_grid_salt,
-            ItemGridSaltBinding::inflate,
-            { it,pos,bindingItem->
-                bindingItem.ivLogo.setImageResource(it.image)
-                bindingItem.tvLogoName.text= it.title
-                bindingItem.cvLogo.setOnClickListener {
-                    when(pos){
-                        0-> moveToLink("https://nycfirewire.net/send-a-tip/")
-                        1-> moveToLink("https://www.chicagosbraveststories.com")
-                        3-> moveToLink("https://nycfirewire.net/contact/")
-                        2-> moveToLink("https://nycfirewire.net/")
-                        4-> moveToPersonalActivity()
-                    }
-                }
-            },{}, manager = GridLayoutManager(this, 3))
-
+        // the role can arrive after initUi(), so re-evaluate the admin-only POST action
+        applyPostVisibility()
     }
 
-
-    private fun initUi() {
+    /** POST is admin-only — same roles this lineage already gated it on. */
+    private fun applyPostVisibility() {
         if(prefs.userRole==USER_ADMIN || prefs.userRole==USER_SUPER || prefs.userRole==USER_SUB_ADMIN){
             binding.tvPost.visible()
         }else{
             binding.tvPost.gone()
         }
+    }
 
+    private fun areasAlertsTile() = GridItems(
+        getString(R.string.areas_alerts), R.drawable.fw_ic_bell,
+        R.color.fw_red, R.color.fw_red_tint,
+        isPersonalization = true
+    )
 
+    private fun defaultShortcutTiles() = listOf(
+        GridItems(getString(R.string.submit_tip), R.drawable.fw_ic_alert,
+            R.color.fw_orange, R.color.fw_orange_tint,
+            url = "https://nycfirewire.net/send-a-tip/"),
+        GridItems(getString(R.string.fw_chicago_podcast), R.drawable.fw_ic_podcast,
+            R.color.fw_text, R.color.fw_surface2,
+            url = "https://www.chicagosbraveststories.com"),
+        GridItems(getString(R.string.fw_firewire_website), R.drawable.fw_ic_globe,
+            R.color.fw_red, R.color.fw_red_tint,
+            url = "https://nycfirewire.net/"),
+        GridItems(getString(R.string.fw_contact), R.drawable.fw_ic_mail,
+            R.color.fw_info, R.color.fw_info_tint,
+            url = "https://nycfirewire.net/contact/"),
+        areasAlertsTile()
+    )
 
-        binding.llClose.setOnClickListener {
+    /**
+     * Single source of truth for the grid: server Link tiles when available
+     * (else the static defaults, which already end with Areas & Alerts), plus
+     * the built-in Areas & Alerts tile after any server links.
+     */
+    private fun composeTiles() {
+        gridList.clear()
+        val links = serverLinkTiles
+        if (links.isNullOrEmpty()) {
+            gridList.addAll(defaultShortcutTiles())
+        } else {
+            gridList.addAll(links)
+            gridList.add(areasAlertsTile())
+        }
+        gridAdapter?.notifyDataSetChanged()
+    }
+
+    private fun setupShortcutsGrid() {
+        composeTiles()
+
+        // Balanced grid over a 6-span row: up to 3 tiles per row, smaller rows
+        // first — 5 tiles keeps the mockup's 2+3 layout, and any other count
+        // (1, 3, 4, 6, 8...) fills clean rows with the same spacing.
+        val manager = GridLayoutManager(this, GRID_TOTAL_SPANS)
+        manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                val count = gridList.size
+                if (count <= 0 || position >= count) return GRID_TOTAL_SPANS
+                val rows = (count + MAX_TILES_PER_ROW - 1) / MAX_TILES_PER_ROW
+                val base = count / rows
+                val extra = count % rows
+                // first (rows - extra) rows hold `base` tiles, the rest base + 1
+                var index = 0
+                for (row in 0 until rows) {
+                    val tilesInRow = if (row < rows - extra) base else base + 1
+                    if (position < index + tilesInRow) return GRID_TOTAL_SPANS / tilesInRow
+                    index += tilesInRow
+                }
+                return GRID_TOTAL_SPANS
+            }
+        }
+
+        gridAdapter = binding.gvData.setUpAdapter(
+            gridList,
+            R.layout.item_menu_tile,
+            ItemMenuTileBinding::inflate,
+            { it,_,bindingItem->
+                if (!it.imageUrl.isNullOrEmpty()) {
+                    // server-provided icon: untinted image on a neutral circle
+                    bindingItem.ivIcon.imageTintList = null
+                    bindingItem.ivIcon.backgroundTintList = ColorStateList.valueOf(
+                        ContextCompat.getColor(this@NavigationMenuActivity, R.color.fw_surface2))
+                    Glide.with(this@NavigationMenuActivity).load(it.imageUrl).into(bindingItem.ivIcon)
+                } else {
+                    bindingItem.ivIcon.setImageResource(it.image)
+                    bindingItem.ivIcon.imageTintList = ColorStateList.valueOf(
+                        ContextCompat.getColor(this@NavigationMenuActivity, it.iconTint))
+                    bindingItem.ivIcon.backgroundTintList = ColorStateList.valueOf(
+                        ContextCompat.getColor(this@NavigationMenuActivity, it.iconBg))
+                }
+                bindingItem.tvTitle.text= it.title
+                bindingItem.tileRoot.setOnClickListener { _ ->
+                    when {
+                        it.isPersonalization -> moveToPersonalActivity()
+                        !it.url.isNullOrEmpty() -> moveToLink(it.url!!)
+                    }
+                }
+            },{}, manager = manager)
+    }
+
+    /**
+     * Non-blocking: static tiles render immediately; when the Link API returns
+     * at least one link the external-URL tiles are replaced by the server links
+     * (Areas & Alerts always stays, last). On error or an empty list the static
+     * tiles are left untouched.
+     */
+    private fun updateShortcutsFromLinks(response: Resource<LinkResponse>) {
+        if (response.state != ResourceState.SUCCESS) return
+        val links = response.data?.data?.data.orEmpty()
+            .filter { !it.url.isNullOrEmpty() && !it.name.isNullOrEmpty() }
+        if (links.isEmpty()) return
+
+        serverLinkTiles = links.sortedBy { it.sort ?: 0 }.map { link ->
+            GridItems(
+                link.name?.uppercase(), R.drawable.fw_ic_globe,
+                R.color.fw_text, R.color.fw_surface2,
+                url = link.url,
+                imageUrl = link.imageUrl
+            )
+        }
+        composeTiles()
+    }
+
+    private fun initUi() {
+        applyPostVisibility()
+        setupShortcutsGrid()
+
+        binding.tvClose.setOnClickListener {
             prefs.isRecreate=true
             finish()
+        }
+
+        // POST opens the portal's authenticated create-incident URL in an in-app
+        // WebView — the URL carries the auth token, so it must never reach the
+        // external browser's history.
+        binding.tvPost.setOnClickListener {
+            startActivity(Intent(this, WebViewActivity::class.java))
         }
 
         binding.cvProfile.setOnClickListener {
@@ -247,32 +306,18 @@ class NavigationMenuActivity: BaseActivity() {
 
         binding.tvDelete.setOnClickListener {
             showAlertDialogButtonClicked(getString(R.string.confirm_delete))
-           // showConfirm(getString(R.string.confirm_delete))
         }
-
-//        if(prefs.isDarkMode){
-//            binding.clView.setBackgroundColor(resources.getColor(R.color.white))
-//        }else{
-//            binding.clView.background= resources.getDrawable(R.drawable.ic_lite_red_bg)
-//        }
     }
 
+    /**
+     * TEMPORARY: routes to this lineage's existing PersonalizationActivity.
+     * The Areas & Alerts consolidation — which replaces Personalization plus the
+     * Notification City/Locality screens with a single AreasAlertsActivity — is
+     * sequenced last, and this target switches over at that point.
+     */
     private fun moveToPersonalActivity(){
         val intent= Intent(this, PersonalizationActivity::class.java)
         startActivity(intent)
-    }
-
-   private fun showConfirm(message: String? = "") {
-        AlertDialog.Builder(this)
-            .setTitle(resources.getString(R.string.app_name))
-            .setMessage(message)
-            .setPositiveButton(android.R.string.ok) { _, _ ->
-                val request= DeleteUser(true)
-               vm.deleteUser(request)
-            }.setNegativeButton(android.R.string.cancel) { dialog, _ ->
-               dialog.dismiss()
-            }
-            .show()
     }
 
     private fun deleteOrLogout(){
@@ -284,52 +329,37 @@ class NavigationMenuActivity: BaseActivity() {
         prefs.userEmail= ""
         prefs.isDarkMode= false
         startNewActivity(LoginNewActivity::class.java)
-        AppCompatDelegate
-            .setDefaultNightMode(
-                AppCompatDelegate
-                    .MODE_NIGHT_NO);
-        OneSignal.logout();
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        OneSignal.logout()
     }
 
-
-   private fun showAlertDialogButtonClicked(msg: String) {
-        // Create an alert builder
+    private fun showAlertDialogButtonClicked(msg: String) {
         val builder = AlertDialog.Builder(this)
-
-        // set the custom layout
         val customLayout = layoutInflater.inflate(R.layout.dialog_custom_alert, null)
         builder.setView(customLayout)
+        builder.setTitle(resources.getString(R.string.app_name))
+        builder.setMessage(msg)
 
-       builder.setTitle(resources.getString(R.string.app_name))
-       builder.setMessage(msg)
-       val editText: EditText = customLayout.findViewById(R.id.editText)
-       val btnCancel: Button = customLayout.findViewById(R.id.btn_cancel)
-       val btnOk: Button = customLayout.findViewById(R.id.btn_ok)
+        val editText: EditText = customLayout.findViewById(R.id.editText)
+        val btnCancel: Button = customLayout.findViewById(R.id.btn_cancel)
+        val btnOk: Button = customLayout.findViewById(R.id.btn_ok)
 
-        // add a button
-        builder.setPositiveButton("") { dialog: DialogInterface?, which: Int ->
-        }
-            builder.setNegativeButton("") { dialog, _ ->
-            }
-        // create and show the alert dialog
+        builder.setPositiveButton("") { _: DialogInterface?, _: Int -> }
+        builder.setNegativeButton("") { _, _ -> }
         val dialog = builder.create()
         dialog.show()
 
-       btnCancel.setOnClickListener{ dialog.dismiss() }
-
-       btnOk.setOnClickListener{
-           if(editText.text.toString().isEmpty()){
-               //editText.setError(getString(R.string.enter_your_reason))
+        btnCancel.setOnClickListener{ dialog.dismiss() }
+        btnOk.setOnClickListener{
+            if(editText.text.toString().isEmpty()){
                 showToast(this,"Kindly enter your reason")
-           }else{
-               val request= DeleteUser(true, editText.text.toString())
-               vm.deleteUser(request)
-               dialog.dismiss()
-           }
-       }
-
-
-   }
+            }else{
+                val request= DeleteUser(true, editText.text.toString())
+                vm.deleteUser(request)
+                dialog.dismiss()
+            }
+        }
+    }
 
     override fun onBackPressed() {
         super.onBackPressed()
