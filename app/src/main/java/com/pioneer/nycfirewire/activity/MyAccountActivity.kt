@@ -68,17 +68,16 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener, PurchaseHist
             ResourceState.LOADING -> binding.progress.visible()
             ResourceState.SUCCESS -> {
                 isPurchased = true
-                binding.btnGetNow.gone()
-                binding.btnSubscribe.visible()
-                binding.tvFullAccess.text = "Premium Account"
-
                 prefs.userRole = Constants.USER_PREMIUM_FREE
+                renderSubscriptionState()
                 binding.progress.gone()
 
                 Log.d("Billing", "Backend confirmed payment: ${response.data}")
                 if (response.data?.code == Constants.CODE_SUCCESS) {
                     Log.d("Billing", "User upgraded to premium successfully")
-                    userView()
+                    // was userView(): the paywall overlay is gone, so re-render
+                    // the premium card in its subscribed state instead
+                    renderSubscriptionState()
                 }
             }
             ResourceState.ERROR -> {
@@ -103,20 +102,24 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener, PurchaseHist
         }
 
         if (isPurchased) {
-            binding.btnGetNow.gone()
-            binding.btnSubscribe.visible()
+            renderSubscriptionState()
         }
     }
 
+    private fun moveToEditProfile() {
+        val intent = Intent(this, UpdateProfileActivity::class.java)
+        intent.putExtra(UPDATE_PROFILE, userDetails)
+        startActivity(intent)
+    }
+
     private fun initExtra() {
-        val from = intent.getStringExtra(FROM_ACCOUNT)
-        if (from == OTHER) {
-            billingView()
-        } else {
-            userDetails = intent.getParcelableExtra(UPDATE_PROFILE) ?: UserDetails()
-            binding.tvProfileName.text = userDetails.firstName.plus(" ").plus(userDetails.lastName)
-            binding.tvProfileEmail.text = userDetails.email
-        }
+        // The paywall is no longer a separate mode: whether we arrived from a
+        // premium gate (FROM_ACCOUNT == OTHER) or from the menu, the profile
+        // details load and the premium card decides which side to show.
+        userDetails = intent.getParcelableExtra(UPDATE_PROFILE) ?: UserDetails()
+        binding.tvProfileName.text = userDetails.firstName.plus(" ").plus(userDetails.lastName)
+        binding.tvProfileEmail.text = userDetails.email
+        renderSubscriptionState()
     }
 
     private fun initUi() {
@@ -144,49 +147,47 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener, PurchaseHist
         })
     }
 
-    private fun userView() {
-        binding.tvTermsService.visible()
-        binding.tvPrivacyPolicy.visible()
-        binding.tvSignOut.visible()
-        binding.userView.gone()
-        binding.ivClose.gone()
-        binding.bgView.gone()
+    /**
+     * The redesign merges the old separate paywall into this screen, so there is
+     * no longer a userView/billingView overlay pair — one premium card renders
+     * either the price header (with GET NOW) or the subscribed header (with
+     * MANAGE SUBSCRIPTION). Entry from a premium gate (FROM_ACCOUNT == OTHER)
+     * now lands on the same screen; the card simply shows the unsubscribed side.
+     */
+    private fun isPremium(): Boolean {
+        val role = prefs.userRole ?: ""
+        return isPurchased || (role.isNotEmpty() && role != Constants.USER_BASIC_USER)
     }
 
-    private fun billingView() {
-        binding.tvTermsService.setTextColor(getColor(R.color.white))
-        val drawable = ContextCompat.getDrawable(this, R.drawable.ic_terms_service)
-        drawable?.setColorFilter(ContextCompat.getColor(this, R.color.white), android.graphics.PorterDuff.Mode.SRC_IN)
-
-        val drawable1 = ContextCompat.getDrawable(this, R.drawable.ic_right_arrow)
-        drawable1?.setColorFilter(ContextCompat.getColor(this, R.color.white), android.graphics.PorterDuff.Mode.SRC_IN)
-
-        binding.tvPrivacyPolicy.setTextColor(getColor(R.color.white))
-        binding.tvPrivacyPolicy.setCompoundDrawablesWithIntrinsicBounds(drawable, null, drawable1, null)
-        binding.tvTermsService.setCompoundDrawablesWithIntrinsicBounds(drawable, null, drawable1, null)
-
-        binding.tvSignOut.gone()
-        binding.userView.visible()
-        binding.ivClose.visible()
-        binding.bgView.visible()
+    private fun renderSubscriptionState() {
+        runOnUiThread {
+            if (isPremium()) {
+                binding.llPriceHeader.gone()
+                binding.btnGetNow.gone()
+                binding.llSubscribedHeader.visible()
+                binding.btnManageSubscription.visible()
+                binding.tvFullAccess.text = "Premium Account"
+            } else {
+                binding.llSubscribedHeader.gone()
+                binding.btnManageSubscription.gone()
+                binding.llPriceHeader.visible()
+                binding.btnGetNow.visible()
+                binding.tvFullAccess.text = "Basic Account"
+            }
+        }
     }
 
     private fun updateSubscriptionUI(isActive: Boolean) {
         runOnUiThread {
             if (isActive) {
                 isPurchased = true
-                binding.btnGetNow.gone()
-                binding.btnSubscribe.visible()
-                binding.tvFullAccess.text = "Premium Account"
                 Log.d("SubscriptionCheck", "Subscription active")
             } else {
                 isPurchased = false
-                binding.btnGetNow.visible()
-                binding.btnSubscribe.gone()
-                binding.tvFullAccess.text = "Basic Account"
                 basedOnUserRoleWithoutPurchase()
                 Log.d("SubscriptionCheck", "Subscription inactive")
             }
+            renderSubscriptionState()
         }
     }
 
@@ -210,8 +211,7 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener, PurchaseHist
         runOnUiThread {
             if (prefs.userRole == Constants.USER_PREMIUM_FREE) {
                 isPurchased = true
-                binding.btnGetNow.gone()
-                binding.btnSubscribe.visible()
+                renderSubscriptionState()
             }
         }
     }
@@ -257,13 +257,27 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener, PurchaseHist
     }
 
     private fun clickEvent() {
-        binding.tvBack.setOnClickListener { finish() }
-        binding.ivClose.setOnClickListener { finish() }
+        // the redesigned screen has a single shared toolbar instead of a
+        // separate tvBack (account mode) and ivClose (paywall overlay)
+        binding.toolbar.ivMenu.setOnClickListener { finish() }
+        binding.toolbar.tvToolbarTitle.text = getString(R.string.my_account)
+        binding.toolbar.tvToolbarTitle.visible()
 
-        binding.tvUpdateProfile.setOnClickListener {
-            val intent = Intent(this, UpdateProfileActivity::class.java)
-            intent.putExtra(UPDATE_PROFILE, userDetails)
-            startActivity(intent)
+        binding.tvUpdateProfile.setOnClickListener { moveToEditProfile() }
+        binding.tvEditProfile.setOnClickListener { moveToEditProfile() }
+
+        // TEMPORARY: routes to this lineage's PersonalizationActivity until the
+        // Areas & Alerts consolidation lands (sequenced last).
+        binding.tvAreasAlerts.setOnClickListener {
+            startActivity(Intent(this, PersonalizationActivity::class.java))
+        }
+
+        binding.btnManageSubscription.setOnClickListener {
+            moveToLink("https://play.google.com/store/account/subscriptions?sku=$SUB_PRODUCT_ID&package=$packageName")
+        }
+
+        binding.tvDeleteAccount.setOnClickListener {
+            binding.tvSignOut.performClick()
         }
 
         binding.btnGetNow.setOnClickListener {
