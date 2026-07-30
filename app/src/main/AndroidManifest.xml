@@ -99,6 +99,21 @@
 
         <activity android:name=".activity.AreasAlertsActivity" />
 
+
+        <!-- OneSignal 5.x builds each notification on its own fallback channel whose
+
+             sound is locked to the system default. This extender re-targets incoming
+
+             pushes onto the fw_alerts_* channel carrying the user's chosen alert
+
+             sound (see AlertSounds). Without it the alert-sound picker has no effect. -->
+
+        <meta-data
+
+            android:name="com.onesignal.NotificationServiceExtension"
+
+            android:value="com.pioneer.nycfirewire.notification.NotificationServiceExtension" />
+
         <activity android:name=".activity.ForgotPasswordActivity"
             android:exported="true"/>
 

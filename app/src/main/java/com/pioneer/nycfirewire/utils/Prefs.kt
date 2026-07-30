@@ -25,6 +25,7 @@ class Prefs(context: Context) {
     private val FEED_MAIN_POS = "feed_main_pos"
     private val FEED_SUB_POS = "feed_sub_pos"
     private val SOUND_NAME = "sound_name"
+    private val ALERT_SOUND = "alert_sound"
     private val SHOW_APP_INTRO = "show_app_intro"
     private val SHOW_HOME_INTRO = "show_home_intro"
     private val SHOW_FEED_INTRO = "show_feed_intro"
@@ -87,6 +88,37 @@ class Prefs(context: Context) {
 
     var soundName:String? get() = preferences.getString(SOUND_NAME,"")
         set(value) = preferences.edit().putString(SOUND_NAME,value).apply()
+
+    /**
+     * Stable key of the chosen alert sound (see AlertSounds). Replaces the old
+     * display-name-based soundName. Reading it migrates a legacy soundName once,
+     * so an existing user keeps the sound they had rather than silently
+     * resetting to DEFAULT.
+     */
+    var alertSound:String? get() {
+            val existing = preferences.getString(ALERT_SOUND, null)
+            if (!existing.isNullOrEmpty()) return existing
+            val legacy = preferences.getString(SOUND_NAME, "")?.trim().orEmpty()
+            if (legacy.isEmpty()) return null
+            val migrated = when (legacy.uppercase()) {
+                "ACTING ENGINE" -> "acting_engine"
+                "BATTALION" -> "battalion"
+                "DIVISION" -> "division"
+                "ENGINE LADDER TICKET" -> "engine_ladder_ticket"
+                "ENGINE TICKET" -> "engine_ticket"
+                "ENGINE, LADDER, BATTALION" -> "engine_ladder_battalion"
+                "LADDER TICKET" -> "ladder_ticket"
+                "MDT RING" -> "mdt_ring"
+                // legacy label was mangled to "Special FireUnit" by an old rename
+                "SPECIAL UNIT", "SPECIAL FIREUNIT" -> "special_unit"
+                "STANDBY FOR MESSAGE" -> "standby_for_message"
+                "TONES ONLY" -> "tones_only"
+                else -> null
+            } ?: return null
+            preferences.edit().putString(ALERT_SOUND, migrated).apply()
+            return migrated
+        }
+        set(value) = preferences.edit().putString(ALERT_SOUND,value).apply()
 
     var showAppIntro:Boolean get() = preferences.getBoolean(SHOW_APP_INTRO,false)
         set(value) = preferences.edit().putBoolean(SHOW_APP_INTRO,value).apply()

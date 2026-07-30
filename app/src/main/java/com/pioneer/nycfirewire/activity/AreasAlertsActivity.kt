@@ -22,6 +22,7 @@ import com.pioneer.nycfirewire.utils.visible
 import com.pioneer.nycfirewire.viewModel.FireWireViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import com.pioneer.nycfirewire.utils.IntentUtils
+import com.pioneer.nycfirewire.utils.AlertSounds
 
 /**
  * AREAS & ALERTS (design screen 13) — replaces the old Personalization hub
@@ -318,7 +319,9 @@ class AreasAlertsActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         // refresh after returning from the ALERT SOUND screen
-        binding.tvCurrentSound.text = prefs.soundName ?: ""
+        // AlertSounds.current() falls back to DEFAULT, so this never shows blank
+        // for a user who has not chosen a sound yet
+        binding.tvCurrentSound.text = AlertSounds.current(prefs).displayName
     }
 
     /** Commits only the changed selection sets, then finishes. */
