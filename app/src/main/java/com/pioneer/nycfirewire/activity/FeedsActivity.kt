@@ -306,6 +306,9 @@ class FeedsActivity : BaseActivity() {
                                         }
                                     }
                                 }else{
+                                    // fires here too, not just on the switch-feed
+                                    // confirmation, so a cold start is counted
+                                    analyticMethod(RADIO_CLICKED,"FeedsActivity")
                                     stopAudio(false, pos,pos1)
                                     var localCheck= it1.isChecked
                                     groupMainList.forEach {
