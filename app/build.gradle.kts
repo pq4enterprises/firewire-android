@@ -129,3 +129,38 @@ kapt {
     correctErrorTypes = true
 }
 
+// ---------------------------------------------------------------------------
+// RELEASE GUARD: refuse to build a release while the API points at staging.
+//
+// ApiClient.BASE_URL has sat on staging.api.nycfirewireapp.com since 2025-11-30
+// while this branch carried release version codes, so a release built straight
+// from source would silently ship pointed at staging. Debug builds are
+// unaffected — pointing them at staging is normal and expected.
+// ---------------------------------------------------------------------------
+val checkReleaseApiUrl = tasks.register("checkReleaseApiUrl") {
+    val apiClient = file("src/main/java/com/pioneer/nycfirewire/data/auth/ApiClient.kt")
+    inputs.file(apiClient)
+    doLast {
+        if (!apiClient.exists()) {
+            throw GradleException("Release guard: ${apiClient.path} not found — cannot verify the API base URL.")
+        }
+        val active = apiClient.readLines()
+            .map { it.trim() }
+            .filter { !it.startsWith("//") && it.contains("const val BASE_URL") }
+        if (active.isEmpty()) {
+            throw GradleException("Release guard: no active BASE_URL found in ApiClient.kt.")
+        }
+        val bad = active.filter { it.contains("staging.") || it.contains("dev-firewire") }
+        if (bad.isNotEmpty()) {
+            throw GradleException(
+                "\n\nRELEASE BLOCKED — the API base URL is not production:\n" +
+                bad.joinToString("\n") { "    $it" } +
+                "\n\nSet ApiClient.BASE_URL to https://api.nycfirewireapp.com before building a release.\n"
+            )
+        }
+        logger.lifecycle("Release guard OK — API base URL: ${active.first()}")
+    }
+}
+
+tasks.matching { it.name.startsWith("assembleRelease") || it.name.startsWith("bundleRelease") }
+    .configureEach { dependsOn(checkReleaseApiUrl) }

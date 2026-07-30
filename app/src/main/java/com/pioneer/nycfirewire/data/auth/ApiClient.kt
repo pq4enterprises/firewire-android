@@ -14,11 +14,25 @@ import java.util.concurrent.TimeUnit
 class ApiClient(context: Context) {
 
     companion object {
-       // const val BASE_URL = "https://api.nycfirewireapp.com"
-      const val BASE_URL = "https://staging.api.nycfirewireapp.com"
-      // const val BASE_URL = "https://dev-firewire-api.atomgroups.work"
-       // const val BASE_INCIDENT_URL = "https://admin.nycfirewireapp.com"
-        const val BASE_INCIDENT_URL = "https://staging.admin.nycfirewireapp.com"
+        // ===================================================================
+        // ⚠️  THIS IS CURRENTLY POINTED AT **STAGING**.
+        //
+        // It has been since 2025-11-30, on a branch carrying release version
+        // codes — so a release built straight from source would silently ship
+        // against staging. Debug builds on staging are fine and expected.
+        //
+        // Before ANY release build, uncomment the production lines below and
+        // comment out the staging ones. The `checkReleaseApiUrl` Gradle task in
+        // app/build.gradle.kts enforces this: assembleRelease / bundleRelease
+        // FAIL while a staging or dev URL is active. Do not weaken that task.
+        // ===================================================================
+
+        // const val BASE_URL = "https://api.nycfirewireapp.com"          // PRODUCTION
+        const val BASE_URL = "https://staging.api.nycfirewireapp.com"      // staging
+        // const val BASE_URL = "https://dev-firewire-api.atomgroups.work" // dead host
+
+        // const val BASE_INCIDENT_URL = "https://admin.nycfirewireapp.com"        // PRODUCTION
+        const val BASE_INCIDENT_URL = "https://staging.admin.nycfirewireapp.com"   // staging
     }
 
     // Logging interceptor
