@@ -1,32 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    News sheet (2026 design system) — mirrors bottom_sheet_wire.
+    IDs are load-bearing: NewsFragment binds tv_news_total, tvFilter,
+    rv_main_filter, tv_no_data and progress.
+-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clickable="true"
     android:focusable="true"
-    android:background="@drawable/rounded_corner_rectangle"
+    android:background="@drawable/fw_sheet_bg"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- drag handle -->
+    <View
+        android:id="@+id/v_handle"
+        android:layout_width="44dp"
+        android:layout_height="5dp"
+        android:layout_marginTop="9dp"
+        android:alpha="0.5"
+        android:background="@drawable/fw_sheet_handle"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <!-- stories count (+ hidden legacy filter) -->
     <RelativeLayout
         android:id="@+id/rl_header"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/heading_grey_bar_length"
-        android:orientation="horizontal"
-        android:background="@drawable/rounded_corner_rectangle"
+        android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="12dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/v_handle"
         app:layout_constraintRight_toRightOf="parent">
 
+        <!-- red uppercase link to the FireWire news site -->
         <TextView
             android:id="@+id/tv_news_total"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:padding="@dimen/dis_10"
-            android:fontFamily="@font/inter_regular"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_12"
-            tools:text="@string/news_listed" />
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:text="@string/news_site_link"
+            android:textAllCaps="true"
+            android:textColor="@color/fw_red"
+            android:textSize="@dimen/fw_text_section"
+            android:fontFamily="@font/poppins_bold"
+            android:letterSpacing="0.02" />
 
         <TextView
             android:id="@+id/tvFilter"
@@ -34,39 +59,62 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:drawablePadding="@dimen/dis_10"
-            android:text="@string/feed_areas"
+            android:drawablePadding="7dp"
+            android:gravity="center"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:text="@string/filter"
             android:visibility="gone"
-            android:padding="@dimen/dis_10"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_12"
+            android:textAllCaps="true"
+            android:textColor="@color/fw_red"
+            android:textSize="@dimen/fw_text_caption"
+            android:fontFamily="@font/poppins_bold"
+            android:letterSpacing="0.03"
+            app:drawableTint="@color/fw_red"
             app:drawableStartCompat="@drawable/ic_filter" />
 
     </RelativeLayout>
 
+    <View
+        android:id="@+id/v_header_divider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fw_hairline_width"
+        android:background="@color/fw_hairline"
+        app:layout_constraintTop_toBottomOf="@+id/rl_header"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_main_filter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/grey_bg"
+        android:background="@color/fw_background"
+        android:clipToPadding="false"
+        android:paddingLeft="@dimen/fw_screen_margin"
+        android:paddingRight="@dimen/fw_screen_margin"
+        android:paddingTop="@dimen/fw_screen_margin"
         android:paddingBottom="40dp"
         tools:listitem="@layout/item_bottom_news"
-        app:layout_constraintTop_toBottomOf="@+id/rl_header"
+        app:layout_constraintTop_toBottomOf="@+id/v_header_divider"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
     <TextView
         android:id="@+id/tv_no_data"
         android:text="@string/no_data_found"
         android:visibility="gone"
-        android:textColor="@color/choose_text_color"
+        android:textAllCaps="true"
+        android:textColor="@color/fw_muted"
+        android:textSize="@dimen/fw_text_body"
+        android:fontFamily="@font/poppins_semibold"
         android:layout_width="wrap_content"
-        android:layout_height="200dp"
+        android:layout_height="300dp"
         android:gravity="center"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
+
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="wrap_content"

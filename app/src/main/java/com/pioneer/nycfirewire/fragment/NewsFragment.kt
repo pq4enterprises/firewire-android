@@ -1,5 +1,6 @@
 package com.pioneer.nycfirewire.fragment
 
+import android.net.Uri
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -52,6 +53,7 @@ class NewsFragment:Fragment() {
     private lateinit var vm: FireWireViewModel
 
     companion object{
+        private const val NEWS_SITE_URL= "https://nycfirewire.net/news/"
         fun newInstance()= NewsFragment().putArgs {  }
     }
 
@@ -126,8 +128,8 @@ class NewsFragment:Fragment() {
             ResourceState.LOADING -> binding.progress.visible()
             ResourceState.SUCCESS -> {
                 binding.progress.gone()
-                val totalNews= response.data?.channel?.itemList?.size.toString()
-                binding.tvNewsTotal.text= getString(R.string.news_listed, totalNews)
+                // tvNewsTotal is no longer a count — the redesign turns it into a
+                // red uppercase link out to the FireWire news site (see clickEvent).
                 val list= response.data?.channel?.itemList?:ArrayList()
                 setupAdapter(ArrayList(list))
 
@@ -196,10 +198,16 @@ class NewsFragment:Fragment() {
     }
 
     private fun clickEvent() {
+        // KEPT from this lineage: the redesign dropped this wiring, which would
+        // have removed news filtering entirely. Preserved deliberately.
         binding.tvFilter.setOnClickListener {
             callback?.replaceFragment(NAV_FILTER,"")
         }
 
+        // Added by the redesign: sheet-bar link out to the FireWire news site.
+        binding.tvNewsTotal.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(NEWS_SITE_URL)))
+        }
     }
 
     fun showAlert(message: String? = "") {
