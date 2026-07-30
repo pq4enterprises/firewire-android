@@ -60,11 +60,11 @@ class UpdateProfileActivity: BaseActivity(), ImageDataListener {
 
                 // 2. Set Drawable Tint Programmatically to Green
                 compoundDrawableTintList = ColorStateList.valueOf(
-                    ContextCompat.getColor(this@UpdateProfileActivity, R.color.green)
+                    ContextCompat.getColor(this@UpdateProfileActivity, R.color.fw_success)
                 )
 
                 // 3. Change text color if desired
-                setTextColor(ContextCompat.getColor(this@UpdateProfileActivity, R.color.black))
+                setTextColor(ContextCompat.getColor(this@UpdateProfileActivity, R.color.fw_text))
             }
             showSnack("Email verified successfully!")
         }
@@ -84,10 +84,10 @@ class UpdateProfileActivity: BaseActivity(), ImageDataListener {
         clickEvent()
     }
 
-   /* override fun onResume() {
+    override fun onResume() {
         super.onResume()
         analyticMethod(PROFILE_UPDATE,"UpdateProfileActivity")
-    }*/
+    }
     private fun initExtra() {
         profileDetails= intent.getParcelableExtra(UPDATE_PROFILE)?: UserDetails()
         bindProfileDetails()
@@ -150,9 +150,9 @@ class UpdateProfileActivity: BaseActivity(), ImageDataListener {
                 text = "Verified"
                 setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_verified, 0, 0, 0)
                 compoundDrawableTintList = ColorStateList.valueOf(
-                    ContextCompat.getColor(this@UpdateProfileActivity, R.color.green)
+                    ContextCompat.getColor(this@UpdateProfileActivity, R.color.fw_success)
                 )
-                setTextColor(ContextCompat.getColor(this@UpdateProfileActivity, R.color.black))
+                setTextColor(ContextCompat.getColor(this@UpdateProfileActivity, R.color.fw_text))
             }
         }
 
@@ -230,7 +230,9 @@ class UpdateProfileActivity: BaseActivity(), ImageDataListener {
     }
 
     private fun initUi() {
-        binding.toolbar.tvTitle.text = getString(R.string.update_profile)
+        binding.toolbar.tvToolbarTitle.text = getString(R.string.edit_profile).uppercase()
+        binding.toolbar.tvToolbarTitle.visible()
+        binding.toolbar.ivFeed.gone()
     }
 
     private fun clickEvent() {
@@ -242,7 +244,7 @@ class UpdateProfileActivity: BaseActivity(), ImageDataListener {
             createRequestFormat()
         }
 
-        binding.toolbar.tvBack.setOnClickListener {
+        binding.toolbar.ivMenu.setOnClickListener {
             finish()
         }
 
