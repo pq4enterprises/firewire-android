@@ -70,6 +70,7 @@
     <string name="view_map">View map</string>
     <string name="check_network_connection">Kindly check your network connection</string>
     <string name="token_expired">Unauthorized! Access Token was expired!</string>
+    <string name="session_ended_sign_in_again">Your session ended. Please sign in again.</string>
     <string name="enter_current_password">Kindly enter current password</string>
     <string name="error_confirm_password">Kindly enter confirm password</string>
     <string name="error_new_password">Kindly enter new password</string>

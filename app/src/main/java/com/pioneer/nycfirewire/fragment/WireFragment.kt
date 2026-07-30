@@ -266,9 +266,12 @@ class WireFragment: Fragment(),IncidentClickListener {
             }
             ResourceState.ERROR -> {
                 binding.progress.gone()
-                showAlert(response.message)
-                if(response.message==getString(R.string.token_expired)) {
-                    startNewActivity(LoginNewActivity::class.java)
+                // Session renewal is silent and owned by TokenAuthenticator. If it could not
+                // refresh, it has already cleared the session and routed the user to the login
+                // screen with an explanation — so surfacing the raw server string here only
+                // stacks a dead-end alert on top of that.
+                if (response.message != getString(R.string.token_expired)) {
+                    showAlert(response.message)
                 }
 
             }

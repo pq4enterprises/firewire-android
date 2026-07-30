@@ -322,8 +322,10 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener, PurchaseHist
             .setCancelable(false)
             .setNegativeButton(android.R.string.cancel, null)
             .setPositiveButton(R.string.sign_out) { _, _ ->
-                prefs.deleteToken
-                prefs.isLogin = false
+                // clearSession() removes the access AND refresh tokens and writes the
+                // change. The old `prefs.deleteToken` was a no-op property read, so
+                // signing out left both live credentials in SharedPreferences.
+                prefs.clearSession()
                 startNewActivity(LoginNewActivity::class.java)
                 prefs.userImg = ""
                 prefs.userFirstName = ""

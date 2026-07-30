@@ -21,14 +21,12 @@ import androidx.lifecycle.ViewModelProvider
 import com.facebook.*
 import com.facebook.appevents.ml.Utils
 import com.pioneer.nycfirewire.model.user.request.LoginRequest
-import com.pioneer.nycfirewire.model.user.request.RefreshTokenRequest
 import com.pioneer.nycfirewire.model.user.response.LoginResponse
-import com.pioneer.nycfirewire.model.user.response.RefreshTokenResponse
+import com.pioneer.nycfirewire.data.auth.TokenAuthenticator
 import com.pioneer.nycfirewire.prefs
 import com.pioneer.nycfirewire.resource.Resource
 import com.pioneer.nycfirewire.resource.ResourceState
 import com.pioneer.nycfirewire.utils.Constants.CODE_SUCCESS
-import com.pioneer.nycfirewire.utils.IntentUtils.REFRESH_TOKEN
 import com.pioneer.nycfirewire.utils.NetworkUtils.isOnline
 import com.pioneer.nycfirewire.viewModel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -86,6 +84,7 @@ class LoginNewActivity: BaseActivity() {
         initUi()
         initViewModel()
         clickEvent()
+        showSessionExpiredNoticeIfNeeded()
         callbackManager = CallbackManager.Factory.create();
 
         if(prefs.isDarkMode) {
@@ -104,44 +103,23 @@ class LoginNewActivity: BaseActivity() {
         vm.loginLiveData.observe(this){
            updateLoginData(it)
         }
-        vm.refreshLiveData.observe(this){
-            updateRefreshData(it)
-        }
-
         vm.socialLoginLiveData.observe(this){
             updateLoginData(it)
         }
-
-
-        if(intent.getStringExtra(REFRESH_TOKEN)!=null){
-            val refrehToken = intent.getStringExtra(REFRESH_TOKEN)
-            if(isOnline(this)){
-                vm.refreshToken(RefreshTokenRequest(refrehToken!!))
-            } else {
-            showSnack(getString(R.string.check_network_connection))
-        }
-
-        }
     }
 
-    private fun updateRefreshData(response: Resource<RefreshTokenResponse>?) {
-        when(response?.state){
-            ResourceState.LOADING -> binding.progress.visible()
-            ResourceState.SUCCESS -> {
-                binding.progress.gone()
-                response.data?.let { it1 ->
-                    val data= it1.data
-                    prefs.refreshToken = data.refreshToken
-
-                    val intent = Intent(this, MapsActivity::class.java)
-                    startActivity(intent)
-                }
-            }
-            ResourceState.ERROR -> {
-                binding.progress.gone()
-                showAlert(response.message)
-            }
-            else -> {}
+    /**
+     * Explains why the user is looking at a login screen they did not ask for.
+     *
+     * Set by TokenAuthenticator in the one case where re-authentication is unavoidable
+     * (the refresh token itself is dead). Everything the user needs to recover is
+     * already on this screen — email, password, Forgot Password, and social sign-in —
+     * so this is a non-blocking snackbar, not a modal the user has to dismiss before
+     * they can type.
+     */
+    private fun showSessionExpiredNoticeIfNeeded() {
+        if (intent.getBooleanExtra(TokenAuthenticator.EXTRA_SESSION_EXPIRED, false)) {
+            showSnack(getString(R.string.session_ended_sign_in_again))
         }
     }
 

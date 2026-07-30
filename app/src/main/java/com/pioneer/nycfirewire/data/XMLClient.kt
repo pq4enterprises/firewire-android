@@ -1,14 +1,7 @@
 package com.pioneer.nycfirewire.data
 
 import android.content.Context
-import android.content.Intent
-import com.pioneer.nycfirewire.activity.LoginNewActivity
-import com.pioneer.nycfirewire.prefs
-import com.pioneer.nycfirewire.utils.IntentUtils.REFRESH_TOKEN
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
@@ -30,39 +23,21 @@ class XMLClient (val context: Context) {
             HttpLoggingInterceptor.Level.NONE
     }
 
+    /**
+     * This client talks to exactly one endpoint: the public WordPress RSS feed at
+     * https://nycfirewire.net/feed (see NewsEndPoint). It is not our API.
+     *
+     * It used to attach the user's FireWire access token as an Authorization header to
+     * that request — sending a live credential to a host that has no use for it — and
+     * then treat any 401 coming back from WordPress as a FireWire session expiry,
+     * wiping the token and throwing the user onto the login screen mid-session. Both
+     * behaviours are gone: no credential leaves the app here, and session renewal is
+     * owned solely by TokenAuthenticator on the API client.
+     */
     private val defaultHttpClient = OkHttpClient.Builder()
         .readTimeout(2, TimeUnit.MINUTES)
         .addInterceptor(logging)
-        .addInterceptor(Interceptor { chain ->
-            val original: Request = chain.request()
-            val token = prefs.token
-            val request: Request = if (token == null || token.isEmpty()) {
-                original.newBuilder()
-                    .method(original.method, original.body)
-                    .build()
-            } else {
-                println("token:"+token)
-
-                original.newBuilder()
-                    .addHeader("Authorization", "Bearer " + token)
-                    .method(original.method, original.body)
-                    .build()
-
-            }
-            val response: Response = chain.proceed(request)
-
-
-            if (response.code == 401 && token != null) {
-                prefs.deleteToken
-                val intent = Intent(context, LoginNewActivity::class.java)
-                intent.putExtra(REFRESH_TOKEN, prefs.refreshToken)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                context.startActivity(intent)
-                response
-            }else response
-
-
-        }).build()
+        .build()
 
 
 

@@ -37,11 +37,32 @@ class Prefs(context: Context) {
 
     var token:String? get() = preferences.getString(TOKEN,null)
         set(value) = preferences.edit().putString(TOKEN,value).apply()
-    var deleteToken= preferences.edit().remove(TOKEN)
 
-    var refreshToken:String? get() = preferences.getString(REFRESH_TOKEN,"")
+    /**
+     * Defaults to null, not "". The old "" default made every null-check on this
+     * property useless: TokenAuthenticator's `refreshToken ?: return null` guard
+     * never fired for a logged-out user, so anonymous 401s were treated as expired
+     * sessions and bounced the user to the login screen.
+     */
+    var refreshToken:String? get() = preferences.getString(REFRESH_TOKEN,null)
         set(value) = preferences.edit().putString(REFRESH_TOKEN,value).apply()
-    var deleteRefreshToken= preferences.edit().remove(REFRESH_TOKEN)
+
+    /**
+     * Clears every credential for the current session.
+     *
+     * Replaces the old `deleteToken` / `deleteRefreshToken` properties, which were
+     * property *initializers*: they built a SharedPreferences.Editor once, when Prefs
+     * was constructed, and never called apply(). Reading `prefs.deleteToken` at a call
+     * site did nothing at all, so neither sign-out nor session expiry ever actually
+     * removed the stored tokens.
+     */
+    fun clearSession() {
+        preferences.edit()
+            .remove(TOKEN)
+            .remove(REFRESH_TOKEN)
+            .putBoolean(ISLOGIN, false)
+            .apply()
+    }
 
     var userId:String? get() = preferences.getString(USER_ID,null)
         set(value) = preferences.edit().putString(USER_ID,value).apply()
