@@ -37,7 +37,6 @@ import com.pioneer.nycfirewire.model.user.request.NotificationAreaData
 import com.pioneer.nycfirewire.model.user.request.PostAreaData
 import com.pioneer.nycfirewire.model.user.request.ProfileUpdateRequest
 import com.pioneer.nycfirewire.model.user.request.UpdatePasswordRequest
-import com.pioneer.nycfirewire.model.user.response.SaltyWireResponse
 import com.pioneer.nycfirewire.prefs
 import com.pioneer.nycfirewire.resource.ResourceState
 import com.pioneer.nycfirewire.utils.Constants
@@ -574,30 +573,6 @@ class FireWireRepository @Inject constructor(
         try {
             var theme= if(prefs.isDarkMode) DARK else LIGHT
             val result = apiEndPoint.postIncidentForm("add", prefs.token.toString(),theme)
-            if (result.isSuccessful) {
-                liveData.setSuccess(result.body())
-            } else {
-                liveData.setError(errorHandling(result))
-            }
-
-        } catch (e: Exception) {
-            liveData.setError(e.message.toString())
-        }
-    }
-
-
-    suspend fun getContents(
-        liveData: MutableLiveData<Resource<SaltyWireResponse>>,
-        context: Context
-    ) {
-        if (!NetworkUtils.isOnline(context)) {
-            liveData.setError(context.getString(R.string.network_connection))
-            return
-        }
-
-        liveData.setLoading()
-        try {
-            val result = apiEndPoint.getContent()
             if (result.isSuccessful) {
                 liveData.setSuccess(result.body())
             } else {

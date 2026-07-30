@@ -22,7 +22,6 @@ import com.pioneer.nycfirewire.utils.Constants
 import com.pioneer.nycfirewire.utils.Constants.CODE_UPDATED
 import com.pioneer.nycfirewire.utils.Constants.FROM_START
 import com.pioneer.nycfirewire.utils.Constants.LOCALITY_DATA
-import com.pioneer.nycfirewire.utils.Constants.SALTY_WIRE
 import com.pioneer.nycfirewire.utils.Constants.SELECT_AREA
 import com.pioneer.nycfirewire.utils.gone
 import com.pioneer.nycfirewire.utils.showToast

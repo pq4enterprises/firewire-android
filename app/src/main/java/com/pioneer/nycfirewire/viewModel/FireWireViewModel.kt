@@ -34,7 +34,6 @@ import com.pioneer.nycfirewire.model.user.request.NotificationAreaData
 import com.pioneer.nycfirewire.model.user.request.PostAreaData
 import com.pioneer.nycfirewire.model.user.request.ProfileUpdateRequest
 import com.pioneer.nycfirewire.model.user.request.UpdatePasswordRequest
-import com.pioneer.nycfirewire.model.user.response.SaltyWireResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -79,7 +78,6 @@ class FireWireViewModel @Inject constructor(val context: Application,val apiEndP
     val deleteCommentLiveData = MutableLiveData<Resource<CommonResponse>>()
 
     val incidentLiveData = MutableLiveData<Resource<IncidentResponse>>()
-    val saltyLiveData = MutableLiveData<Resource<SaltyWireResponse>>()
 
 
     fun getIncidentList(locality:ArrayList<String>, subLocality:ArrayList<String>,offset:String,limit:String){
@@ -231,12 +229,6 @@ class FireWireViewModel @Inject constructor(val context: Application,val apiEndP
     fun postForm(){
         viewModelScope.launch{
             fireWireRepo.postIncidentForm(postFormLiveData,context)
-        }
-    }
-
-    fun getSaltyContents(){
-        viewModelScope.launch {
-            fireWireRepo.getContents(saltyLiveData,context)
         }
     }
 

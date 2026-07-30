@@ -67,9 +67,6 @@
         <activity android:name=".activity.NavigationMenuActivity"
             android:exported="true"/>
 
-        <activity android:name=".activity.SaltyWireActivity"
-            android:exported="true"/>
-
         <activity android:name=".activity.FeedsActivity"
             android:exported="true"/>
 

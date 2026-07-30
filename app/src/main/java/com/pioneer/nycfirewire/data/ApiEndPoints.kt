@@ -28,7 +28,6 @@ import com.pioneer.nycfirewire.model.user.response.FeedResponse
 import com.pioneer.nycfirewire.model.user.response.LoginResponse
 import com.pioneer.nycfirewire.model.user.response.RefreshTokenResponse
 import com.pioneer.nycfirewire.model.user.response.RegisterResponse
-import com.pioneer.nycfirewire.model.user.response.SaltyWireResponse
 import com.pioneer.nycfirewire.model.user.response.UserResponse
 import com.pioneer.nycfirewire.model.user.response.VerifyOtpResponse
 import okhttp3.MultipartBody
@@ -148,9 +147,6 @@ interface ApiEndPoints {
     @DELETE("api/app/comment/{commentId}")
     suspend fun deleteComment(@Path("commentId") commentId: String):Response<CommonResponse>
     //{{url}}/api/app/comment/67c6d5df214691593b760177(comment id)
-
-    @GET("api/app/content")
-    suspend fun getContent():Response<SaltyWireResponse>
 
     @POST("api/app/auth/verify-email-otp")
     suspend fun verifyEmailOtp(@Body request: VerifyEmailOtpRequest):Response<LoginResponse>

@@ -19,6 +19,9 @@ object Constants {
     var INVALID_OTP="invalid_otp"
     var PLAY_STORE_URL="https://play.google.com/store/search?q=nyc+fire+wire+app&c=apps&hl=es_419"
 
+    // Legacy roles from the removed Gettin' Salty feature. Unused in code —
+    // the premium gate is a denylist on basic_user — but ~73 production
+    // accounts still carry them, so they are kept here as documentation.
     var USER_MONTHLY="gettinsalty_monthly"
     var USER_YEARLY="gettinsalty_yearly"
     var USER_PREMIUM_FREE="premium_free"
@@ -50,7 +53,6 @@ object Constants {
     var NOTIFICATION_AREAS="Notification Areas"
     var PERSONALIZATION="Personalization"
     var REGISTRATION="Register User"
-    var SALTY_WIRE="salty_wire"
     var SELECT_AREA="Select Area"
     var PROFILE_UPDATE="Update Profile"
     var INCIDENT_POST="Incident Post"
