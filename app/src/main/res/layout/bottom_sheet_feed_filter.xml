@@ -1,32 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Scanner feed filter (region picker) restyled to fw_* tokens so it matches
+    the Instrument Panel scanner screen in light and dark mode.
+    IDs are load-bearing: FeedFilterFragment binds tv_done, tv_select_all,
+    rv_sub_filter, tv_no_data, progress.
+-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/fw_background"
     android:clickable="true"
-    android:focusable="true"
-    android:background="@drawable/rounded_corner_rectangle"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:focusable="true">
+
     <RelativeLayout
         android:id="@+id/rl_header"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/heading_grey_bar_length"
-        android:orientation="horizontal"
-        android:paddingLeft="@dimen/dis_10"
-        android:paddingRight="@dimen/dis_10"
-        android:background="@drawable/rounded_corner_rectangle"
+        android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:paddingRight="6dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="10dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:fontFamily="@font/teko_regular"
+            android:fontFamily="@font/poppins_bold"
+            android:letterSpacing="0.08"
             android:text="@string/select_areas"
-            android:textColor="@color/heading_color"
-            android:textSize="@dimen/text_28" />
+            android:textAllCaps="true"
+            android:textColor="@color/fw_text"
+            android:textSize="@dimen/fw_text_toolbar" />
 
         <TextView
             android:id="@+id/tv_done"
@@ -34,11 +43,16 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:fontFamily="@font/poppins_regular"
+            android:fontFamily="monospace"
+            android:letterSpacing="0.15"
+            android:minHeight="@dimen/fw_touch_target"
+            android:gravity="center_vertical"
             android:padding="@dimen/dis_10"
             android:text="@string/done"
-            android:textColor="@color/app_red"
-            android:textSize="@dimen/text_16" />
+            android:textAllCaps="true"
+            android:textColor="@color/fw_red"
+            android:textSize="@dimen/fw_text_body"
+            android:textStyle="bold" />
 
     </RelativeLayout>
 
@@ -46,64 +60,71 @@
         android:id="@+id/tv_country_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text=""
-        android:textColor="@color/black"
-        android:fontFamily="@font/poppins_regular"
-        android:textSize="@dimen/text_18"
         android:layout_margin="@dimen/dis_10"
+        android:fontFamily="@font/poppins_semibold"
+        android:text=""
+        android:textAllCaps="true"
+        android:textColor="@color/fw_text"
+        android:textSize="@dimen/fw_text_body"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rl_header"/>
+        app:layout_constraintTop_toBottomOf="@+id/rl_header" />
+
     <TextView
         android:id="@+id/tv_select_all"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:minHeight="@dimen/fw_touch_target"
+        android:gravity="center_vertical"
+        android:fontFamily="monospace"
+        android:letterSpacing="0.1"
         android:text="@string/select_all"
-        android:textColor="@color/app_red"
-        android:fontFamily="@font/poppins_regular"
-        android:textSize="@dimen/text_16"
-        android:layout_marginEnd="@dimen/dis_10"
+        android:textAllCaps="true"
+        android:textColor="@color/fw_red"
+        android:textSize="@dimen/fw_text_chip"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_country_name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_country_name"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_country_name"/>
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/ns_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintLeft_toLeftOf="@+id/tv_country_name"
-        app:layout_constraintTop_toBottomOf="@+id/tv_country_name">
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_sub_filter"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:listitem="@layout/item_sub_filter_item"
-            app:layout_constraintLeft_toLeftOf="@+id/tv_country_name"
-            app:layout_constraintTop_toBottomOf="@+id/tv_country_name"/>
-    </androidx.core.widget.NestedScrollView>
+        app:layout_constraintTop_toTopOf="@+id/tv_country_name" />
 
+    <!-- 0dp + bottom constraint so a long region list scrolls inside the
+         RecyclerView instead of running off the bottom of the screen -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_sub_filter"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_country_name"
+        tools:listitem="@layout/item_sub_filter_item" />
 
     <TextView
         android:id="@+id/tv_no_data"
-        android:text="@string/no_data_found"
-        android:visibility="gone"
-        android:textColor="@color/choose_text_color"
         android:layout_width="wrap_content"
         android:layout_height="200dp"
+        android:fontFamily="@font/poppins_semibold"
         android:gravity="center"
+        android:text="@string/no_data_found"
+        android:textAllCaps="true"
+        android:textColor="@color/fw_muted"
+        android:textSize="@dimen/fw_text_body"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:layout_marginTop="100dp"
         android:theme="@style/redProgress"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="100dp"
         app:layout_constraintTop_toBottomOf="@+id/rl_header" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

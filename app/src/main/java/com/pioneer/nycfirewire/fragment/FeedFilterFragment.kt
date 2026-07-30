@@ -76,7 +76,7 @@ class FeedFilterFragment : Fragment() {
 
     }
 
- /*   override fun onResume() {
+    override fun onResume() {
         super.onResume()
         val bundle = Bundle().apply {
             putString(FirebaseAnalytics.Param.SCREEN_NAME, FEED_FILTER_FRAGMENT)
@@ -84,7 +84,7 @@ class FeedFilterFragment : Fragment() {
         }
 
         Firebase.analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle)
-    }*/
+    }
 
     private fun updateFilterData(response: Resource<LocalityResponse>?) {
         when (response?.state) {
@@ -94,6 +94,7 @@ class FeedFilterFragment : Fragment() {
                 if (response.data?.code == Constants.CODE_SUCCESS) {
                     val localityList = response.data.data
                     val list = ArrayList(localityList?.data ?: ArrayList())
+                    localityListData.clear()
                     localityListData.addAll(list)
                     setupAdapter()
 
@@ -115,10 +116,10 @@ class FeedFilterFragment : Fragment() {
         checkSelectedData()
         if (localityListData.isNotEmpty()) {
             binding.tvNoData.gone()
-            binding.nsView.visible()
+            binding.rvSubFilter.visible()
         } else {
             binding.tvNoData.visible()
-            binding.nsView.gone()
+            binding.rvSubFilter.gone()
         }
 
 
@@ -155,7 +156,9 @@ class FeedFilterFragment : Fragment() {
 
     private fun clickEvent() {
         binding.tvSelectAll.setOnClickListener {
-            localityListData.map { it.isChecked  }
+            // was localityListData.map { it.isChecked }, which reads the flag
+            // and discards the result — the control never did anything
+            localityListData.forEach { it.isChecked = true }
             binding.rvSubFilter.adapter?.notifyDataSetChanged()
         }
 
