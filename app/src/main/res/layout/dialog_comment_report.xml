@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Comment overflow ("three dot") sheet. Report is shown to everyone;
+     Delete and Set/Remove Featured Image are revealed in code for admin,
+     super and sub_admin only.
+
+     Buttons are AppCompatButton rather than plain Button so android:background
+     is honoured under the MaterialComponents theme; they are still Button
+     subclasses, which CommentsFragment's findViewById<Button> casts rely on.
+     Widths are match_parent — the old fixed 300dp overflowed narrow screens. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="@dimen/dis_10"
-    android:background="#FBEB95">
+    android:background="@drawable/fw_card_bg"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="18dp"
+    android:paddingBottom="14dp">
 
     <ImageView
         android:id="@+id/iv_close"
@@ -13,49 +25,72 @@
         android:layout_gravity="end"
         android:padding="@dimen/dis_10"
         android:visibility="gone"
-        android:src="@drawable/ic_close"/>
+        app:tint="@color/fw_muted"
+        android:src="@drawable/fw_ic_close" />
 
-    <Button
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="14dp"
+        android:gravity="center"
+        android:text="@string/fw_comment_options"
+        android:textAllCaps="true"
+        android:letterSpacing="0.08"
+        android:fontFamily="@font/poppins_bold"
+        android:textColor="@color/fw_text"
+        android:textSize="@dimen/fw_text_section" />
+
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_feature_image"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textColor="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/fw_button_outline_bg"
         android:gravity="center"
-        android:layout_marginTop="@dimen/dis_16"
         android:textAllCaps="false"
-        android:text="Set Featured Image" />
+        android:fontFamily="@font/poppins_semibold"
+        android:textColor="@color/fw_text"
+        android:textSize="@dimen/fw_text_body"
+        android:text="@string/fw_set_featured_image" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_report_comment"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textColor="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/fw_button_bg"
         android:gravity="center"
         android:textAllCaps="false"
-        android:text="Report Comment" />
-    <Button
+        android:fontFamily="@font/poppins_semibold"
+        android:textColor="@color/white"
+        android:textSize="@dimen/fw_text_body"
+        android:text="@string/fw_report_comment" />
+
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_delete_comment"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textColor="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/fw_button_outline_bg"
         android:gravity="center"
         android:textAllCaps="false"
-        android:text="Delete Comment" />
+        android:fontFamily="@font/poppins_semibold"
+        android:textColor="@color/fw_red"
+        android:textSize="@dimen/fw_text_body"
+        android:text="@string/fw_delete_comment" />
 
     <TextView
         android:id="@+id/button_cancel"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:padding="@dimen/dis_10"
+        android:layout_marginTop="6dp"
+        android:minHeight="@dimen/fw_touch_target"
         android:gravity="center"
-        android:textStyle="bold"
-        android:textColor="@color/white"
-        android:layout_marginTop="@dimen/dis_10"
-        android:background="@color/black"
-        android:text="Cancel" />
+        android:background="?attr/selectableItemBackground"
+        android:textAllCaps="true"
+        android:letterSpacing="0.05"
+        android:fontFamily="@font/poppins_bold"
+        android:textColor="@color/fw_muted"
+        android:textSize="@dimen/fw_text_caption"
+        android:text="@string/fw_cancel" />
 
 </LinearLayout>

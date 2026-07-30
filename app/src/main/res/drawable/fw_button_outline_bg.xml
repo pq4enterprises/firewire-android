@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- secondary/outline button; pair with a text colour per use -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@android:color/transparent" />
+    <corners android:radius="@dimen/fw_corner_medium" />
+    <stroke android:width="1dp" android:color="@color/fw_hairline" />
+</shape>

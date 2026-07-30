@@ -543,9 +543,8 @@ class CommentsFragment: Fragment() , ImageDataListener {
                             if (!replyItem.createdAt.isNullOrEmpty())
                                 replyBinding.tvDateTimeReply.text = DateUtils.formatDateTime(replyItem.createdAt.toString())
 
-                            if(prefs.userRole?.contains("admin") == true){
-                                replyBinding.ivMenuDotReply.visible()
-                            }
+                            // see the main-comment overflow below — same reasoning
+                            replyBinding.ivMenuDotReply.visible()
 
                             replyBinding.ivMenuDotReply.setOnClickListener{ view->
                                 commentId= replyItem._id.toString()
@@ -576,6 +575,9 @@ class CommentsFragment: Fragment() , ImageDataListener {
                                 Glide.with(this)
                                     .load(replyItem.userId?.img ?: "")
                                     .into(replyBinding.ivProfileImageReply)
+                            } else {
+                                Glide.with(this).clear(replyBinding.ivProfileImageReply)
+                                replyBinding.ivProfileImageReply.setImageDrawable(null)
                             }
 
                             replyBinding.rvReplyImages.setUpAdapter(
@@ -607,6 +609,10 @@ class CommentsFragment: Fragment() , ImageDataListener {
                     bindingItem.tvMainTotalReplies.gone()
                     bindingItem.rvReplies.gone()
                     bindingItem.tvHideReply.gone()
+                    // both dividers set explicitly: on a recycled row the
+                    // previous comment may have left view_comment hidden
+                    bindingItem.viewReplyLine.gone()
+                    bindingItem.viewComment.visible()
                 }
 
                 // --- Restore expanded/collapsed state ---
@@ -632,9 +638,11 @@ class CommentsFragment: Fragment() , ImageDataListener {
                 // --- Bind main comment data ---
                 bindingItem.tvProfileName.text = item.userId?.firstName + " " + item.userId?.lastName
                 bindingItem.tvComments.text = item.comment
-                if(prefs.userRole?.contains("admin") == true){
-                    bindingItem.ivMenuDot.visible()
-                }
+                // the overflow is for everyone: report is the non-admin action,
+                // and showCustomDialog gates delete / featured image by role.
+                // The admin check this replaces had no else branch, so it never
+                // hid anything — both row layouts already default to visible.
+                bindingItem.ivMenuDot.visible()
 
                 bindingItem.ivMenuDot.setOnClickListener{ view->
                     commentId= item._id.toString()
@@ -651,9 +659,10 @@ class CommentsFragment: Fragment() , ImageDataListener {
                     Glide.with(this)
                         .load(item.userId?.img)
                         .into(bindingItem.profileImage)}else{
-                    Glide.with(this)
-                        .load(R.drawable.ic_user_profile_empty)
-                        .into(bindingItem.profileImage)
+                    // recycled row: drop any stale avatar so the red-tint person
+                    // fallback underneath shows through
+                    Glide.with(this).clear(bindingItem.profileImage)
+                    bindingItem.profileImage.setImageDrawable(null)
                 }
 
                 val imageFilterList = item.img?.filter { it.isNotBlank() }
@@ -788,11 +797,14 @@ class CommentsFragment: Fragment() , ImageDataListener {
 
         if(isfeatureImage){
             clickedCommentImage=""
-            buttonImageSet.setText("Remove Featured Image")
-        }else buttonImageSet.setText(("Set Featured Image"))
+            buttonImageSet.setText(getString(R.string.fw_remove_featured_image))
+        }else buttonImageSet.setText(getString(R.string.fw_set_featured_image))
 
         // Set up dialog
         val alertDialog = dialogBuilder.create()
+        // let the card drawable supply the surface and rounded corners instead
+        // of the platform dialog background showing through behind them
+        alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
       cancelText.setOnClickListener{
           alertDialog.dismiss()
