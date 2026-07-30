@@ -3,22 +3,36 @@
     android:layout_width="match_parent"
     android:layout_height="?actionBarSize"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white">
+    android:background="@color/fw_surface">
     <TextView
         android:id="@+id/ivMenu"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:textSize="@dimen/text_16"
         android:fontFamily="@font/poppins_regular"
-        android:textColor="@color/black"
+        android:textColor="@color/back_text"
         android:gravity="center"
         android:layout_marginStart="@dimen/text_16"
         android:drawablePadding="@dimen/dis_5"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:drawableTint="@color/black"
+        android:tint="@color/black"
         app:drawableStartCompat="@drawable/ic_back" />
+
+    <TextView
+        android:id="@+id/tvToolbarTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_bold"
+        android:textColor="@color/fw_text"
+        android:textSize="@dimen/fw_text_toolbar"
+        android:letterSpacing="0.05"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/ivFeed"
@@ -29,7 +43,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/black"/>
+        android:tint="@color/fw_text"/>
 
     <TextView
         android:id="@+id/tv_share"
@@ -42,7 +56,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:drawableTint="@color/black"
+        android:tint="@color/black"
         app:drawableStartCompat="@drawable/ic_share" />
 
 

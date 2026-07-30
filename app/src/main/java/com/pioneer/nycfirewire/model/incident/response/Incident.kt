@@ -13,6 +13,10 @@ data class Incident(
     val field1Value: String? = "",
     val field2Value: String? = "",
     val field3Value: String? = "",
+    // signal / alarm level shown as a chip in the redesigned summary card
+    val field4Value: String? = "",
+    // responding units, rendered as colour-coded chips on the detail screen
+    val respondingUnits: ArrayList<String>? = null,
     val commentCount:String?="0",
     var likeCount:String?="",
     val createdAt:String?="",

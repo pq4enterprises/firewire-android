@@ -20,6 +20,8 @@ data class IncidentDataByID(
     val field1Value:String?="",
     val field2Value:String?="",
     val field3Value:String?="",
+    // signal / alarm level, returned by the by-id endpoint
+    val field4Value:String?="",
     val createdAt:String?="",
     val subLocalityName:String?="",
     val featuredImageUrl:String?="",
@@ -37,7 +39,10 @@ data class IncidentByIdResponse(
 data class Points(
     val latitude: String?="",
     val longitude: String?="",
-    val name: String?=""
+    val name: String?="",
+    // used as the marker snippet on the incident map (added with the redesign's
+    // firehouse pins); defaulted so existing construction sites are unaffected
+    val address: String?=""
 ): Parcelable
 
 
