@@ -45,7 +45,10 @@ class VerifyEmailOtpActivity : BaseActivity() {
         setContentView(binding.root)
         vm = ViewModelProvider(this).get(UserViewModel::class.java)
 
-        binding.toolbar.tvTitle.text= getString(R.string.verify_email)
+        binding.toolbar.tvToolbarTitle.text= getString(R.string.verify_email).uppercase()
+        binding.toolbar.tvToolbarTitle.visible()
+        binding.toolbar.ivFeed.gone()
+        binding.toolbar.ivMenu.setOnClickListener { finish() }
          startOtpTimer()
         initExtra()
         initApiCall()

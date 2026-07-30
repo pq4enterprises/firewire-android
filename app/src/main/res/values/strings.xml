@@ -167,6 +167,8 @@ Check it out www.saltywire.com</string>
     <string name="fw_delete_comment">Delete Comment</string>
     <string name="fw_firewire_website">FireWire Website</string>
     <string name="fw_hide_replies">Hide Replies</string>
+    <string name="fw_login_subtitle">Welcome to the Fire Wire App. Please sign in or register below.</string>
+    <string name="fw_show_hide_password">Show or hide password</string>
     <string name="fw_manage_subscription">Manage Subscription</string>
     <string name="fw_mention_prefix">"@%1$s "</string>
     <string name="fw_premium_account">Premium Account</string>

@@ -72,7 +72,9 @@ class ChangePasswordActivity: BaseActivity() {
     }
 
     private fun initUi() {
-        binding.toolbar.tvTitle.text = getString(R.string.change_password_text)
+        binding.toolbar.tvToolbarTitle.text = getString(R.string.change_password_text).uppercase()
+        binding.toolbar.tvToolbarTitle.visible()
+        binding.toolbar.ivFeed.gone()
 
         binding.etConfirmPassword.transformationMethod = PasswordTransformationMethod.getInstance();
         binding.etNewPassword.transformationMethod = PasswordTransformationMethod.getInstance();
@@ -80,7 +82,7 @@ class ChangePasswordActivity: BaseActivity() {
     }
 
     private fun clickEvent() {
-      binding.toolbar.tvBack.setOnClickListener {
+      binding.toolbar.ivMenu.setOnClickListener {
           finish()
       }
         binding.btnChangePassword.setOnClickListener {

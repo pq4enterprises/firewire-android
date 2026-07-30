@@ -108,7 +108,7 @@ class ForgotPasswordActivity : BaseActivity() {
             }
         }
 
-        binding.toolbar.tvBack.setOnClickListener {
+        binding.toolbar.ivMenu.setOnClickListener {
             finish()
         }
 
@@ -145,7 +145,9 @@ class ForgotPasswordActivity : BaseActivity() {
     }
 
     private fun initUi() {
-          binding.toolbar.tvTitle.text= getString(R.string.reset_password)
+          binding.toolbar.tvToolbarTitle.text= getString(R.string.reset_password).uppercase()
+          binding.toolbar.tvToolbarTitle.visible()
+          binding.toolbar.ivFeed.gone()
 
         binding.etConfirmPassword.transformationMethod = PasswordTransformationMethod.getInstance();
         binding.etPassword.transformationMethod = PasswordTransformationMethod.getInstance();

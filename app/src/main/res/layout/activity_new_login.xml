@@ -1,75 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
+<!-- SIGN IN — 2026 design system. Hero panel with the mark over a dimmed
+     station photo, then a field card and the primary action.
+     IDs are load-bearing: LoginNewActivity binds ns_view, progress, cv_google,
+     cv_fb, et_email, et_password, btnShowHidePassword, tv_forgot, btn_sign_in,
+     tv_register and tv_terms_condition. ll_fb stays gone — Facebook sign-in is
+     switched off in production. -->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/ns_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/fw_background"
     android:fillViewport="true"
-    android:clipToPadding="false"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:clipToPadding="false">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- ===== hero ===== -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="320dp">
+            android:layout_height="232dp">
 
             <ImageView
                 android:id="@+id/bgImage"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="match_parent"
                 android:scaleType="centerCrop"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_login_back"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                android:src="@drawable/ic_login_back" />
+                app:layout_constraintLeft_toLeftOf="parent" />
 
+            <!-- scrim keeps the mark legible on the photo in both themes -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/white"
-                android:alpha="0.6" />
+                android:background="@color/fw_scrim"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
             <ImageView
                 android:id="@+id/iv_logo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_logo_red"
-                android:layout_marginTop="@dimen/dis_20"
-                app:layout_constraintRight_toRightOf="parent"
+                android:importantForAccessibility="no"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"/>
+                app:layout_constraintBottom_toTopOf="@+id/iv_get_started"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
 
             <TextView
                 android:id="@+id/iv_get_started"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dis_20"
+                android:layout_marginTop="14dp"
                 android:text="@string/get_started"
-                android:textSize="@dimen/text_42"
-                android:fontFamily="@font/teko_regular"
-                android:textColor="@color/black_text"
+                android:textAllCaps="true"
+                android:letterSpacing="0.1"
+                android:fontFamily="@font/poppins_bold"
+                android:textSize="@dimen/fw_text_display"
+                android:textColor="@color/white"
                 app:layout_constraintTop_toBottomOf="@+id/iv_logo"
+                app:layout_constraintBottom_toTopOf="@+id/tv_sub_content"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"/>
+                app:layout_constraintRight_toRightOf="parent" />
 
             <TextView
                 android:id="@+id/tv_sub_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
                 android:gravity="center"
-                android:fontFamily="@font/inter_regular"
-                android:textSize="@dimen/text_14"
-                android:textColor="@color/black"
-                android:layout_marginTop="@dimen/dis_10"
-                android:layout_marginLeft="@dimen/dis_40"
-                android:layout_marginRight="@dimen/dis_40"
+                android:fontFamily="@font/poppins_medium"
+                android:textSize="@dimen/fw_text_body"
+                android:textColor="@color/fw_on_scrim_muted"
+                android:text="@string/fw_login_subtitle"
                 app:layout_constraintTop_toBottomOf="@+id/iv_get_started"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                android:text="Welcome to the Fire Wire App! Please login or register below"/>
+                app:layout_constraintRight_toRightOf="parent" />
 
             <ProgressBar
                 android:id="@+id/progress"
@@ -84,33 +100,35 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <!-- ===== form ===== -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white">
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/fw_screen_margin"
+            android:paddingRight="@dimen/fw_screen_margin"
+            android:paddingTop="18dp"
+            android:paddingBottom="20dp">
 
             <TextView
                 android:id="@+id/tv_connect_with"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dis_5"
-                android:fontFamily="@font/poppins_regular"
-                android:text="@string/login_connect_with"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_16"
                 android:gravity="center"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:fontFamily="monospace"
+                android:letterSpacing="0.15"
+                android:text="@string/login_connect_with"
+                android:textAllCaps="true"
+                android:textColor="@color/fw_muted"
+                android:textSize="@dimen/fw_text_chip"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:id="@+id/ll_g_fb"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:weightSum="2"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_connect_with">
+                android:layout_marginTop="10dp"
+                android:weightSum="2">
 
                 <LinearLayout
                     android:id="@+id/ll_google"
@@ -121,20 +139,17 @@
                     <androidx.cardview.widget.CardView
                         android:id="@+id/cv_google"
                         android:layout_width="match_parent"
-                        android:layout_height="60dp"
-                        android:layout_marginTop="@dimen/dis_5"
-                        android:layout_marginBottom="@dimen/dis_5"
-                        android:layout_marginStart="@dimen/dis_16"
-                        android:layout_marginEnd="@dimen/dis_16"
-                        android:layout_gravity="center"
-                        app:cardCornerRadius="@dimen/dis_10"
-                        app:cardElevation="@dimen/dis_5">
+                        android:layout_height="54dp"
+                        app:cardBackgroundColor="@color/fw_surface"
+                        app:cardCornerRadius="@dimen/fw_corner_medium"
+                        app:cardElevation="0dp">
 
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_google"
-                            android:layout_gravity="center"/>
+                            android:layout_gravity="center"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_google" />
 
                     </androidx.cardview.widget.CardView>
                 </LinearLayout>
@@ -149,176 +164,172 @@
                     <androidx.cardview.widget.CardView
                         android:id="@+id/cv_fb"
                         android:layout_width="match_parent"
-                        android:layout_height="60dp"
-                        android:layout_marginTop="@dimen/dis_5"
-                        android:layout_marginBottom="@dimen/dis_5"
-                        android:layout_marginStart="@dimen/dis_5"
-                        android:layout_marginEnd="@dimen/dis_16"
-                        app:cardCornerRadius="@dimen/dis_10"
-                        app:cardElevation="@dimen/dis_5">
+                        android:layout_height="54dp"
+                        android:layout_marginStart="12dp"
+                        app:cardBackgroundColor="@color/fw_surface"
+                        app:cardCornerRadius="@dimen/fw_corner_medium"
+                        app:cardElevation="0dp">
 
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_facebook"
-                            android:layout_gravity="center"/>
+                            android:layout_gravity="center"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_facebook" />
                     </androidx.cardview.widget.CardView>
                 </LinearLayout>
             </LinearLayout>
 
             <TextView
                 android:id="@+id/tv_or"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:gravity="center"
                 android:text="@string/or"
-                android:textColor="@color/or_text"
-                android:textSize="@dimen/text_16"
-                android:layout_marginTop="@dimen/dis_10"
-                app:layout_constraintTop_toBottomOf="@+id/ll_g_fb"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"/>
+                android:textAllCaps="true"
+                android:fontFamily="monospace"
+                android:letterSpacing="0.15"
+                android:textColor="@color/fw_muted"
+                android:textSize="@dimen/fw_text_chip" />
 
-            <TextView
-                android:id="@+id/tv_email"
-                android:layout_width="wrap_content"
+            <!-- field card -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/text_12"
-                app:layout_constraintTop_toBottomOf="@+id/tv_or"
-                android:layout_marginStart="@dimen/dis_16"
-                app:layout_constraintStart_toStartOf="parent"
-                android:fontFamily="@font/poppins_regular"
-                android:textColor="@color/login_reg_text"
-                android:text="@string/enter_email"/>
+                android:layout_marginTop="12dp"
+                android:orientation="vertical"
+                android:padding="@dimen/dis_16"
+                android:background="@drawable/fw_card_bg">
 
-            <EditText
-                android:id="@+id/et_email"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dis_5"
-                android:layout_marginEnd="@dimen/dis_16"
-                android:paddingStart="@dimen/dis_16"
-                android:paddingEnd="@dimen/dis_16"
-                android:textSize="@dimen/text_14"
-                android:textColorHint="@color/dim_grey"
-                android:hint="@string/enter_email"
-                android:inputType="textEmailAddress"
-                android:imeOptions="actionNext"
-                android:background="@drawable/ic_rectangle_box"
-                app:layout_constraintTop_toBottomOf="@+id/tv_email"
-                app:layout_constraintStart_toStartOf="@+id/tv_email"
-                app:layout_constraintEnd_toEndOf="parent"/>
-
-            <TextView
-                android:id="@+id/tv_password"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/text_12"
-                android:layout_marginTop="@dimen/dis_16"
-                app:layout_constraintTop_toBottomOf="@+id/et_email"
-                android:layout_marginStart="@dimen/dis_16"
-                app:layout_constraintStart_toStartOf="parent"
-                android:fontFamily="@font/poppins_regular"
-                android:textColor="@color/login_reg_text"
-                android:text="@string/enter_password"/>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_password"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dis_5"
-                app:layout_constraintTop_toBottomOf="@+id/tv_password"
-                app:layout_constraintStart_toStartOf="@+id/tv_password"
-                app:layout_constraintEnd_toEndOf="parent">
-
-                <EditText
-                    android:id="@+id/et_password"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="@dimen/dis_16"
-                    android:paddingStart="@dimen/dis_16"
-                    android:paddingEnd="@dimen/dis_16"
-                    android:textSize="@dimen/text_14"
-                    android:textColorHint="@color/dim_grey"
-                    android:hint="@string/enter_password"
-                    android:inputType="textPassword"
-                    android:imeOptions="actionDone"
-                    android:background="@drawable/ic_rectangle_box"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
-
-                <ImageButton
-                    android:id="@+id/btnShowHidePassword"
+                <TextView
+                    android:id="@+id/tv_email"
+                    style="@style/TextAppearance.FireWire.Subtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/dis_20"
-                    android:src="@drawable/ic_hide_password"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Show/Hide Password"
-                    app:layout_constraintEnd_toEndOf="@+id/et_password"
-                    app:layout_constraintBottom_toBottomOf="@+id/et_password"
-                    app:layout_constraintTop_toTopOf="@+id/et_password"
-                    android:layout_marginEnd="@dimen/dis_16"/>
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:letterSpacing="0.08"
+                    android:text="@string/enter_email" />
 
-            <TextView
-                android:id="@+id/tv_forgot"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dis_10"
-                android:textSize="@dimen/text_14"
-                android:layout_marginEnd="@dimen/dis_16"
-                android:textColor="@color/app_text_color"
-                android:fontFamily="@font/poppins_regular"
-                app:layout_constraintTop_toBottomOf="@+id/cl_password"
-                app:layout_constraintEnd_toEndOf="@+id/cl_password"
-                android:text="@string/forgot"/>
+                <EditText
+                    android:id="@+id/et_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="7dp"
+                    android:paddingLeft="14dp"
+                    android:paddingRight="14dp"
+                    android:hint="@string/enter_email"
+                    android:inputType="textEmailAddress"
+                    android:imeOptions="actionNext"
+                    android:maxLines="1"
+                    android:background="@drawable/fw_input_bg"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textSize="@dimen/fw_text_section"
+                    android:textColor="@color/fw_text"
+                    android:textColorHint="@color/fw_muted" />
 
-            <Button
+                <TextView
+                    android:id="@+id/tv_password"
+                    style="@style/TextAppearance.FireWire.Subtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:letterSpacing="0.08"
+                    android:text="@string/enter_password" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp">
+
+                    <EditText
+                        android:id="@+id/et_password"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:paddingLeft="14dp"
+                        android:paddingRight="52dp"
+                        android:hint="@string/enter_password"
+                        android:inputType="textPassword"
+                        android:imeOptions="actionDone"
+                        android:maxLines="1"
+                        android:background="@drawable/fw_input_bg"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:textSize="@dimen/fw_text_section"
+                        android:textColor="@color/fw_text"
+                        android:textColorHint="@color/fw_muted"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageButton
+                        android:id="@+id/btnShowHidePassword"
+                        android:layout_width="@dimen/fw_touch_target"
+                        android:layout_height="@dimen/fw_touch_target"
+                        android:padding="12dp"
+                        android:src="@drawable/ic_hide_password"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/fw_show_hide_password"
+                        app:tint="@color/fw_muted"
+                        app:layout_constraintEnd_toEndOf="@+id/et_password"
+                        app:layout_constraintBottom_toBottomOf="@+id/et_password"
+                        app:layout_constraintTop_toTopOf="@+id/et_password" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <TextView
+                    android:id="@+id/tv_forgot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="4dp"
+                    android:minHeight="@dimen/fw_touch_target"
+                    android:gravity="center_vertical"
+                    android:text="@string/forgot"
+                    android:textAllCaps="true"
+                    android:letterSpacing="0.05"
+                    android:fontFamily="@font/poppins_bold"
+                    android:textSize="@dimen/fw_text_caption"
+                    android:textColor="@color/fw_red" />
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_sign_in"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_marginTop="@dimen/dis_10"
-                android:layout_marginEnd="@dimen/dis_16"
-                android:background="@drawable/ic_rectangle_box_red"
-                android:textColor="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/fw_button_bg"
+                android:gravity="center"
                 android:text="@string/sign_in"
-                app:layout_constraintTop_toBottomOf="@+id/tv_forgot"
-                app:layout_constraintStart_toStartOf="@+id/cl_password"
-                app:layout_constraintEnd_toEndOf="@+id/cl_password"/>
+                android:textAllCaps="true"
+                android:letterSpacing="0.08"
+                android:fontFamily="@font/poppins_bold"
+                android:textSize="@dimen/fw_text_section"
+                android:textColor="@color/white" />
 
             <TextView
                 android:id="@+id/tv_register"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dis_20"
-                app:layout_constraintTop_toBottomOf="@+id/btn_sign_in"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:fontFamily="@font/poppins_regular"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_14"
-                android:text="@string/account_register"/>
+                android:layout_marginTop="10dp"
+                android:minHeight="@dimen/fw_touch_target"
+                android:gravity="center"
+                android:text="@string/account_register"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="@dimen/fw_text_body"
+                android:textColor="@color/fw_red" />
 
             <TextView
                 android:id="@+id/tv_terms_condition"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dis_10"
-                android:paddingBottom="@dimen/dis_10"
+                android:layout_marginTop="6dp"
                 android:gravity="center"
-                android:layout_marginStart="@dimen/dis_16"
-                android:layout_marginEnd="@dimen/dis_16"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_register"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:fontFamily="@font/poppins_regular"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_12"
-                android:text="@string/terms_condition"/>
+                android:lineSpacingMultiplier="1.2"
+                android:text="@string/terms_condition"
+                android:fontFamily="@font/poppins_medium"
+                android:textSize="@dimen/fw_text_caption"
+                android:textColor="@color/fw_muted" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

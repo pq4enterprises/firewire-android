@@ -43,6 +43,7 @@
     <dimen name="fw_tile_pad_v">18dp</dimen>        <!-- shortcut tile vertical padding -->
 
     <!-- type scale -->
+    <dimen name="fw_text_display">30sp</dimen>    <!-- auth hero headline -->
     <dimen name="fw_text_title">22sp</dimen>      <!-- address headline -->
     <dimen name="fw_text_toolbar">18sp</dimen>
     <dimen name="fw_text_section">15sp</dimen>    <!-- section headers, primary button -->

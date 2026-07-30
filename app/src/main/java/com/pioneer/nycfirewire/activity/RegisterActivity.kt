@@ -69,7 +69,9 @@ class RegisterActivity : BaseActivity() {
 
     private fun initUi() {
         setMessageWithClickableLink(this,binding.tvHaveAccount)
-        binding.toolbar.tvTitle.text=""
+        binding.toolbar.tvToolbarTitle.text= getString(R.string.sign_up).uppercase()
+        binding.toolbar.tvToolbarTitle.visible()
+        binding.toolbar.ivFeed.gone()
 
         binding.etConfirmPassword.transformationMethod = PasswordTransformationMethod.getInstance();
         binding.etPassword.transformationMethod = PasswordTransformationMethod.getInstance();
@@ -137,7 +139,7 @@ class RegisterActivity : BaseActivity() {
     }*/
 
     private fun clickEvent() {
-        binding.toolbar.tvBack.setOnClickListener {
+        binding.toolbar.ivMenu.setOnClickListener {
             finish()
         }
 
