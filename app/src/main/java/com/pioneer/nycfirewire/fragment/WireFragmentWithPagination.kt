@@ -67,6 +67,8 @@ import com.pioneer.nycfirewire.utils.inVisible
 import com.pioneer.nycfirewire.utils.showToast
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import com.pioneer.nycfirewire.BuildConfig
+import com.pioneer.nycfirewire.utils.introsEnabled
 
 
 @AndroidEntryPoint
@@ -113,7 +115,7 @@ class WireFragmentWithPagination: Fragment(), IncidentClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if(prefs.showAppIntro && prefs.showFeedIntro){
+        if(introsEnabled && prefs.showAppIntro && prefs.showFeedIntro){
             introApp()
         }else{
             initiateAllAction()
@@ -128,7 +130,7 @@ class WireFragmentWithPagination: Fragment(), IncidentClickListener {
     }
 
     private fun introApp() {
-        if(prefs.showAppIntro && prefs.showFeedIntro) {
+        if(introsEnabled && prefs.showAppIntro && prefs.showFeedIntro) {
             TapTargetView.showFor(requireActivity(),                 // `this` is an Activity
                 TapTarget.forView(
                     binding.tvFilter,
@@ -303,7 +305,7 @@ class WireFragmentWithPagination: Fragment(), IncidentClickListener {
                         Constants.PLAY_STORE_URL)
                 }
 
-                if(prefs.showAppIntro && prefs.showFeedIntro && pos==0) {
+                if(introsEnabled && prefs.showAppIntro && prefs.showFeedIntro && pos==0) {
 
                     TapTargetSequence(requireActivity())
                         .targets(
@@ -444,10 +446,10 @@ class WireFragmentWithPagination: Fragment(), IncidentClickListener {
     }
 
     override fun appIntroTour(
-        tvTitle: TextView,
-        ivRating: TextView,
-        ivCommand: TextView,
-        ivShare: ImageView
+        tvTitle: View,
+        ivRating: View,
+        ivCommand: View,
+        ivShare: View
     ) {
         TODO("Not yet implemented")
     }

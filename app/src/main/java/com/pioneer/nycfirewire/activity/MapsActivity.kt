@@ -107,6 +107,8 @@ import com.pioneer.nycfirewire.utils.IntentUtils.BUN_WIRE_LIST_DETAIL
 import com.pioneer.nycfirewire.utils.IntentUtils.EXTRA_WIRE_DETAILS
 import com.pioneer.nycfirewire.utils.IntentUtils.FILTER_DATA
 import com.pioneer.nycfirewire.utils.showToast
+import com.pioneer.nycfirewire.BuildConfig
+import com.pioneer.nycfirewire.utils.introsEnabled
 
 
 @AndroidEntryPoint
@@ -192,7 +194,7 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
         mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        if(prefs.showHomeIntro && prefs.showAppIntro){
+        if(introsEnabled && prefs.showHomeIntro && prefs.showAppIntro){
             introducingApp()
         }else callAllInitiateAction()
     }
@@ -236,7 +238,7 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
 
 
     private fun introducingApp() {
-       if(prefs.showAppIntro && prefs.showHomeIntro) {
+       if(introsEnabled && prefs.showAppIntro && prefs.showHomeIntro) {
            TapTargetSequence(this)
                .targets(
                    TapTarget.forView(binding.toolbarLayout.ivFeed, "RADIO","Listen to scanner feeds"),

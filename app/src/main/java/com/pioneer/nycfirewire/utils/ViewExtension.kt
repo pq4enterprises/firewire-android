@@ -73,3 +73,10 @@ fun SearchView.getQueryTextChangeStateFlow(): StateFlow<String> {
 
 inline fun <FRAGMENT : Fragment> FRAGMENT.putArgs(argsBuilder: Bundle.() -> Unit): FRAGMENT =
     this.apply { arguments = Bundle().apply(argsBuilder) }
+/**
+ * Onboarding tap-target tours are skipped in debug builds. They target views
+ * inside RecyclerView rows, which is fragile — a recycled or not-yet-attached
+ * view can stall the sequence and trap you on the screen — and they get in the
+ * way of testing. Release builds are unaffected.
+ */
+val introsEnabled: Boolean get() = !com.pioneer.nycfirewire.BuildConfig.DEBUG

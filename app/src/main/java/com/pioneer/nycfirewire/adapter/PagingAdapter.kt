@@ -40,14 +40,16 @@ class PagingAdapter( private val listener: IncidentClickListener) : PagingDataAd
         private val title = view.findViewById<TextView>(R.id.tv_title)
         private val desc  = view.findViewById<TextView>(R.id.tv_desc)
         private val ivBanner  = view.findViewById<ImageView>(R.id.iv_banner)
-        private val ivRating  = view.findViewById<TextView>(R.id.iv_rating)
+        private val cardBanner = view.findViewById<View>(R.id.card_banner)
+        private val tvLocality = view.findViewById<TextView>(R.id.tv_locality)
+        private val ivRating  = view.findViewById<ImageView>(R.id.iv_rating)
         private val tvDateTime  = view.findViewById<TextView>(R.id.tv_date_time)
         private val tvAddress  = view.findViewById<TextView>(R.id.tv_address)
         private val tvRateCount  = view.findViewById<TextView>(R.id.tv_rate_count)
         private val tvCommentCount  = view.findViewById<TextView>(R.id.tv_comment_count)
-        private val ivCommand  = view.findViewById<TextView>(R.id.iv_command)
-        private val clContainer  = view.findViewById<ConstraintLayout>(R.id.cl_container)
-        private val ivShare  = view.findViewById<ImageView>(R.id.iv_share)
+        private val ivCommand  = view.findViewById<View>(R.id.iv_command)
+        private val clContainer  = view.findViewById<View>(R.id.cl_container)
+        private val ivShare  = view.findViewById<View>(R.id.iv_share)
         fun bind(it: Incident) {
             val context = itemView.context
 
@@ -65,9 +67,8 @@ class PagingAdapter( private val listener: IncidentClickListener) : PagingDataAd
                 .load(it.featuredImageUrl)
                 .into(ivBanner)
 
-            if(it.isLiked)
-                ivRating.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_rating_red,0,0,0)
-            else ivRating.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_rating,0,0,0)
+            ivRating.setImageResource(
+                if(it.isLiked) R.drawable.ic_rating_red else R.drawable.ic_rating)
 
             ivRating.setOnClickListener { view->
                 val position = bindingAdapterPosition
@@ -82,21 +83,26 @@ class PagingAdapter( private val listener: IncidentClickListener) : PagingDataAd
             }
 
             if(it.featuredImageUrl.isNullOrEmpty()){
-                ivBanner.gone()
+                cardBanner.gone()
             }else{
                 Glide.with(context)
                     .load(it.featuredImageUrl)
                     .into(ivBanner)
-                ivBanner.visible()
+                cardBanner.visible()
             }
-            var subLocalityName= if(it.subLocalityDetails?.isNotEmpty()==true) ", ".plus(it.subLocalityDetails.get(0).name) else ""
-            tvAddress.text= it.field3Value.plus(subLocalityName)
+            tvAddress.text= it.address
+            val localityParts= ArrayList<String>()
+            if(!it.field3Value.isNullOrEmpty()) localityParts.add(it.field3Value!!)
+            val subName= it.subLocalityDetails?.firstOrNull()?.name
+            if(!subName.isNullOrEmpty()) localityParts.add(subName)
+            if(localityParts.isNotEmpty()){
+                tvLocality.text= localityParts.joinToString(", ")
+                tvLocality.visible()
+            }else tvLocality.gone()
 
             var likeCount= if(it.likeCount.isNullOrEmpty())"0" else it.likeCount
 
-            ivRating.text= if(likeCount=="0")
-                context.getString(R.string.star,likeCount)
-            else context.getString(R.string.stars,likeCount)
+            tvRateCount.text= likeCount
 
 
             val count= if(it.commentCount.isNullOrEmpty())"0" else it.commentCount
@@ -105,9 +111,7 @@ class PagingAdapter( private val listener: IncidentClickListener) : PagingDataAd
 //                tvCommentCount.text= context.getString(R.string.comments,count)
 //            else tvCommentCount.text= context.getString(R.string.comment,count)
 
-            if(count.toInt()>1)
-                ivCommand.text= context.getString(R.string.comments,count)
-            else ivCommand.text= context.getString(R.string.comment,count)
+            tvCommentCount.text= count
 
             ivCommand.setOnClickListener { view->
                 val intent= Intent(context, FeedFilterOrCommentsActivity::class.java)
@@ -155,6 +159,6 @@ class PagingAdapter( private val listener: IncidentClickListener) : PagingDataAd
 
 interface IncidentClickListener {
     fun onRatingClicked(incident: Incident,pos: Int)
-    fun appIntroTour(tvTitle: TextView, ivRating: TextView, ivCommand: TextView, ivShare: ImageView)
+    fun appIntroTour(tvTitle: View, ivRating: View, ivCommand: View, ivShare: View)
     fun onItemClicked(incident: Incident)
 }

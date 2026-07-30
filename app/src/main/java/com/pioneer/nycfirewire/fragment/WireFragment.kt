@@ -78,6 +78,8 @@ import com.pioneer.nycfirewire.utils.showToast
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
+import com.pioneer.nycfirewire.BuildConfig
+import com.pioneer.nycfirewire.utils.introsEnabled
 
 
 @AndroidEntryPoint
@@ -147,7 +149,7 @@ class WireFragment: Fragment(),IncidentClickListener {
         super.onViewCreated(view, savedInstanceState)
          pagingAdapter = PagingAdapter(this)
 
-        if(prefs.showAppIntro && prefs.showFeedIntro){
+        if(introsEnabled && prefs.showAppIntro && prefs.showFeedIntro){
             introApp()
         }else{
             initiateAllAction()
@@ -161,7 +163,7 @@ class WireFragment: Fragment(),IncidentClickListener {
     }
 
     private fun introApp() {
-        if(prefs.showAppIntro && prefs.showFeedIntro) {
+        if(introsEnabled && prefs.showAppIntro && prefs.showFeedIntro) {
             TapTargetView.showFor(requireActivity(),                 // `this` is an Activity
                 TapTarget.forView(
                     binding.tvFilter,
@@ -392,12 +394,12 @@ class WireFragment: Fragment(),IncidentClickListener {
     }
 
     override fun appIntroTour(
-        tvTitle: TextView,
-        ivRating: TextView,
-        ivCommand: TextView,
-        ivShare: ImageView
+        tvTitle: View,
+        ivRating: View,
+        ivCommand: View,
+        ivShare: View
     ) {
-        if(prefs.showAppIntro && prefs.showFeedIntro ) {
+        if(introsEnabled && prefs.showAppIntro && prefs.showFeedIntro ) {
 
             TapTargetSequence(requireActivity())
                 .targets(
