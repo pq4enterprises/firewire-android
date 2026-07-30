@@ -230,9 +230,10 @@ class WireFragmentWithPagination: Fragment(), IncidentClickListener {
                 Glide.with(this)
                     .load(it.featuredImageUrl)
                     .into(bindingItem.ivBanner)
-                if(it.isLiked)
-                bindingItem.ivRating.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_rating_red,0,0,0)
-                else bindingItem.ivRating.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_rating,0,0,0)
+                // ivRating is a plain ImageView in the redesigned row, not a
+                // TextView with a compound drawable
+                bindingItem.ivRating.setImageResource(
+                    if(it.isLiked) R.drawable.ic_rating_red else R.drawable.ic_rating)
 
                 bindingItem.ivRating.setOnClickListener { view->
                     isLikeSingle= !it.isLiked
@@ -248,18 +249,32 @@ class WireFragmentWithPagination: Fragment(), IncidentClickListener {
                         DateUtils.formatDateTime(it.createdAt.toString())
                 }
 
+                // the redesigned row wraps the banner in a rounded card, so
+                // visibility is toggled on the card rather than the ImageView
                 if(it.featuredImageUrl.isNullOrEmpty()){
-                    bindingItem.ivBanner.gone()
+                    bindingItem.cardBanner.gone()
                 }else{
                     Glide.with(this)
                         .load(it.featuredImageUrl)
                         .into(bindingItem.ivBanner)
-                    bindingItem.ivBanner.visible()
+                    bindingItem.cardBanner.visible()
                 }
 
-              var subLocalityName= if(it.subLocalityDetails?.isNotEmpty()==true) ", ".plus(it.subLocalityDetails.get(0).name) else ""
+                // The redesigned row splits what used to be one line: the street
+                // address is the headline, and the city/town + sub-locality move
+                // to a muted line beneath it (iOS parity).
+                bindingItem.tvAddress.text= it.address
 
-                bindingItem.tvAddress.text= it.field3Value.plus(subLocalityName)
+                val localityParts= ArrayList<String>()
+                if(!it.field3Value.isNullOrEmpty()) localityParts.add(it.field3Value!!)
+                val subName= it.subLocalityDetails?.firstOrNull()?.name
+                if(!subName.isNullOrEmpty()) localityParts.add(subName)
+                if(localityParts.isNotEmpty()){
+                    bindingItem.tvLocality.text= localityParts.joinToString(", ")
+                    bindingItem.tvLocality.visible()
+                }else{
+                    bindingItem.tvLocality.gone()
+                }
                 bindingItem.tvRateCount.text= getString(R.string.star,it.likeCount)
                 val count= if(it.commentCount.isNullOrEmpty())"0" else it.commentCount
 

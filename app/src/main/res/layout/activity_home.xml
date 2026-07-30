@@ -3,13 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/fw_surface"
         android:visibility="visible"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -24,7 +24,6 @@
     </com.google.android.material.appbar.AppBarLayout>
 
 
-
     <FrameLayout
         android:id="@+id/flFragmentContainer"
         android:layout_width="match_parent"
@@ -34,32 +33,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/appBarLayout" >
 
-        <androidx.fragment.app.FragmentContainerView
+        <fragment
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".activity.MapsActivity" />
-        <LinearLayout
-            android:id="@+id/progress"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/white"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:alpha="0.5">
-            <ProgressBar
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:theme="@style/redProgress"
-                android:layout_gravity="center"
-                android:visibility="visible"
-                />
-        </LinearLayout>
-
 
     </FrameLayout>
 
@@ -67,16 +46,15 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/bottom_cl"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         app:layout_constraintLeft_toLeftOf="parent"
         android:visibility="visible"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/bottom_constraint"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             app:behavior_hideable="true"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
             <FrameLayout
@@ -95,7 +73,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    android:background="#F9F9F9"/>
+                    android:background="@color/fw_surface"/>
                 <FrameLayout
                     android:id="@+id/fl_main"
                     android:layout_width="match_parent"
@@ -110,14 +88,13 @@
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cv_list1"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="@dimen/dis_30"
-        app:strokeWidth="0.2dp"
-        app:strokeColor="@color/app_red"
-        app:cardBackgroundColor="@color/rv_bg"
+        app:cardCornerRadius="25dp"
+        app:cardElevation="6dp"
+        app:cardBackgroundColor="@color/fw_red"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -126,28 +103,30 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/view_list"
-            android:paddingLeft="@dimen/dis_20"
-            android:textSize="@dimen/text_14"
+            android:textAllCaps="true"
+            android:letterSpacing="0.04"
+            android:paddingLeft="24dp"
+            android:textSize="@dimen/fw_text_body"
             android:gravity="center"
-            android:textColor="@color/app_text_color"
+            android:textColor="@color/white"
             android:layout_gravity="center"
-            android:fontFamily="@font/poppins_medium"
-            android:drawablePadding="@dimen/dis_10"
-            android:paddingRight="@dimen/dis_20"
-            android:paddingTop="@dimen/dis_10"
-            android:paddingBottom="@dimen/dis_10"
+            android:fontFamily="@font/poppins_bold"
+            android:drawablePadding="9dp"
+            android:paddingRight="24dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            app:drawableTint="@color/white"
             app:drawableStartCompat="@drawable/ic_view_list" />
-    </com.google.android.material.card.MaterialCardView>
+    </androidx.cardview.widget.CardView>
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cv_map1"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_map"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="@dimen/dis_30"
-        app:cardBackgroundColor="@color/rv_bg"
+        app:cardCornerRadius="25dp"
+        app:cardElevation="6dp"
+        app:cardBackgroundColor="@color/fw_red"
         android:visibility="gone"
-        app:strokeWidth="0.2dp"
-        app:strokeColor="@color/app_red"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -156,20 +135,32 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/view_map"
-            android:paddingLeft="@dimen/dis_20"
-            android:textSize="@dimen/text_14"
+            android:textAllCaps="true"
+            android:letterSpacing="0.04"
+            android:paddingLeft="24dp"
+            android:textSize="@dimen/fw_text_body"
             android:gravity="center"
-            android:textColor="@color/app_text_color"
+            android:textColor="@color/white"
             android:layout_gravity="center"
-            android:fontFamily="@font/poppins_medium"
-            android:drawablePadding="@dimen/dis_10"
-            android:paddingRight="@dimen/dis_20"
-            android:paddingTop="@dimen/dis_10"
-            android:paddingBottom="@dimen/dis_10"
+            android:fontFamily="@font/poppins_bold"
+            android:drawablePadding="9dp"
+            android:paddingRight="24dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            app:drawableTint="@color/white"
             app:drawableStartCompat="@drawable/ic_view_map" />
-    </com.google.android.material.card.MaterialCardView>
+    </androidx.cardview.widget.CardView>
 
-
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:theme="@style/redProgress"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

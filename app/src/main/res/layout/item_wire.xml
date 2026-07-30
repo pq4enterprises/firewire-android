@@ -1,207 +1,256 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<!--
+    Wire-feed card (2026 design system).
+    IDs are load-bearing: WireFragment binds tv_title (alarm level -> badge),
+    tv_date_time, tv_desc, iv_banner, tv_address, tv_locality (city/box +
+    sub-locality), iv_rating / tv_rate_count, iv_command / tv_comment_count
+    and iv_share (share chip).
+-->
+<LinearLayout
     android:id="@+id/cl_wire_item"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/rv_bg"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_marginBottom="@dimen/fw_card_gap"
+    android:orientation="vertical"
+    android:background="@drawable/fw_card_bg"
+    android:padding="@dimen/fw_card_pad">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:id="@+id/cl_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:padding="@dimen/dis_10"
-        app:layout_constraintEnd_toStartOf="parent">
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="0dp"
+        android:orientation="vertical">
+
+        <!-- alarm-level badge + timestamp -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/app_text_color"
-            android:textSize="@dimen/text_22"
-            android:textStyle="bold"
-            android:textAllCaps="true"
-            android:singleLine="true"
-            app:layout_constraintRight_toLeftOf="@+id/tv_date_time"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:fontFamily="@font/poppins_regular"
-            tools:text="Working Fire"/>
-        <TextView
-            android:id="@+id/tv_date_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_12"
-            android:textColor="@color/grey_lite"
-            tools:text="10 Oct | 10.15 AM"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_title"
-            app:layout_constraintTop_toTopOf="@id/tv_title"/>
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/fw_badge_bg"
+                android:backgroundTint="@color/fw_red"
+                android:paddingLeft="@dimen/fw_badge_pad_h"
+                android:paddingRight="@dimen/fw_badge_pad_h"
+                android:paddingTop="@dimen/fw_badge_pad_v"
+                android:paddingBottom="@dimen/fw_badge_pad_v"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/fw_text_caption"
+                android:fontFamily="@font/poppins_bold"
+                android:maxLines="1"
+                android:ellipsize="end"
+                tools:text="WORKING FIRE"/>
+
+            <TextView
+                android:id="@+id/tv_date_time"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                android:gravity="end"
+                android:fontFamily="monospace"
+                android:textColor="@color/fw_muted"
+                android:textSize="@dimen/fw_text_chip"
+                tools:text="07 JUL | 03:48 PM"/>
+        </LinearLayout>
+
+        <!-- incident description -->
         <TextView
             android:id="@+id/tv_desc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_16"
-            android:maxLines="1"
-            android:textColor="@color/black"
-            android:textAllCaps="true"
-            tools:text="Fire in a 2 story apartment building"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_title"/>
-        <TextView
-            android:id="@+id/tv_address"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_14"
-            android:textColor="@color/app_red"
-            android:layout_marginTop="@dimen/dis_10"
-            android:drawablePadding="@dimen/dis_10"
-            android:textAllCaps="true"
-            tools:text="Fire in a 2 story apartment building"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_banner"
-            app:drawableLeftCompat="@drawable/ic_fire" />
-
-        <ImageView
-            android:id="@+id/iv_banner"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="@dimen/dis_10"
-            android:scaleType="centerCrop"
-            android:src="@drawable/dummy_img"
-            app:layout_constraintTop_toBottomOf="@id/tv_desc"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintDimensionRatio="16:9" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="9dp"
+            android:maxLines="3"
+            android:ellipsize="end"
+            android:textAllCaps="true"
+            android:textColor="@color/fw_text"
+            android:textSize="@dimen/fw_text_section"
+            android:fontFamily="@font/poppins_semibold"
+            tools:text="2 STORY MULTIFAMILY APARTMENT BUILDING FIRE — HEAVY FIRE SHOWING"/>
 
-       <!-- <ImageView
-            android:id="@+id/iv_banner"
+        <!-- optional scene photo -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_banner"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:src="@drawable/dummy_img"
-            android:scaleType="fitXY"
-            android:layout_marginTop="@dimen/dis_10"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_desc"
-            app:layout_constraintDimensionRatio="12:6"
-            />-->
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-    <RelativeLayout
-        android:id="@+id/ll_icons"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dis_5"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@+id/cl_container"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-        <LinearLayout
-            android:id="@+id/ll_rate_comment_share"
-            android:layout_width="wrap_content"
-            android:weightSum="3"
-            android:layout_gravity="end"
-            android:gravity="end"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/iv_rating"
-                android:layout_width="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginStart="@dimen/dis_10"
-                android:paddingStart="5dp"
-                android:paddingEnd="@dimen/dis_20"
-                android:paddingTop="5dp"
-                android:text="2"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_16"
-                android:paddingBottom="5dp"
-                android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_rating"
-                android:drawablePadding="@dimen/dis_5"
-                android:layout_weight="1"/>
-            <TextView
-                android:id="@+id/iv_command"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_comment"
-                android:drawablePadding="@dimen/dis_5"
-                android:text="5"
-                android:textColor="@color/black"
-                app:tint="@color/black"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"/>
-            <ImageView
-                android:id="@+id/iv_share"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_share"
-                android:paddingStart="@dimen/dis_20"
-                android:layout_gravity="center"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
-                android:paddingEnd="@dimen/dis_20"
-                app:tint="@color/black"
-                android:layout_weight="1"/>
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:weightSum="2"
+            android:layout_height="170dp"
+            android:layout_marginTop="11dp"
+            app:cardCornerRadius="@dimen/fw_corner_medium"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp"
             android:visibility="gone"
-            android:layout_alignTop="@+id/ll_rate_comment_share"
-            android:layout_alignBottom="@+id/ll_rate_comment_share"
-            android:layout_alignParentEnd="true"
-            android:layout_height="wrap_content">
+            tools:visibility="visible">
+
+            <ImageView
+                android:id="@+id/iv_banner"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:background="@color/fw_surface2"/>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- address row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="11dp"
+            android:orientation="horizontal"
+            android:gravity="top">
+
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="1dp"
+                android:src="@drawable/ic_fire"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAllCaps="true"
+                    android:textColor="@color/fw_red"
+                    android:textSize="@dimen/fw_text_body"
+                    android:fontFamily="@font/poppins_bold"
+                    tools:text="4200 WOODSON RD, ST ANN, MISSOURI"/>
+
+                <!-- muted locality line (iOS parity): city/town or box + sub-locality -->
+                <TextView
+                    android:id="@+id/tv_locality"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:textAllCaps="true"
+                    android:textColor="@color/fw_muted"
+                    android:textSize="@dimen/fw_text_caption"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:letterSpacing="0.02"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    tools:text="ST LOUIS COUNTY, ST ANN"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fw_hairline_width"
+        android:layout_marginTop="11dp"
+        android:background="@color/fw_hairline"/>
+
+    <!-- actions: star / comment counts + share -->
+    <LinearLayout
+        android:id="@+id/ll_icons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="9dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/fw_chip_bg"
+            android:backgroundTint="@color/fw_surface2"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp">
+
+            <ImageView
+                android:id="@+id/iv_rating"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_rating"/>
+
             <TextView
                 android:id="@+id/tv_rate_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:paddingStart="@dimen/dis_20"
-                android:paddingEnd="@dimen/dis_5"
-                android:textSize="@dimen/text_12"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
-                android:drawablePadding="@dimen/dis_5"
-                android:textColor="@color/grey_lite"
-                tools:text="12 Starred"
-                app:drawableStartCompat="@drawable/ic_gs_rating" />
+                android:layout_marginStart="6dp"
+                android:textColor="@color/fw_muted"
+                android:textSize="@dimen/fw_text_body"
+                android:fontFamily="@font/poppins_bold"
+                tools:text="3"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/iv_command"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:layout_marginStart="8dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/fw_chip_bg"
+            android:backgroundTint="@color/fw_surface2"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_comment"
+                app:tint="@color/fw_muted"/>
+
             <TextView
                 android:id="@+id/tv_comment_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingTop="5dp"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:paddingBottom="5dp"
-                android:layout_marginEnd="@dimen/dis_10"
-                android:textSize="@dimen/text_12"
-                android:layout_marginStart="@dimen/dis_10"
-                android:drawablePadding="@dimen/dis_5"
-                android:textColor="@color/grey_lite"
-                tools:text="06 Comments"
-                app:drawableStartCompat="@drawable/ic_gs_comment" />
-
+                android:layout_marginStart="6dp"
+                android:textColor="@color/fw_muted"
+                android:textSize="@dimen/fw_text_body"
+                android:fontFamily="@font/poppins_bold"
+                tools:text="0"/>
         </LinearLayout>
 
-    </RelativeLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dis_10"
-        android:background="@color/grey_bg"
-        android:layout_marginTop="@dimen/dis_10"
-        app:layout_constraintTop_toBottomOf="@id/ll_icons"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"/>
 
+        <LinearLayout
+            android:id="@+id/iv_share"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/fw_chip_bg"
+            android:backgroundTint="@color/fw_red_tint"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageView
+                android:layout_width="17dp"
+                android:layout_height="17dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_share"
+                app:tint="@color/fw_red"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="7dp"
+                android:text="@string/share"
+                android:textAllCaps="true"
+                android:letterSpacing="0.04"
+                android:textColor="@color/fw_red"
+                android:textSize="@dimen/fw_text_caption"
+                android:fontFamily="@font/poppins_bold"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

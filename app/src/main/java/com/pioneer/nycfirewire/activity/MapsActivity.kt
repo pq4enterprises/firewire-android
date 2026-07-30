@@ -657,8 +657,8 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
                         binding.appBarLayout.setBackgroundColor(resources.getColor(R.color.transparent_color))
-                        binding.cvList1.visible()
-                        binding.cvMap1.gone()
+                        binding.cvList.visible()
+                        binding.cvMap.gone()
                         whiteToolbar()
                         //transparentToolbar()
                     }
@@ -671,8 +671,8 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
                     BottomSheetBehavior.STATE_COLLAPSED -> {
                         binding.appBarLayout.setBackgroundColor(resources.getColor(R.color.transparent_color))
                         binding.appBarLayout.visible()
-                        binding.cvList1.gone()
-                        binding.cvMap1.visible()
+                        binding.cvList.gone()
+                        binding.cvMap.visible()
                         whiteToolbar()
                         // transparentToolbar()
                     }
@@ -681,11 +681,11 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
                         binding.appBarLayout.setBackgroundColor(resources.getColor(R.color.transparent_color))
                         whiteToolbar()
                         // transparentToolbar()
-                        binding.cvMap1.visible()
+                        binding.cvMap.visible()
                     }
 
                     BottomSheetBehavior.STATE_DRAGGING -> {
-                        binding.cvMap1.visible()
+                        binding.cvMap.visible()
                         binding.llTopView.gone()
                     }
                 }
@@ -736,8 +736,8 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
             isWireView= true
             isNewsView=false
             changeFragment()
-            binding.cvList1.gone()
-            binding.cvMap1.visible()
+            binding.cvList.gone()
+            binding.cvMap.visible()
             bottomSheetBehavior.state= BottomSheetBehavior.STATE_EXPANDED
         }
 
@@ -750,24 +750,24 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
             isWireView=false
             isNewsView= true
             changeFragment()
-            binding.cvList1.gone()
-            binding.cvMap1.gone()
+            binding.cvList.gone()
+            binding.cvMap.gone()
             bottomSheetBehavior.state= BottomSheetBehavior.STATE_EXPANDED
         }
 
-        binding.cvList1.setOnClickListener {
+        binding.cvList.setOnClickListener {
             bottomSheetBehavior.state= BottomSheetBehavior.STATE_EXPANDED
-            binding.cvList1.gone()
-            binding.cvMap1.visible()
+            binding.cvList.gone()
+            binding.cvMap.visible()
             binding.bottomCl.visible()
             changeFragment()
 
         }
 
-        binding.cvMap1.setOnClickListener {
+        binding.cvMap.setOnClickListener {
             bottomSheetBehavior.state= BottomSheetBehavior.STATE_HIDDEN
-            binding.cvList1.visible()
-            binding.cvMap1.gone()
+            binding.cvList.visible()
+            binding.cvMap.gone()
         }
 
     }
@@ -780,7 +780,7 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
             containerViewId = R.id.fl_main,
             allowBackStack = flag
         )
-        if(fragment is CommentsFragment) binding.cvMap1.gone()
+        if(fragment is CommentsFragment) binding.cvMap.gone()
 
     }
 
@@ -886,7 +886,7 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
         if (f == null) {
             Log.d("BackPressed", "No fragment found in R.id.fl_main")
         } else if (f is WireFragment) {
-            binding.cvMap1.visible()
+            binding.cvMap.visible()
         } else {
             Log.d("BackPressed", "Fragment is not WireFragment: ${f::class.java.simpleName}")
         }
