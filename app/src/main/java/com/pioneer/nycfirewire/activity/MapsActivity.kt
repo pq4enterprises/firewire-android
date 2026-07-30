@@ -67,6 +67,7 @@ import com.pioneer.nycfirewire.model.locality.Locality
 import com.pioneer.nycfirewire.model.locality.LocalityResponse
 import com.pioneer.nycfirewire.prefs
 import com.pioneer.nycfirewire.utils.Constants
+import com.pioneer.nycfirewire.utils.Constants.MAP_PAGE
 import com.pioneer.nycfirewire.utils.Constants.LOCALITY_DATA
 import com.pioneer.nycfirewire.utils.IntentUtils.BUN_WIRE_DETAILS
 import com.pioneer.nycfirewire.utils.NAV_COMMENT_LIST
@@ -219,6 +220,10 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
 
     override fun onResume() {
         super.onResume()
+        // the MAP_PAGE constant has existed since the original analytics work
+        // but was never wired up, so the app's main screen has never reported a
+        // screen_view. The hosted fragments report their own on top of this.
+        analyticMethod(MAP_PAGE,"MapsActivity")
         //mapFragment.onResume()
         val currentFragment = supportFragmentManager.fragments.lastOrNull { it.isVisible }
 

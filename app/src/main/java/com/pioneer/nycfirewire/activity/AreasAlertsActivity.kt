@@ -17,6 +17,7 @@ import com.pioneer.nycfirewire.resource.Resource
 import com.pioneer.nycfirewire.resource.ResourceState
 import android.content.Intent
 import com.pioneer.nycfirewire.utils.Constants
+import com.pioneer.nycfirewire.utils.Constants.PERSONALIZATION
 import com.pioneer.nycfirewire.utils.gone
 import com.pioneer.nycfirewire.utils.visible
 import com.pioneer.nycfirewire.viewModel.FireWireViewModel
@@ -318,6 +319,9 @@ class AreasAlertsActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
+        // keeps the existing "Personalization" series continuous: this screen
+        // replaced PersonalizationActivity, which reported under that name
+        analyticMethod(PERSONALIZATION,"AreasAlertsActivity")
         // refresh after returning from the ALERT SOUND screen
         // AlertSounds.current() falls back to DEFAULT, so this never shows blank
         // for a user who has not chosen a sound yet

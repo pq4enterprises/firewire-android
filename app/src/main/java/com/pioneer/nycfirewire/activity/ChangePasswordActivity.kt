@@ -11,6 +11,7 @@ import com.pioneer.nycfirewire.model.user.response.CommonResponse
 import com.pioneer.nycfirewire.resource.Resource
 import com.pioneer.nycfirewire.resource.ResourceState
 import com.pioneer.nycfirewire.utils.Constants
+import com.pioneer.nycfirewire.utils.Constants.CHANGE_PASSWORD
 import com.pioneer.nycfirewire.utils.gone
 import com.pioneer.nycfirewire.utils.visible
 import com.pioneer.nycfirewire.viewModel.FireWireViewModel
@@ -38,6 +39,11 @@ class ChangePasswordActivity: BaseActivity() {
         initApiCall()
         initUi()
         clickEvent()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        analyticMethod(CHANGE_PASSWORD,"ChangePasswordActivity")
     }
 
 

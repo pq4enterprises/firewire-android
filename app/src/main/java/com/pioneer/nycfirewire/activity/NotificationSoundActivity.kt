@@ -17,6 +17,7 @@ import com.pioneer.nycfirewire.prefs
 import com.pioneer.nycfirewire.resource.ResourceState
 import com.pioneer.nycfirewire.utils.AlertSounds
 import com.pioneer.nycfirewire.utils.Constants
+import com.pioneer.nycfirewire.utils.Constants.ALERT_SOUND
 import com.pioneer.nycfirewire.utils.IntentUtils
 import com.pioneer.nycfirewire.utils.gone
 import com.pioneer.nycfirewire.utils.visible
@@ -68,9 +69,15 @@ class NotificationSoundActivity : BaseActivity() {
 
         initToolbar()
         initApiCall()
+
         setupList()
 
         binding.btnSave.setOnClickListener { onSave() }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        analyticMethod(ALERT_SOUND,"NotificationSoundActivity")
     }
 
     private fun initToolbar() {

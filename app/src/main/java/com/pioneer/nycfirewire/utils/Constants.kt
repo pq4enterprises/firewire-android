@@ -58,6 +58,9 @@ object Constants {
     var INCIDENT_POST="Incident Post"
     var INCIDENT_DETAILS="incident_details"
     var RADIO_CLICKED="radio_clicked"
+    var CHANGE_PASSWORD="Change Password"
+    var ALERT_SOUND="Alert Sound"
+    var VERIFY_EMAIL="Verify Email"
     var CODE_EMAIL_NOT_VERIFIED="email_not_verified"
     var FROM_PAGE="from_page"
 }

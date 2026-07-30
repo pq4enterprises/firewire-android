@@ -16,6 +16,7 @@ import com.pioneer.nycfirewire.prefs
 import com.pioneer.nycfirewire.resource.Resource
 import com.pioneer.nycfirewire.resource.ResourceState
 import com.pioneer.nycfirewire.utils.Constants
+import com.pioneer.nycfirewire.utils.Constants.VERIFY_EMAIL
 import com.pioneer.nycfirewire.utils.Constants.CODE_SUCCESS
 import com.pioneer.nycfirewire.utils.Constants.EMAIL_ID
 import com.pioneer.nycfirewire.utils.Constants.FORGOT_PASSWORD
@@ -50,6 +51,11 @@ class VerifyEmailOtpActivity : BaseActivity() {
         initApiCall()
         clickEvent()
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        analyticMethod(VERIFY_EMAIL,"VerifyEmailOtpActivity")
     }
 
     private fun initExtra() {
