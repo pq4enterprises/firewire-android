@@ -1,27 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Scanner region group (Instrument Panel 1A): tappable collapsible header
+    (chevron + region + feed count) with the nested feed list below.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
-    <TextView
-        android:id="@+id/tv_loc_title"
-        android:layout_width="wrap_content"
+
+    <LinearLayout
+        android:id="@+id/ll_region_header"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/text_18"
-        android:layout_marginTop="@dimen/dis_10"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        android:layout_marginStart="@dimen/dis_16"
-        android:fontFamily="@font/poppins_regular"
-        tools:text="New York City"/>
+        android:layout_marginTop="8dp"
+        android:background="@drawable/fw_card_bg"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp">
+
+        <ImageView
+            android:id="@+id/iv_chevron"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:importantForAccessibility="no"
+            android:rotation="90"
+            android:src="@drawable/fw_ic_chevron_right"
+            app:tint="@color/fw_muted" />
+
+        <TextView
+            android:id="@+id/tv_loc_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:fontFamily="@font/poppins_bold"
+            android:letterSpacing="0.1"
+            android:maxLines="1"
+            android:textAllCaps="true"
+            android:textColor="@color/fw_text"
+            android:textSize="@dimen/fw_text_body"
+            tools:text="NEW YORK CITY" />
+
+        <TextView
+            android:id="@+id/tv_feed_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:fontFamily="monospace"
+            android:letterSpacing="0.05"
+            android:textAllCaps="true"
+            android:textColor="@color/fw_muted"
+            android:textSize="10sp"
+            tools:text="4 FEEDS" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_feed_song"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:listitem="@layout/item_sub_feed"
-        android:layout_marginBottom="@dimen/dis_30"
-        />
+        android:layout_marginTop="8dp"
+        tools:listitem="@layout/item_sub_feed" />
 
 </LinearLayout>
