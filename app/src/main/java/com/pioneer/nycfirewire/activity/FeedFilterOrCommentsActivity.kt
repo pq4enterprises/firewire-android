@@ -8,7 +8,6 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.pioneer.nycfirewire.fragment.CommentsFragment
-import com.pioneer.nycfirewire.fragment.FeedFilterFragment
 import com.pioneer.nycfirewire.utils.NAV_COMMENT_LIST
 import com.pioneer.nycfirewire.utils.replaceFragment
 import com.pioneer.nycfirewire.R
@@ -69,15 +68,21 @@ class FeedFilterOrCommentsActivity : AppCompatActivity() {
         )
     }
 
+    /**
+     * Comments only. This container used to fall back to FeedFilterFragment when no
+     * comment id was supplied — the old scanner area-selection screen. That screen is
+     * gone: area selection lives in AreasAlertsActivity, which writes the UserLocality
+     * rows the feed endpoint actually filters on. Nothing should reach this activity
+     * without a comment id now, so an intent that does is a wiring mistake rather than
+     * a second mode to support.
+     */
     private fun initExtra() {
-        if(intent!=null){
-            if(intent.hasExtra(NAV_COMMENT_LIST)){
-                val data= intent.getStringExtra(NAV_COMMENT_LIST)
-                displayFragment(CommentsFragment.newInstance(data as String),true)
-            }else{
-                displayFragment(FeedFilterFragment.newInstance(),false)
-            }
+        val data = intent?.getStringExtra(NAV_COMMENT_LIST)
+        if (data.isNullOrEmpty()) {
+            finish()
+            return
         }
+        displayFragment(CommentsFragment.newInstance(data), true)
     }
 
     override fun onBackPressed() {

@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
@@ -58,7 +59,19 @@ class FeedsActivity : BaseActivity() {
 
     private lateinit var binding: ActivityFeedBinding
     private val mTAG= FeedsActivity::class.java.canonicalName
-    private var localityIds= ArrayList<String>()
+
+    /**
+     * Reloads the feed list after the user edits their areas, so a newly added or
+     * removed region shows up straight away instead of on next launch. Scoped to
+     * this one round trip rather than a blanket refresh in onResume, which would
+     * rebuild the list — and disturb the playing-feed UI — every time the user
+     * came back from anything at all.
+     */
+    private val areasAlertsLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        vm.getFeedList(arrayListOf())
+    }
 
     private lateinit var receiver: BroadcastReceiver
     val groupMainList= ArrayList<FeedsGroupList>()
@@ -86,7 +99,6 @@ class FeedsActivity : BaseActivity() {
         buildSignalMeter()
         buildWave()
         refreshConsole()
-        initExtra()
         clickEvent()
         initApiCall()
 
@@ -108,15 +120,6 @@ class FeedsActivity : BaseActivity() {
         // Step 2: Register the receiver with an IntentFilter
         val filter = IntentFilter(AUDIO_BROADCAST)
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter)
-    }
-
-    /**
-     * FeedFilterFragment hands the chosen regions over as "LocalityId", but the
-     * production screen never read the extra, so Filter → Done always came back
-     * to the unfiltered list. Reading it here is what makes the filter apply.
-     */
-    private fun initExtra() {
-        intent?.getStringArrayListExtra("LocalityId")?.let { localityIds = it }
     }
 
     override fun onResume() {
@@ -168,7 +171,7 @@ class FeedsActivity : BaseActivity() {
     }
 
     private fun initApiCall() {
-        vm.getFeedList(localityIds)
+        vm.getFeedList(arrayListOf())
         vm.feedLiveData.observe(this, Observer {
           updateFeedList(it)
         })
@@ -385,10 +388,12 @@ class FeedsActivity : BaseActivity() {
         }
 
         binding.tvFilter.setOnClickListener {
-            val intent = Intent(this, FeedFilterOrCommentsActivity::class.java )
-            startActivity(intent)
-            finish()
-
+            // Areas & Alerts is the only area-selection screen now. It writes
+            // UserLocality, which is what GET /api/app/feed actually filters on — the
+            // old feed-filter screen sent its selection as a query param the server
+            // never reads, so it could not filter this list even in principle.
+            // No finish(): the user comes back here, and we reload on return.
+            areasAlertsLauncher.launch(Intent(this, AreasAlertsActivity::class.java))
         }
 
         // transport mirrors the row pause control for whatever is playing
