@@ -43,11 +43,11 @@
         </activity>-->
         <activity android:name=".activity.LoginNewActivity"
             android:windowSoftInputMode="stateHidden|adjustResize"
-            android:exported="true"/>
+            android:exported="false"/>
 
         <activity android:name=".activity.RegisterActivity"
             android:windowSoftInputMode="adjustResize"
-            android:exported="true"/>
+            android:exported="false"/>
 
         <activity android:name=".activity.MapsActivity"
             android:launchMode="singleTask"
@@ -65,28 +65,29 @@
         </activity>
 
         <activity android:name=".activity.NavigationMenuActivity"
-            android:exported="true"/>
+            android:exported="false"/>
 
         <activity android:name=".activity.FeedsActivity"
-            android:exported="true"/>
+            android:exported="false"/>
 
         <activity android:name=".activity.SelectAreaActivity"
-            android:exported="true"/>
+            android:exported="false"/>
         <activity android:name=".activity.WireDetailActivity"
-            android:exported="true"/>
+            android:exported="false"/>
 
         <activity android:name=".activity.NewsDetailActivity"
-            android:exported="true"/>
+            android:exported="false"/>
         <activity android:name=".activity.MyAccountActivity"
-            android:exported="true"/>
+            android:exported="false"/>
         <activity android:name=".activity.UpdateProfileActivity"
             android:windowSoftInputMode="adjustResize"
-            android:exported="true"/>
+            android:exported="false"/>
         <activity android:name=".activity.ChangePasswordActivity"
             android:windowSoftInputMode="adjustResize"
-            android:exported="true"/>
+            android:exported="false"/>
 
-        <activity android:name=".activity.AreasAlertsActivity" />
+        <activity android:name=".activity.AreasAlertsActivity"
+            android:exported="false" />
 
 
         <!-- OneSignal 5.x builds each notification on its own fallback channel whose
@@ -104,16 +105,16 @@
             android:value="com.pioneer.nycfirewire.notification.NotificationServiceExtension" />
 
         <activity android:name=".activity.ForgotPasswordActivity"
-            android:exported="true"/>
+            android:exported="false"/>
 
         <activity android:name=".activity.FeedFilterOrCommentsActivity"
-            android:exported="true"/>
+            android:exported="false"/>
         <activity android:name=".activity.WebViewActivity"
-            android:exported="true"/>
+            android:exported="false"/>
         <activity android:name=".activity.NotificationSoundActivity"
-            android:exported="true"/>
+            android:exported="false"/>
         <activity android:name=".activity.VerifyEmailOtpActivity"
-            android:exported="true"/>
+            android:exported="false"/>
 
         <meta-data
             android:name="com.google.android.gms.wallet.api.enabled"
