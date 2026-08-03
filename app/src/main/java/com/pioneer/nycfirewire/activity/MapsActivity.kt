@@ -9,6 +9,7 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.ColorRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -25,7 +26,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import com.pioneer.nycfirewire.ReplaceCallback
-import com.pioneer.nycfirewire.fragment.FilterFragment
 import com.pioneer.nycfirewire.fragment.NewsFragment
 import com.pioneer.nycfirewire.fragment.WireFragment
 import com.pioneer.nycfirewire.model.incident.response.Incident
@@ -474,12 +474,30 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
     }
 
 
+    /**
+     * Reloads the area list after the user edits it in Areas & Alerts, so the Wire
+     * list reflects the change immediately. Goes through callApi() so the observer
+     * is registered on the path where startup skipped it (initExtra calls
+     * callIncidentList instead when it already has a locality list).
+     */
+    private val areasAlertsLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        callApi()
+    }
+
+    /** Guards against stacking a second observer each time callApi() runs. */
+    private var isLocalityObserverRegistered = false
+
     private fun callApi() {
         if(isNetworkConnected(this)) {
             vm.getLocalityList(Constants.TYPE_AREA)
         }else getString(R.string.check_network_connection)
-        vm.localityLiveData.observe(this) {
-            updateFilterData(it)
+        if (!isLocalityObserverRegistered) {
+            isLocalityObserverRegistered = true
+            vm.localityLiveData.observe(this) {
+                updateFilterData(it)
+            }
         }
     }
 
@@ -632,13 +650,8 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
 
     private fun clickEvent() {
         binding.toolbarLayout.ivMenu.setOnClickListener {
-            val currentFragment = supportFragmentManager.fragments.lastOrNull { it.isVisible }
-            if(currentFragment is FilterFragment){
-                val fragmentManager = supportFragmentManager
-                fragmentManager.beginTransaction()
-                    .remove(currentFragment)  // removes current fragment
-                    .commitAllowingStateLoss()
-            }
+            // FilterFragment used to be torn down here before opening the menu; area
+            // selection is now AreasAlertsActivity, so there is no fragment to remove.
             val intent = Intent(this, NavigationMenuActivity::class.java )
             startActivity(intent)
         }
@@ -801,7 +814,12 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
     override fun replaceFragment(receivingType: String, data: Any) {
         when(receivingType){
             NAV_FILTER ->{
-                displayFragment(FilterFragment.newInstance(),true)
+                // The "FEED AREAS" control on the Wire and News sheets. It used to open
+                // FilterFragment; area selection now lives solely in AreasAlertsActivity.
+                // Both wrote the same UserLocality rows — and those rows are the only
+                // thing GET /api/app/incident filters on, server-side — so this is the
+                // same operation on the screen the redesign actually ships.
+                areasAlertsLauncher.launch(Intent(this, AreasAlertsActivity::class.java))
             }
             NAV_WIRE ->{
                 displayFragment(WireFragment.newInstance(incidentList,totalCount, data as Bundle),false)

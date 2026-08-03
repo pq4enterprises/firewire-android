@@ -107,7 +107,13 @@
         <activity android:name=".activity.ForgotPasswordActivity"
             android:exported="false"/>
 
+        <!-- Hosts the comment composer. Without adjustResize the system fell back to
+             panning the whole window when the keyboard opened, which shoved the
+             composer up near the status bar and pushed the comment list off screen.
+             Every other screen with a text field the user types into already
+             declares this; this one was missed. -->
         <activity android:name=".activity.FeedFilterOrCommentsActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false"/>
         <activity android:name=".activity.WebViewActivity"
             android:exported="false"/>
