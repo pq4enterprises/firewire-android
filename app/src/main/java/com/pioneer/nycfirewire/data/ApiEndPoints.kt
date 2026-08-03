@@ -87,8 +87,15 @@ interface ApiEndPoints {
         @Query("limit") limit: Int// Pass the 'query' parameter as a JSON string
     ): Response<IncidentResponse>
 
-   //api/app/locality?sortBy=createdAt&sortDir=desc&offset=1&limit=100?&query={"type":"notification"}
-    @GET("api/app/locality?sortBy=createdAt&sortDir=desc")
+    // Filter / area-selection screens. The server marks each locality and
+    // subLocality with the caller's own isChecked from their stored UserLocality
+    // rows, so the saved selection comes back with the list — no local cache needed.
+    //
+    // show=true is required: without it the server falls back to `limit || 10` and
+    // returns only the FIRST TEN localities. Any saved selection outside that page
+    // was simply absent from the screen, which is what made filters look like they
+    // never persisted. getLocalityListByType already passes it; these screens did not.
+    @GET("api/app/locality?sortBy=createdAt&sortDir=desc&show=true")
     suspend fun getLocalityList(
        @Query("query") query: String
    ):Response<LocalityResponse>

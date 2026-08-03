@@ -10,7 +10,6 @@ class Prefs(context: Context) {
     private val TOKEN = "token"
     private val REFRESH_TOKEN = "refresh_token"
     private val USER_ID = "user_id"
-    private val FILTER_LIST = "filter_list"
     private val USER_IMG = "user_img"
     private val ISAREASELECTED = "area_selected"
     private val IS_DARK_MODE_ON = "is_dark_mode"
@@ -67,8 +66,10 @@ class Prefs(context: Context) {
     var userId:String? get() = preferences.getString(USER_ID,null)
         set(value) = preferences.edit().putString(USER_ID,value).apply()
 
-    var filterData:String? get() = preferences.getString(FILTER_LIST,null)
-        set(value) = preferences.edit().putString(FILTER_LIST,value).apply()
+    // filterData ("filter_list") removed: it backed the local JSON cache that
+    // checkSelectedData() read, which the server-side isChecked flags on the locality
+    // response replaced. Nothing wrote it and nothing read it. Any value left on an
+    // existing install is simply ignored.
 
 
     var userImg:String? get() = preferences.getString(USER_IMG,"")

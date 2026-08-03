@@ -40,7 +40,6 @@ class FeedFilterFragment : Fragment() {
     private var callback: ReplaceCallback? = null
     private lateinit var vm: FireWireViewModel
     private var localityListData = ArrayList<Locality>()
-    private var filterLocalityList = ArrayList<Locality>()
 
     companion object {
         fun newInstance() = FeedFilterFragment().putArgs { }
@@ -113,7 +112,12 @@ class FeedFilterFragment : Fragment() {
     }
 
     private fun setupAdapter() {
-        checkSelectedData()
+        // The saved selection arrives on the response itself: the server sets
+        // isChecked on every locality and subLocality from the caller's stored
+        // UserLocality rows. The old checkSelectedData() cross-referenced a local
+        // JSON cache in prefs.filterData instead — but the code that populated that
+        // cache (saveData/getData) was commented out, so it looped over a
+        // permanently empty list and did nothing at all.
         if (localityListData.isNotEmpty()) {
             binding.tvNoData.gone()
             binding.rvSubFilter.visible()
@@ -138,20 +142,6 @@ class FeedFilterFragment : Fragment() {
 
             }
         )
-    }
-
-    private fun checkSelectedData() {
-        filterLocalityList.forEach {
-            val selectedSubLoc = it.subLocality?.filter { it.isChecked }
-
-            localityListData.forEach {
-               it.subLocality?.forEach { subLoc->
-                   if(selectedSubLoc?.map { it._id }?.contains(subLoc._id) == true){
-                       subLoc.isChecked= true
-                   }
-               }
-            }
-        }
     }
 
     private fun clickEvent() {

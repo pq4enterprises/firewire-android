@@ -54,7 +54,6 @@ class FilterFragment : Fragment() {
     private var callback: ReplaceCallback? = null
     private lateinit var vm: FireWireViewModel
     private var localityListData = ArrayList<Locality>()
-   // private var filterLocalityList = ArrayList<Locality>()
     private var isSelectAll= false
 
     companion object {
@@ -90,7 +89,6 @@ class FilterFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
         clickEvent()
-        //getData()
 
         val itemTouchListener = object : RecyclerView.OnItemTouchListener {
             override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
@@ -134,6 +132,9 @@ class FilterFragment : Fragment() {
                 if (response.data?.code == Constants.CODE_SUCCESS) {
                     val localityList = response.data.data
                     val list = ArrayList(localityList?.data ?: ArrayList())
+                    // clear first: this observer can fire again (re-entry, config
+                    // change) and addAll alone duplicated every locality on screen
+                    localityListData.clear()
                     localityListData.addAll(list)
                     setupAdapter()
 
@@ -152,7 +153,11 @@ class FilterFragment : Fragment() {
     }
 
     private fun setupAdapter() {
-       // checkSelectedData()
+        // The saved selection arrives on the response itself: the server sets
+        // isChecked on every locality and subLocality from the caller's stored
+        // UserLocality rows. The commented-out checkSelectedData()/saveData()/
+        // getData() that used to sit here were a local prefs.filterData JSON cache
+        // the server response superseded; removed rather than left as dead weight.
         if (localityListData.isNotEmpty()) {
             binding.tvNoData.gone()
             binding.rvMainFilter.visible()
@@ -206,19 +211,6 @@ class FilterFragment : Fragment() {
         )
     }
 
-  /*  private fun checkSelectedData() {
-        filterLocalityList.forEach {
-            val selectedSubLoc = it.subLocality?.filter { it.isChecked }
-
-            localityListData.forEach {
-               it.subLocality?.forEach { subLoc->
-                   if(selectedSubLoc?.map { it._id }?.contains(subLoc._id) == true){
-                       subLoc.isChecked= true
-                   }
-               }
-            }
-        }
-    }*/
 
     private fun clickEvent() {
         binding.tvDone.setOnClickListener {
@@ -243,26 +235,9 @@ class FilterFragment : Fragment() {
             }else showToast(requireContext(),"Please select a area before proceeding")
 
 
-            //saveData()
         }
     }
 
-   /* private fun saveData() {
-        val gson = Gson()
-        val jsonString = gson.toJson(localityListData)
-        prefs.filterData = jsonString
-    }
-
-    private fun getData() {
-        val jsonString = prefs.filterData
-        if (!jsonString.isNullOrEmpty()) {
-            // Convert JSON string back to ArrayList
-            val gson = Gson()
-            val arrayListType =
-                object : com.google.gson.reflect.TypeToken<ArrayList<Locality>>() {}.type
-            filterLocalityList.addAll(gson.fromJson(jsonString, arrayListType))
-        }
-    }*/
 
 
     fun showAlert(message: String? = "") {
