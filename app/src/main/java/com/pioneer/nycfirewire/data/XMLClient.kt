@@ -7,7 +7,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory
 import java.util.concurrent.TimeUnit
-import com.onesignal.BuildConfig
+import com.pioneer.nycfirewire.BuildConfig
 
 class XMLClient (val context: Context) {
 

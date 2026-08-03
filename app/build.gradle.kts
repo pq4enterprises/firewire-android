@@ -132,21 +132,34 @@ val checkReleaseApiUrl = tasks.register("checkReleaseApiUrl") {
         if (!apiClient.exists()) {
             throw GradleException("Release guard: ${apiClient.path} not found — cannot verify the API base URL.")
         }
+        // Both hosts, not just the API one. The old filter was `contains("const val
+        // BASE_URL")`, which does not match "const val BASE_INCIDENT_URL" — so flipping
+        // BASE_URL to production while leaving BASE_INCIDENT_URL on staging passed the
+        // guard cleanly, and a production build would have posted incidents into the
+        // staging admin site.
         val active = apiClient.readLines()
             .map { it.trim() }
-            .filter { !it.startsWith("//") && it.contains("const val BASE_URL") }
-        if (active.isEmpty()) {
-            throw GradleException("Release guard: no active BASE_URL found in ApiClient.kt.")
+            .filter {
+                !it.startsWith("//") &&
+                    (it.contains("const val BASE_URL") || it.contains("const val BASE_INCIDENT_URL"))
+            }
+        if (active.size < 2) {
+            throw GradleException(
+                "Release guard: expected an active BASE_URL and BASE_INCIDENT_URL in " +
+                    "ApiClient.kt, found ${active.size}:\n" + active.joinToString("\n") { "    $it" }
+            )
         }
         val bad = active.filter { it.contains("staging.") || it.contains("dev-firewire") }
         if (bad.isNotEmpty()) {
             throw GradleException(
-                "\n\nRELEASE BLOCKED — the API base URL is not production:\n" +
+                "\n\nRELEASE BLOCKED — an API base URL is not production:\n" +
                 bad.joinToString("\n") { "    $it" } +
-                "\n\nSet ApiClient.BASE_URL to https://api.nycfirewireapp.com before building a release.\n"
+                "\n\nSet BASE_URL to https://api.nycfirewireapp.com and BASE_INCIDENT_URL to\n" +
+                "https://admin.nycfirewireapp.com before building a release.\n"
             )
         }
-        logger.lifecycle("Release guard OK — API base URL: ${active.first()}")
+        logger.lifecycle("Release guard OK — production URLs active:")
+        active.forEach { logger.lifecycle("    $it") }
     }
 }
 

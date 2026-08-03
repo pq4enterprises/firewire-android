@@ -1,6 +1,7 @@
 package com.pioneer.nycfirewire.data.auth
 
 import android.content.Context
+import com.pioneer.nycfirewire.BuildConfig
 import com.pioneer.nycfirewire.data.ApiEndPoints
 import com.pioneer.nycfirewire.prefs
 import okhttp3.Interceptor
@@ -35,16 +36,21 @@ class ApiClient(context: Context) {
         const val BASE_INCIDENT_URL = "https://staging.admin.nycfirewireapp.com"   // staging
     }
 
-    // Logging interceptor
- /*   private val logging = HttpLoggingInterceptor().apply {
+    /**
+     * Level.BODY logs full headers and bodies. On this client that means every access
+     * token, every refresh token, and the login request body — password included —
+     * written to logcat. It was running unconditionally, so release builds did it too:
+     * a live token could be lifted straight out of `adb logcat`, or out of any
+     * `adb bugreport` the user was ever asked to send in.
+     *
+     * Restored to the DEBUG gate that was sitting commented out directly above it.
+     * XMLClient already gated its logging this way; this client was the outlier.
+     */
+    val logging = HttpLoggingInterceptor().apply {
         level = if (BuildConfig.DEBUG)
             HttpLoggingInterceptor.Level.BODY
         else
             HttpLoggingInterceptor.Level.NONE
-    }*/
-
-    val logging = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY // Options: NONE, BASIC, HEADERS, BODY
     }
 
     // Access token injector
@@ -53,7 +59,8 @@ class ApiClient(context: Context) {
         val token = prefs.token
         val requestBuilder = original.newBuilder()
 
-        println("token:"+token)
+        // (removed) println("token:" + token) — printed the bearer token to logcat on
+        // every single request, in release builds as well as debug.
 
         if (!token.isNullOrEmpty()) {
             requestBuilder.addHeader("Authorization", "Bearer $token")
