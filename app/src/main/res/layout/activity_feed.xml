@@ -98,24 +98,35 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rl_toolbar">
 
-        <!-- top strip -->
-        <RelativeLayout
+        <!--
+            top strip — LinearLayout, deliberately not RelativeLayout. A
+            wrap_content RelativeLayout whose children all use centerVertical
+            derives its height from child positions it has not finished
+            resolving, and clipped the bottom off this row: the last pixels of
+            RECEIVER · CH LOCK and STANDBY, and the bottom of the status dot.
+            The toolbar and list-header rows use the same pattern but survive it
+            because each has a 48dp touch-target child that sets the row height
+            with room to spare; this row's tallest child is 14px shorter, so
+            there is no slack to absorb the error. Verified on device.
+        -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
             android:paddingBottom="9dp">
 
             <!--
-                letterSpacing is applied after the final glyph too, but wrap_content
-                does not measure that trailing gap — the last character gets shaved
-                off. paddingEnd gives it back. toStartOf/maxLines keep the label off
-                the status chip when the status string is long (e.g. RECONNECTING).
+                letterSpacing is applied after the final glyph too, but the
+                measured width does not include that trailing gap — the last
+                character gets shaved. paddingEnd gives it back. weight=1 keeps
+                the label clear of the status chip when the status string is
+                long (e.g. RECONNECTING).
             -->
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_toStartOf="@+id/ll_status"
+                android:layout_weight="1"
                 android:fontFamily="monospace"
                 android:letterSpacing="0.2"
                 android:maxLines="1"
@@ -129,8 +140,6 @@
                 android:id="@+id/ll_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -154,7 +163,7 @@
                     android:textSize="10sp"
                     android:textStyle="bold" />
             </LinearLayout>
-        </RelativeLayout>
+        </LinearLayout>
 
         <View
             android:layout_width="match_parent"
