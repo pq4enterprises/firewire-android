@@ -121,6 +121,8 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
     private var isWireView =false
     private var isNewsView =false
     private val mTAG= MapsActivity::class.java.canonicalName
+    /** Distinct from mTAG: the news page lives in its own container (fl_news). */
+    private val NEWS_TAG= "${MapsActivity::class.java.canonicalName}.news"
     private var incidentList= ArrayList<Incident>()
     private val locationArrayList= ArrayList<LatLng>()
     private lateinit var billingClient: BillingClient
@@ -753,33 +755,9 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
     private fun onChangeOption(){
         val changeView= binding.toolbarLayout.itemChange
 
-        changeView.tvWire.setOnClickListener {
-            changeView.cvWire.visible()
-            changeView.cvNews.gone()
-            changeView.tvNews.visible()
-            changeView.tvWire.gone()
-            isNeedBsButton=true
-            isWireView= true
-            isNewsView=false
-            changeFragment()
-            binding.cvList.gone()
-            binding.cvMap.visible()
-            bottomSheetBehavior.state= BottomSheetBehavior.STATE_EXPANDED
-        }
+        changeView.tvWire.setOnClickListener { selectWireTab() }
 
-        changeView.tvNews.setOnClickListener {
-            changeView.cvNews.visible()
-            changeView.cvWire.gone()
-            changeView.tvWire.visible()
-            changeView.tvNews.gone()
-            isNeedBsButton= false
-            isWireView=false
-            isNewsView= true
-            changeFragment()
-            binding.cvList.gone()
-            binding.cvMap.gone()
-            bottomSheetBehavior.state= BottomSheetBehavior.STATE_EXPANDED
-        }
+        changeView.tvNews.setOnClickListener { selectNewsTab() }
 
         binding.cvList.setOnClickListener {
             bottomSheetBehavior.state= BottomSheetBehavior.STATE_EXPANDED
@@ -796,6 +774,72 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
             binding.cvMap.gone()
         }
 
+    }
+
+    /** Moves the WIRE/NEWS pill to WIRE and shows the map page. */
+    private fun selectWireTab() {
+        val changeView = binding.toolbarLayout.itemChange
+        changeView.cvWire.visible()
+        changeView.cvNews.gone()
+        changeView.tvNews.visible()
+        changeView.tvWire.gone()
+        showWirePage()
+    }
+
+    /** Moves the WIRE/NEWS pill to NEWS and shows the standalone news page. */
+    private fun selectNewsTab() {
+        val changeView = binding.toolbarLayout.itemChange
+        changeView.cvNews.visible()
+        changeView.cvWire.gone()
+        changeView.tvWire.visible()
+        changeView.tvNews.gone()
+        showNewsPage()
+    }
+
+    /**
+     * NEWS is a standalone page, not a sheet floating over the map. Everything
+     * that belongs to the map view — the map itself, the incident bottom sheet
+     * and the map/list FABs — is taken down while it is up, so the news feed is
+     * all that is on screen. Mirrors iOS, where the NEWS segment swaps
+     * HomeViewController's whole container and hides the reload button.
+     */
+    private fun showNewsPage() {
+        isNeedBsButton = false
+        isWireView = false
+        isNewsView = true
+
+        binding.toolbarLayout.ivRefresh.gone()
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        binding.bottomCl.gone()
+        binding.flFragmentContainer.gone()
+        binding.cvList.gone()
+        binding.cvMap.gone()
+        binding.flNews.visible()
+
+        if (supportFragmentManager.findFragmentByTag(NEWS_TAG) == null) {
+            replaceFragment(
+                NewsFragment.newInstance(),
+                NEWS_TAG,
+                allowStateLoss = true,
+                containerViewId = R.id.fl_news,
+                allowBackStack = false
+            )
+        }
+    }
+
+    /** Restores the map + incident sheet after the news page. */
+    private fun showWirePage() {
+        isNeedBsButton = true
+        isWireView = true
+        isNewsView = false
+
+        binding.flNews.gone()
+        binding.flFragmentContainer.visible()
+        binding.bottomCl.visible()
+        binding.cvList.gone()
+        binding.cvMap.visible()
+        changeFragment()
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
     private fun displayFragment(fragment: Fragment, flag:Boolean){
@@ -825,7 +869,7 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
                 displayFragment(WireFragment.newInstance(incidentList,totalCount, data as Bundle),false)
             }
             NAV_NEWS ->{
-                displayFragment(NewsFragment.newInstance(),true)
+                selectNewsTab()
             }
             NAV_COMMENT_LIST ->{
                // displayFragment(CommentsFragment.newInstance(data as String),true)
@@ -843,7 +887,7 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
 
                 if(isWireView){
                     displayFragment(WireFragment.newInstance(incidentList,totalCount,data as Bundle),false)
-                }else  displayFragment(NewsFragment.newInstance(),true)
+                }else  selectNewsTab()
             }
         }
     }
@@ -853,8 +897,7 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
             binding.toolbarLayout.ivRefresh.visible()
             displayFragment(WireFragment.newInstance(incidentList,totalCount, Bundle()),false)
         }else if(isNewsView){
-            binding.toolbarLayout.ivRefresh.gone()
-            displayFragment(NewsFragment.newInstance(),false)
+            showNewsPage()
         }
 
     }
@@ -911,6 +954,13 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
     }
 
     override fun onBackPressed() {
+        // News is a full page rather than a dismissible sheet, so back has to
+        // return to the map instead of dropping the user out of the app.
+        if (isNewsView) {
+            selectWireTab()
+            return
+        }
+
         super.onBackPressed()
         val f = supportFragmentManager.findFragmentById(R.id.fl_main)
 

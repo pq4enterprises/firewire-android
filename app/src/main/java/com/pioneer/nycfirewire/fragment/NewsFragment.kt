@@ -28,7 +28,7 @@ import com.pioneer.nycfirewire.utils.IntentUtils.NEWS_DETAILS
 import com.pioneer.nycfirewire.utils.IntentUtils.PUB_DATE
 import com.pioneer.nycfirewire.viewModel.FireWireViewModel
 import com.pioneer.nycfirewire.R
-import com.pioneer.nycfirewire.databinding.BottomSheetNewsBinding
+import com.pioneer.nycfirewire.databinding.FragmentNewsBinding
 import com.pioneer.nycfirewire.databinding.ItemBottomNewsBinding
 import com.pioneer.nycfirewire.utils.Constants.FILTER_FRAGMENT
 import com.pioneer.nycfirewire.utils.Constants.NEWS_FRAGMENT
@@ -48,7 +48,7 @@ import org.jsoup.nodes.Element
 @AndroidEntryPoint
 class NewsFragment:Fragment() {
 
-    private lateinit var binding: BottomSheetNewsBinding
+    private lateinit var binding: FragmentNewsBinding
     private var callback: ReplaceCallback?=null
     private lateinit var vm: FireWireViewModel
 
@@ -78,7 +78,7 @@ class NewsFragment:Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = BottomSheetNewsBinding.inflate(inflater, container, false)
+        binding = FragmentNewsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -86,26 +86,9 @@ class NewsFragment:Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
         clickEvent()
-        //binding.rvMainFilter.isNestedScrollingEnabled=false
-
-        val itemTouchListener = object : RecyclerView.OnItemTouchListener {
-            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-                // Detect touch events here, for example, detect a click event
-                rv.getParent().requestDisallowInterceptTouchEvent(true);
-
-                return false // Return false to let other touch events be handled by the RecyclerView
-            }
-
-            override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
-                // Handle the touch event (e.g., on a long press)
-            }
-
-            override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
-                // Optional: Control whether RecyclerView should disallow intercepting touch events
-            }
-        }
-
-        binding.rvMainFilter.addOnItemTouchListener(itemTouchListener)
+        // The OnItemTouchListener that used to live here only existed to stop the
+        // enclosing bottom sheet from stealing the list's vertical drags. News is
+        // its own page now, so there is no sheet to fight with.
     }
 
 

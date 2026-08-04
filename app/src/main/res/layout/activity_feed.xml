@@ -15,13 +15,14 @@
     <!-- header: back / SCANNER / live count -->
     <RelativeLayout
         android:id="@+id/rl_toolbar"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingLeft="6dp"
         android:paddingRight="16dp"
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
@@ -74,9 +75,15 @@
     </RelativeLayout>
 
     <!-- ===== instrument console (fixed dark face in both modes) ===== -->
+    <!--
+        width is 0dp (match_constraint), not match_parent: with only a left
+        constraint, ConstraintLayout resolves match_parent to the full parent
+        width and then *adds* the side margins, pushing the console 32dp off the
+        right edge and clipping the readouts inside it.
+    -->
     <LinearLayout
         android:id="@+id/ll_console"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/fw_screen_margin"
         android:layout_marginRight="@dimen/fw_screen_margin"
@@ -88,31 +95,51 @@
         android:paddingTop="14dp"
         android:paddingBottom="15dp"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rl_toolbar">
 
-        <!-- top strip -->
-        <RelativeLayout
+        <!--
+            top strip — LinearLayout, deliberately not RelativeLayout. A
+            wrap_content RelativeLayout whose children all use centerVertical
+            derives its height from child positions it has not finished
+            resolving, and clipped the bottom off this row: the last pixels of
+            RECEIVER · CH LOCK and STANDBY, and the bottom of the status dot.
+            The toolbar and list-header rows use the same pattern but survive it
+            because each has a 48dp touch-target child that sets the row height
+            with room to spare; this row's tallest child is 14px shorter, so
+            there is no slack to absorb the error. Verified on device.
+        -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
             android:paddingBottom="9dp">
 
+            <!--
+                letterSpacing is applied after the final glyph too, but the
+                measured width does not include that trailing gap — the last
+                character gets shaved. paddingEnd gives it back. weight=1 keeps
+                the label clear of the status chip when the status string is
+                long (e.g. RECONNECTING).
+            -->
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
+                android:layout_weight="1"
                 android:fontFamily="monospace"
                 android:letterSpacing="0.2"
+                android:maxLines="1"
+                android:paddingEnd="3dp"
                 android:text="@string/scanner_receiver_lock"
                 android:textAllCaps="true"
                 android:textColor="@color/fw_scanner_console_label"
                 android:textSize="9sp" />
 
             <LinearLayout
+                android:id="@+id/ll_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -136,7 +163,7 @@
                     android:textSize="10sp"
                     android:textStyle="bold" />
             </LinearLayout>
-        </RelativeLayout>
+        </LinearLayout>
 
         <View
             android:layout_width="match_parent"
@@ -372,12 +399,13 @@
     <!-- list header row: section label + filter -->
     <RelativeLayout
         android:id="@+id/rl_list_header"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ll_console">
 
         <TextView
@@ -415,7 +443,7 @@
     <!-- collapsible region groups -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_feed"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:clipToPadding="false"
         android:paddingLeft="@dimen/fw_screen_margin"
@@ -423,6 +451,7 @@
         android:paddingBottom="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rl_list_header"
         tools:listitem="@layout/item_main_feed" />
 
