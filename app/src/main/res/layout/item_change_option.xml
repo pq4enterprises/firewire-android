@@ -43,6 +43,7 @@
                        android:paddingLeft="@dimen/dis_30"
                        android:paddingTop="@dimen/dis_5"
                        android:paddingBottom="@dimen/dis_5"
+                       android:textAllCaps="true"
                        android:text="@string/wire"/>
                    <androidx.cardview.widget.CardView
                        android:id="@+id/cv_wire"
@@ -63,6 +64,7 @@
                            android:textSize="@dimen/text_14"
                            android:fontFamily="@font/poppins_medium"
                            android:paddingRight="@dimen/dis_30"
+                           android:textAllCaps="true"
                            android:text="@string/wire"/>
 
                    </androidx.cardview.widget.CardView>
@@ -89,6 +91,7 @@
                        android:visibility="visible"
                        android:textSize="@dimen/text_14"
                        android:layout_gravity="center"
+                       android:textAllCaps="true"
                        android:text="@string/news"/>
                    <androidx.cardview.widget.CardView
                        android:id="@+id/cv_news"
@@ -109,6 +112,7 @@
                            android:textColor="@color/app_red"
                            android:textSize="@dimen/text_14"
                            android:fontFamily="@font/poppins_medium"
+                           android:textAllCaps="true"
                            android:text="@string/news"/>
 
                    </androidx.cardview.widget.CardView>
