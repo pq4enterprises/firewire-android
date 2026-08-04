@@ -151,6 +151,24 @@
             app:drawableStartCompat="@drawable/ic_view_map" />
     </androidx.cardview.widget.CardView>
 
+    <!--
+        Standalone NEWS page. The NEWS tab used to drop NewsFragment into the
+        incident bottom sheet, which left the map showing behind a draggable
+        sheet. It now gets the whole content area to itself, the same way the
+        iOS NEWS segment swaps HomeViewController's container. Declared after
+        the map/list FABs so it covers them even before they are hidden.
+    -->
+    <FrameLayout
+        android:id="@+id/fl_news"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/fw_background"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
+
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="wrap_content"

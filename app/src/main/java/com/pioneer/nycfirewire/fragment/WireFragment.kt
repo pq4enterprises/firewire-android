@@ -43,6 +43,9 @@ import com.pioneer.nycfirewire.utils.IntentUtils.BUN_WIRE_DETAILS
 import com.pioneer.nycfirewire.utils.IntentUtils.FILTER_DATA
 import com.pioneer.nycfirewire.viewModel.FireWireViewModel
 import com.pioneer.nycfirewire.R
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import com.pioneer.nycfirewire.activity.FeedFilterOrCommentsActivity
 import com.pioneer.nycfirewire.databinding.BottomSheetWireBinding
 import com.pioneer.nycfirewire.databinding.ItemWireBinding
@@ -111,6 +114,8 @@ class WireFragment: Fragment(),IncidentClickListener {
             putParcelableArrayList(NAV_WIRE_list,incident)
         }
 
+        /** Matches iOS's "h:mm a" last-updated stamp. */
+        private val updatedTimeFormatter = SimpleDateFormat("h:mm a", Locale.getDefault())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -148,6 +153,8 @@ class WireFragment: Fragment(),IncidentClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
          pagingAdapter = PagingAdapter(this)
+
+        binding.tvWireTotal.text = getString(R.string.feed_updated_placeholder)
 
         if(introsEnabled && prefs.showAppIntro && prefs.showFeedIntro){
             introApp()
@@ -209,8 +216,11 @@ class WireFragment: Fragment(),IncidentClickListener {
                 }
             }
 
+            // The header is a last-updated stamp, not a post count — same readout
+            // iOS shows (IncidentListViewController.markFeedUpdated). totalCount is
+            // still the signal that a fresh page of incidents just landed.
             vm.totalCount.observe(viewLifecycleOwner, Observer{
-                binding.tvWireTotal.text= getString(R.string.posts_listed, it)
+                markFeedUpdated()
             })
         }
         val recycler = binding.rvMainFilter.apply {
@@ -351,6 +361,13 @@ class WireFragment: Fragment(),IncidentClickListener {
         binding.tvFilter.setOnClickListener {
             callback?.replaceFragment(NAV_FILTER,"")
         }
+    }
+
+    /** Stamps the feed header with the wall-clock time of the last refresh. */
+    private fun markFeedUpdated() {
+        if (!isAdded) return
+        val time = updatedTimeFormatter.format(Date())
+        binding.tvWireTotal.text = getString(R.string.feed_updated_at, time)
     }
 
     fun showAlert(message: String? = "") {

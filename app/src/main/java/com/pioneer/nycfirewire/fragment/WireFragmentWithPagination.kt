@@ -382,7 +382,7 @@ class WireFragmentWithPagination: Fragment(), IncidentClickListener {
         }
 
         totalCount= arguments?.getString(TOTAL_COUNT).toString()
-        binding.tvWireTotal.text= getString(R.string.posts_listed, totalCount)
+        binding.tvWireTotal.text= getString(R.string.feed_updated_placeholder)
     }
 
     override fun onAttach(context: Context) {
