@@ -48,6 +48,7 @@ import com.android.billingclient.api.AcknowledgePurchaseParams
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClientStateListener
 import com.android.billingclient.api.BillingResult
+import com.android.billingclient.api.PendingPurchasesParams
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.PurchasesUpdatedListener
 import com.android.billingclient.api.QueryPurchasesParams
@@ -320,7 +321,9 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
 
 
         billingClient = BillingClient.newBuilder(this)
-            .enablePendingPurchases()
+            .enablePendingPurchases(
+                PendingPurchasesParams.newBuilder().enableOneTimeProducts().build()
+            )
             .setListener(this)
             .build()
 

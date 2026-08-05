@@ -35,7 +35,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
 @AndroidEntryPoint
-class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener, PurchaseHistoryResponseListener {
+class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener {
 
     private var skuItem: ProductDetails? = null
     private lateinit var binding: ActivityMyAccountBinding
@@ -124,7 +124,9 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener, PurchaseHist
 
     private fun initUi() {
         billingClient = BillingClient.newBuilder(this)
-            .enablePendingPurchases()
+            .enablePendingPurchases(
+                PendingPurchasesParams.newBuilder().enableOneTimeProducts().build()
+            )
             .setListener(this)
             .build()
 
@@ -132,7 +134,6 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener, PurchaseHist
             override fun onBillingSetupFinished(billingResult: BillingResult) {
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                     Log.d("Billing", "Billing setup complete")
-                    loadProducts()
                     queryInventoryAsync()
                     checkIfUserAlreadyPurchased()
                 } else {
@@ -222,10 +223,6 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener, PurchaseHist
         return productIdsList
     }
 
-    private fun loadProducts() {
-        billingClient.queryPurchaseHistoryAsync(BillingClient.SkuType.SUBS, this)
-    }
-
     private fun queryInventoryAsync() {
         if (getProductList().isNullOrEmpty()) return
 
@@ -240,7 +237,8 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener, PurchaseHist
             .setProductList(productList)
             .build()
 
-        billingClient.queryProductDetailsAsync(params) { billingResult, productDetailsList ->
+        billingClient.queryProductDetailsAsync(params) { billingResult, result ->
+            val productDetailsList = result.productDetailsList
             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && !productDetailsList.isNullOrEmpty()) {
                 skuItem = productDetailsList.firstOrNull()
                 val price = skuItem?.subscriptionOfferDetails
@@ -503,24 +501,4 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener, PurchaseHist
         }
     }
 
-    override fun onPurchaseHistoryResponse(
-        billingResult: BillingResult,
-        purchaseHistoryList: MutableList<PurchaseHistoryRecord>?
-    ) {
-        if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-            if (!purchaseHistoryList.isNullOrEmpty()) {
-                val purchase = purchaseHistoryList[0]
-                val purchaseTimestamp: Long = purchase.purchaseTime
-                getDaysSincePurchase(purchaseTimestamp)
-            }
-        }
-    }
-
-    fun getDaysSincePurchase(purchaseTimestamp: Long): Int {
-        val purchaseDate = Date(purchaseTimestamp)
-        val calendarPurchase = Calendar.getInstance().apply { time = purchaseDate }
-        val calendarToday = Calendar.getInstance()
-        val diffInMillis = calendarToday.timeInMillis - calendarPurchase.timeInMillis
-        return (diffInMillis / (1000 * 60 * 60 * 24)).toInt()
-    }
 }
