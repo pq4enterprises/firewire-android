@@ -13,3 +13,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# upload-key signing secrets (created per-machine, never committed)
+keystore.properties
