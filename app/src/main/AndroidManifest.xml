@@ -16,6 +16,11 @@
     android. permission. READ_MEDIA_VIDEO
     android. permission. READ_MEDIA_AUDIO-->
 
+    <!-- enableOnBackInvokedCallback=false: targeting API 36 turns predictive back on
+         by default, which stops the system from calling onBackPressed(). Eight
+         activities (MapsActivity, WebViewActivity, FeedsActivity, ...) still override
+         onBackPressed(), so keep the legacy path until they are migrated to
+         OnBackPressedDispatcher. Do not remove without that migration. -->
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -27,7 +32,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FireWire"
         android:name=".MyApplication"
-        tools:targetApi="31">
+        android:enableOnBackInvokedCallback="false"
+        tools:targetApi="33">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />

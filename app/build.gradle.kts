@@ -11,12 +11,12 @@ plugins {
 
 android {
     namespace = "com.pioneer.nycfirewire"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.pioneer.nycfirewire"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 111
         versionName = "9.9"
        /* versionCode = 25
