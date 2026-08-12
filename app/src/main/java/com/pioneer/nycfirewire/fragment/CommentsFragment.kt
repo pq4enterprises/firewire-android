@@ -59,7 +59,6 @@ import com.pioneer.nycfirewire.model.incident.request.mainCommentRequest
 import com.pioneer.nycfirewire.utils.AppUtils
 import com.pioneer.nycfirewire.utils.Constants
 import com.pioneer.nycfirewire.utils.Constants.USER_ADMIN
-import com.pioneer.nycfirewire.utils.Constants.USER_SUB_ADMIN
 import com.pioneer.nycfirewire.utils.Constants.USER_SUPER
 import com.pioneer.nycfirewire.utils.DateUtils
 import com.pioneer.nycfirewire.utils.UiUtils.commentBindColor
@@ -798,7 +797,7 @@ class CommentsFragment: Fragment() , ImageDataListener {
 
 
 
-        val isModerator = prefs.userRole==USER_ADMIN || prefs.userRole==USER_SUPER || prefs.userRole==USER_SUB_ADMIN
+        val isModerator = prefs.userRole==USER_ADMIN || prefs.userRole==USER_SUPER
         if(isModerator) {
             if(clickedCommentImage.isNotEmpty()) buttonImageSet.visible() else buttonImageSet.gone()
             buttonDelete.visible()

@@ -32,7 +32,6 @@ import com.pioneer.nycfirewire.resource.ResourceState
 import com.pioneer.nycfirewire.utils.Constants
 import com.pioneer.nycfirewire.utils.Constants.MENU
 import com.pioneer.nycfirewire.utils.Constants.USER_ADMIN
-import com.pioneer.nycfirewire.utils.Constants.USER_SUB_ADMIN
 import com.pioneer.nycfirewire.utils.Constants.USER_SUPER
 import com.pioneer.nycfirewire.utils.IntentUtils.FROM_ACCOUNT
 import com.pioneer.nycfirewire.utils.IntentUtils.NAVIGATION_MENU
@@ -165,7 +164,7 @@ class NavigationMenuActivity: BaseActivity() {
 
     /** POST is admin-only — same roles this lineage already gated it on. */
     private fun applyPostVisibility() {
-        if(prefs.userRole==USER_ADMIN || prefs.userRole==USER_SUPER || prefs.userRole==USER_SUB_ADMIN){
+        if(prefs.userRole==USER_ADMIN || prefs.userRole==USER_SUPER){
             binding.tvPost.visible()
         }else{
             binding.tvPost.gone()

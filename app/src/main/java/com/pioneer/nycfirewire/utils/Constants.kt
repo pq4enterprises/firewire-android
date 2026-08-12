@@ -26,7 +26,6 @@ object Constants {
     var USER_YEARLY="gettinsalty_yearly"
     var USER_PREMIUM_FREE="premium_free"
     var USER_BASIC_USER="basic_user"
-    var USER_SUB_ADMIN="sub_admin"
     var USER_SUPER="super"
     var USER_ADMIN="admin"
     var AUDIO_BROADCAST="com.pioneer.nycfirewire.ACTION_SERVICE_STOPPED"
