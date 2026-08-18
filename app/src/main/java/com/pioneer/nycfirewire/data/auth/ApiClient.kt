@@ -16,7 +16,7 @@ class ApiClient(context: Context) {
 
     companion object {
         // ===================================================================
-        // ⚠️  THIS IS CURRENTLY POINTED AT **STAGING**.
+        // ⚠️  THIS IS CURRENTLY POINTED AT **PRODUCTION** (release build).
         //
         // It has been since 2025-11-30, on a branch carrying release version
         // codes — so a release built straight from source would silently ship
@@ -28,12 +28,12 @@ class ApiClient(context: Context) {
         // FAIL while a staging or dev URL is active. Do not weaken that task.
         // ===================================================================
 
-        // const val BASE_URL = "https://api.nycfirewireapp.com"          // PRODUCTION
-        const val BASE_URL = "https://staging.api.nycfirewireapp.com"      // staging
+        const val BASE_URL = "https://api.nycfirewireapp.com"             // PRODUCTION
+        // const val BASE_URL = "https://staging.api.nycfirewireapp.com"   // staging
         // const val BASE_URL = "https://dev-firewire-api.atomgroups.work" // dead host
 
-        // const val BASE_INCIDENT_URL = "https://admin.nycfirewireapp.com"        // PRODUCTION
-        const val BASE_INCIDENT_URL = "https://staging.admin.nycfirewireapp.com"   // staging
+        const val BASE_INCIDENT_URL = "https://admin.nycfirewireapp.com"           // PRODUCTION
+        // const val BASE_INCIDENT_URL = "https://staging.admin.nycfirewireapp.com" // staging
     }
 
     /**
