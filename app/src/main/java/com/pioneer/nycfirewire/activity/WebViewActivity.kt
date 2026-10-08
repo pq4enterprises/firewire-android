@@ -52,7 +52,6 @@ class WebViewActivity : BaseActivity() {
         var url=BASE_INCIDENT_URL.plus("/noauth/create/incident?form=add&token=").plus(prefs.token).plus("&theme=").plus(theme)
        // var url="https://dev-firewire.atomgroups.work/noauth/create/incident?form=add&token=".plus(prefs.token).plus("&theme=").plus(theme)
 
-        println("WebPage:"+url)
         webView.loadUrl(url)
 
     }

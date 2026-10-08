@@ -471,7 +471,7 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
                 updateIncidentList(it)
             })*/
         }else{
-            val intent= Intent(this, SelectAreaActivity::class.java)
+            val intent= Intent(this, AreasAlertsActivity::class.java)
             intent.putExtra(FROM_START,true)
             startActivity(intent)
         }

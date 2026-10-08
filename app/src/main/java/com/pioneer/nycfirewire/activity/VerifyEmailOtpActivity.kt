@@ -187,7 +187,7 @@ class VerifyEmailOtpActivity : BaseActivity() {
 
     private fun moveToLogin(response: LoginResponse) {
         if(response.code==CODE_SUCCESS){
-            var intent = Intent(this, SelectAreaActivity::class.java)
+            var intent = Intent(this, AreasAlertsActivity::class.java)
             intent.putExtra(FROM_START,true)
             startActivity(intent)
             finish()

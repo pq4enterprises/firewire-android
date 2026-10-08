@@ -78,10 +78,18 @@ class AreasAlertsActivity : BaseActivity() {
     private var savingFeedIds = setOf<String>()
     private var savingAlertIds = setOf<String>()
 
+    // Onboarding mode (FROM_START): reached right after email verification, or
+    // from MapsActivity when the account follows no areas yet. No back
+    // affordance, at least one feed area is required, and SAVE continues to
+    // the map instead of returning to the menu. Replaces the old
+    // SelectAreaActivity on this route so new users see the redesigned screen.
+    private var isFromStart = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAreasAlertsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        isFromStart = intent.getBooleanExtra(Constants.FROM_START, false)
         vm = ViewModelProvider(this).get(FireWireViewModel::class.java)
 
         initToolbar()
@@ -96,6 +104,31 @@ class AreasAlertsActivity : BaseActivity() {
         binding.toolbar.ivMenu.setOnClickListener {
             finish()
         }
+        if (isFromStart) {
+            binding.toolbar.ivMenu.gone()
+            binding.cardAlertSound.gone()
+            binding.tvHelper.text = getString(R.string.areas_alerts_onboarding_helper)
+            binding.btnSave.text = getString(R.string.areas_alerts_continue)
+        }
+    }
+
+    override fun onBackPressed() {
+        if (isFromStart) {
+            // same contract as the old SelectAreaActivity: backing out of the
+            // first-run picker leaves the app rather than exposing an empty feed
+            finishAffinity()
+            android.os.Process.killProcess(android.os.Process.myPid())
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+    private fun continueToMap() {
+        prefs.isAreaSelected = true
+        val intent = Intent(this, MapsActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
     }
 
     private fun initApiCall() {
@@ -339,6 +372,10 @@ class AreasAlertsActivity : BaseActivity() {
         val allRows = groups.flatMap { it.rows }
         val feedRows = allRows.filter { it.feedOn }
         val feedIds = feedRows.map { it.subLocalityId }.toSet()
+        if (isFromStart && feedIds.isEmpty()) {
+            showSnack(getString(R.string.areas_alerts_pick_one))
+            return
+        }
         // an alert only counts while its area is in the feed
         val alertRows = allRows.filter { it.feedOn && it.alertOn }
         val alertIds = alertRows.map { it.subLocalityId }.toSet()
@@ -381,7 +418,7 @@ class AreasAlertsActivity : BaseActivity() {
 
         if (pendingSaves == 0) {
             // nothing changed
-            showSnack(getString(R.string.settings_updated))
+            if (isFromStart) continueToMap() else showSnack(getString(R.string.settings_updated))
         }
     }
 
@@ -396,7 +433,7 @@ class AreasAlertsActivity : BaseActivity() {
                         binding.progress.gone()
                         initialFeedIds = savingFeedIds
                         initialAlertIds = savingAlertIds
-                        showSnack(getString(R.string.settings_updated))
+                        if (isFromStart) continueToMap() else showSnack(getString(R.string.settings_updated))
                     }
                 } else {
                     binding.progress.gone()

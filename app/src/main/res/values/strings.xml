@@ -121,6 +121,9 @@
     <string name="areas_alerts_helper">Toggle an area into your feed, then use the bell to get push alerts for it. Feed without alerts is fine.</string>
     <string name="areas_alerts_select_all">Select All</string>
     <string name="areas_alerts_unselect_all">Unselect All</string>
+    <string name="areas_alerts_onboarding_helper">Pick at least one area to build your feed. Use the bell for push alerts. You can change this any time under Areas &amp; Alerts.</string>
+    <string name="areas_alerts_continue">CONTINUE</string>
+    <string name="areas_alerts_pick_one">Select at least one area to continue.</string>
     <string name="change_photo">Change Photo</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="fw_active">Active</string>
