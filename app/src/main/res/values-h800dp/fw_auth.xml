@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- auth hero on tall phones (Pro Max / Ultra class) -->
+<resources>
+    <dimen name="fw_auth_hero_height">260dp</dimen>
+    <dimen name="fw_auth_hero_logo_w">72dp</dimen>
+    <dimen name="fw_auth_hero_logo_h">77dp</dimen>
+    <dimen name="fw_auth_hero_title">30sp</dimen>
+</resources>

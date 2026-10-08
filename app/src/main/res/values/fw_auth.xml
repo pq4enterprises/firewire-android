@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Auth cluster (sign in / register / reset / verify) — 2026 design system.
+    Strings, dimens and widget styles shared by the four auth layouts, kept in
+    one file so the iOS counterpart (FWAuthComponents.swift) is easy to diff.
+-->
+<resources>
+
+    <!-- ===== dimens ===== -->
+    <!-- hero panel: compact on short screens (see values-h640dp / values-h800dp) -->
+    <dimen name="fw_auth_hero_height">176dp</dimen>
+    <dimen name="fw_auth_hero_logo_w">48dp</dimen>
+    <dimen name="fw_auth_hero_logo_h">52dp</dimen>
+    <dimen name="fw_auth_hero_title">24sp</dimen>
+    <dimen name="fw_auth_input_min_height">50dp</dimen>
+    <dimen name="fw_auth_code_min_height">56dp</dimen>
+    <dimen name="fw_auth_button_min_height">54dp</dimen>
+    <dimen name="fw_auth_corner_banner">12dp</dimen>
+
+    <!-- ===== strings ===== -->
+    <string name="fw_auth_login_subtitle_short">Sign in or register below.</string>
+    <string name="fw_auth_email_label">Email</string>
+    <string name="fw_auth_password_label">Password</string>
+    <string name="fw_auth_email_hint">you@example.com</string>
+    <string name="fw_auth_password_hint">Enter your password</string>
+    <string name="fw_auth_forgot">Forgot?</string>
+    <string name="fw_auth_register_link">Don’t have an account? Register</string>
+    <string name="fw_auth_signin_link">Already have an account? Sign in</string>
+    <string name="fw_auth_session_ended">Your session ended. Please sign in again.</string>
+    <string name="fw_auth_no_connection">No connection. Check your network and try again.</string>
+
+    <string name="fw_auth_error_email_empty">Enter your email address.</string>
+    <string name="fw_auth_error_email_invalid">Enter a valid email address.</string>
+    <string name="fw_auth_error_password_empty">Enter your password.</string>
+    <string name="fw_auth_error_password_short">Password must be at least 8 characters.</string>
+    <string name="fw_auth_error_first_name">Enter your first name.</string>
+    <string name="fw_auth_error_last_name">Enter your last name.</string>
+    <string name="fw_auth_error_phone_empty">Enter your phone number.</string>
+    <string name="fw_auth_error_phone_invalid">Enter a valid 10-digit phone number.</string>
+    <string name="fw_auth_error_title">Enter your title or position.</string>
+    <string name="fw_auth_error_confirm_empty">Confirm your password.</string>
+    <string name="fw_auth_error_confirm_mismatch">Passwords don’t match.</string>
+    <string name="fw_auth_error_code_incomplete">Enter the 6-digit code from the email.</string>
+    <string name="fw_auth_error_code_invalid">That code isn’t right or has expired. Check the email or request a new one.</string>
+
+    <string name="fw_auth_register_intro">Create your account. All fields are required.</string>
+    <string name="fw_auth_register_hint">We’ll email you a 6-digit code to verify this address.</string>
+    <string name="fw_auth_first_label">First name</string>
+    <string name="fw_auth_last_label">Last name</string>
+    <string name="fw_auth_first_hint">First</string>
+    <string name="fw_auth_last_hint">Last</string>
+    <string name="fw_auth_phone_label">Phone</string>
+    <string name="fw_auth_phone_hint">10 digits</string>
+    <string name="fw_auth_title_label">Title / position</string>
+    <string name="fw_auth_title_hint">e.g. Lieutenant</string>
+    <string name="fw_auth_new_password_hint">At least 8 characters</string>
+    <string name="fw_auth_confirm_label">Confirm password</string>
+    <string name="fw_auth_confirm_hint">Re-enter password</string>
+
+    <string name="fw_auth_step_1">Step 1 of 3</string>
+    <string name="fw_auth_step_2">Step 2 of 3</string>
+    <string name="fw_auth_step_3">Step 3 of 3</string>
+    <string name="fw_auth_step_email">Your email</string>
+    <string name="fw_auth_step_code">Enter the code</string>
+    <string name="fw_auth_step_password">New password</string>
+    <string name="fw_auth_forgot_intro">Enter the email on your account and we’ll send you a 6-digit code.</string>
+    <string name="fw_auth_forgot_hint">Unverified account? You’ll be asked to verify your email first.</string>
+    <string name="fw_auth_code_sent_to">We sent a 6-digit code to %1$s. It expires in 10 minutes.</string>
+    <string name="fw_auth_send_code">Send code</string>
+    <string name="fw_auth_verify_code">Verify code</string>
+    <string name="fw_auth_save_password">Save new password</string>
+    <string name="fw_auth_new_password_label">New password</string>
+    <string name="fw_auth_new_password_confirm_label">Confirm new password</string>
+    <string name="fw_auth_password_rule">At least 8 characters.</string>
+    <string name="fw_auth_verification_code">Verification code</string>
+    <string name="fw_auth_resend_code">Resend code</string>
+    <string name="fw_auth_resend_in">Resend code in 00:%02d</string>
+    <string name="fw_auth_didnt_get">Didn’t get it?</string>
+    <string name="fw_auth_sending">Sending code…</string>
+    <string name="fw_auth_new_code_sent">A new code is on its way.</string>
+    <string name="fw_auth_email_verified_reset">Email verified. Tap Send code to reset your password.</string>
+    <string name="fw_auth_password_updated">Password updated. Sign in with your new password.</string>
+    <string name="fw_auth_already_verified">This email is already verified. Please sign in.</string>
+
+    <string name="fw_auth_verify_intro">Check your inbox. We emailed a 6-digit code to confirm this address.</string>
+    <string name="fw_auth_verify_hint">Codes expire after 10 minutes. Check spam if it hasn’t arrived.</string>
+    <string name="fw_auth_verify">Verify</string>
+    <string name="fw_auth_code_placeholder">••••••</string>
+
+    <!-- ===== widget styles ===== -->
+
+    <!-- field caption: EMAIL / PASSWORD -->
+    <style name="Widget.FireWire.AuthCaption" parent="android:Widget.TextView">
+        <item name="android:textAppearance">@style/TextAppearance.FireWire.Subtitle</item>
+        <item name="android:letterSpacing">0.08</item>
+    </style>
+
+    <!-- rounded input on surface2; height grows with font scale -->
+    <style name="Widget.FireWire.AuthInput" parent="android:Widget.EditText">
+        <item name="android:minHeight">@dimen/fw_auth_input_min_height</item>
+        <item name="android:paddingLeft">14dp</item>
+        <item name="android:paddingRight">14dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:background">@drawable/fw_input_bg</item>
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="android:textSize">@dimen/fw_text_section</item>
+        <item name="android:textColor">@color/fw_text</item>
+        <item name="android:textColorHint">@color/fw_muted</item>
+        <item name="android:textCursorDrawable">@null</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <!-- 6-digit code input: monospace, letter-spaced, centred -->
+    <style name="Widget.FireWire.AuthCode" parent="Widget.FireWire.AuthInput">
+        <item name="android:minHeight">@dimen/fw_auth_code_min_height</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">26sp</item>
+        <item name="android:letterSpacing">0.45</item>
+        <item name="android:gravity">center</item>
+        <item name="android:inputType">number</item>
+        <item name="android:maxLength">6</item>
+    </style>
+
+    <!-- inline validation message under a field (hidden until needed) -->
+    <style name="Widget.FireWire.AuthFieldError" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="android:textSize">@dimen/fw_text_caption</item>
+        <item name="android:textColor">@color/fw_error_text</item>
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <!-- inline banner (error / info / success); background + colours set in code -->
+    <style name="Widget.FireWire.AuthBanner" parent="android:Widget.TextView">
+        <item name="android:paddingLeft">14dp</item>
+        <item name="android:paddingRight">14dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:drawablePadding">10dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="android:textSize">@dimen/fw_text_body</item>
+        <item name="android:lineSpacingMultiplier">1.15</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <!-- primary action -->
+    <style name="Widget.FireWire.AuthButton" parent="Widget.AppCompat.Button">
+        <item name="android:minHeight">@dimen/fw_auth_button_min_height</item>
+        <item name="android:background">@drawable/fw_button_bg</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.08</item>
+        <item name="android:fontFamily">@font/poppins_bold</item>
+        <item name="android:textSize">@dimen/fw_text_section</item>
+        <!-- fixed white: @color/white is inverted in values-night -->
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+    </style>
+
+    <!-- red uppercase text link with a 44dp tap target (FORGOT?, RESEND CODE) -->
+    <style name="Widget.FireWire.AuthLink" parent="android:Widget.TextView">
+        <item name="android:minHeight">@dimen/fw_touch_target</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:fontFamily">@font/poppins_bold</item>
+        <item name="android:textSize">@dimen/fw_text_caption</item>
+        <item name="android:textColor">@color/fw_red</item>
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingRight">4dp</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+    </style>
+
+    <!-- monospace divider caption: CONNECT WITH / OR / STEP 1 OF 3 -->
+    <style name="Widget.FireWire.AuthMono" parent="android:Widget.TextView">
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.15</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/fw_muted</item>
+        <item name="android:textSize">@dimen/fw_text_chip</item>
+    </style>
+
+    <!-- muted helper text under a button -->
+    <style name="Widget.FireWire.AuthHint" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/poppins_medium</item>
+        <item name="android:textSize">@dimen/fw_text_caption</item>
+        <item name="android:textColor">@color/fw_muted</item>
+        <item name="android:gravity">center</item>
+        <item name="android:lineSpacingMultiplier">1.2</item>
+    </style>
+
+    <!-- body copy inside a card -->
+    <style name="Widget.FireWire.AuthBody" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/poppins_medium</item>
+        <item name="android:textSize">@dimen/fw_text_body</item>
+        <item name="android:textColor">@color/fw_text</item>
+        <item name="android:lineSpacingMultiplier">1.2</item>
+    </style>
+
+</resources>

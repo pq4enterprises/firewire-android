@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- REGISTER — 2026 design system. Field card + pinned sign-up footer.
-     IDs are load-bearing: RegisterActivity binds toolbar, progress, the six
-     field labels and inputs, cl_password / cl_confirm_password, the two
-     show-password buttons, btn_sign_in and tv_have_account. -->
+<!-- REGISTER — 2026 design system. Field card + pinned sign-up footer, inline
+     errors under every field. Mirrors iOS RegistrationViewController.
+     IDs are load-bearing: RegisterActivity binds toolbar, progress, the field
+     labels and inputs, ll_name_row / ll_phone_row (stacked at large font
+     scale), cl_password / cl_confirm_password, the two show-password buttons,
+     the seven tv_*_error views, tv_form_error, btn_sign_in and tv_have_account. -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -30,13 +32,13 @@
             android:orientation="vertical"
             android:paddingLeft="@dimen/fw_screen_margin"
             android:paddingRight="@dimen/fw_screen_margin"
-            android:paddingTop="6dp">
+            android:paddingTop="12dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:text="@string/register_sccount"
+                android:text="@string/fw_auth_register_intro"
                 android:fontFamily="@font/poppins_medium"
                 android:textSize="@dimen/fw_text_body"
                 android:textColor="@color/fw_muted" />
@@ -50,6 +52,7 @@
 
                 <!-- first / last -->
                 <LinearLayout
+                    android:id="@+id/ll_name_row"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -63,27 +66,28 @@
 
                         <TextView
                             android:id="@+id/tv_first_name"
-                            style="@style/TextAppearance.FireWire.Subtitle"
+                            style="@style/Widget.FireWire.AuthCaption"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:letterSpacing="0.08"
-                            android:text="@string/first_name" />
+                            android:labelFor="@+id/et_first_name"
+                            android:text="@string/fw_auth_first_label" />
 
                         <EditText
                             android:id="@+id/et_first_name"
+                            style="@style/Widget.FireWire.AuthInput"
                             android:layout_width="match_parent"
-                            android:layout_height="50dp"
+                            android:layout_height="wrap_content"
                             android:layout_marginTop="7dp"
-                            android:paddingLeft="14dp"
-                            android:paddingRight="14dp"
-                            android:hint="@string/enter_first_name"
-                            android:inputType="text"
-                            android:maxLines="1"
-                            android:background="@drawable/fw_input_bg"
-                            android:fontFamily="@font/poppins_semibold"
-                            android:textSize="@dimen/fw_text_section"
-                            android:textColor="@color/fw_text"
-                            android:textColorHint="@color/fw_muted" />
+                            android:hint="@string/fw_auth_first_hint"
+                            android:inputType="textPersonName|textCapWords"
+                            android:autofillHints="personGivenName"
+                            android:imeOptions="actionNext" />
+
+                        <TextView
+                            android:id="@+id/tv_first_name_error"
+                            style="@style/Widget.FireWire.AuthFieldError"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -95,57 +99,60 @@
 
                         <TextView
                             android:id="@+id/tv_last_name"
-                            style="@style/TextAppearance.FireWire.Subtitle"
+                            style="@style/Widget.FireWire.AuthCaption"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:letterSpacing="0.08"
-                            android:text="@string/last_name" />
+                            android:labelFor="@+id/et_last_name"
+                            android:text="@string/fw_auth_last_label" />
 
                         <EditText
                             android:id="@+id/et_last_name"
+                            style="@style/Widget.FireWire.AuthInput"
                             android:layout_width="match_parent"
-                            android:layout_height="50dp"
+                            android:layout_height="wrap_content"
                             android:layout_marginTop="7dp"
-                            android:paddingLeft="14dp"
-                            android:paddingRight="14dp"
-                            android:hint="@string/enter_last_name"
-                            android:inputType="text"
-                            android:maxLines="1"
-                            android:background="@drawable/fw_input_bg"
-                            android:fontFamily="@font/poppins_semibold"
-                            android:textSize="@dimen/fw_text_section"
-                            android:textColor="@color/fw_text"
-                            android:textColorHint="@color/fw_muted" />
+                            android:hint="@string/fw_auth_last_hint"
+                            android:inputType="textPersonName|textCapWords"
+                            android:autofillHints="personFamilyName"
+                            android:imeOptions="actionNext" />
+
+                        <TextView
+                            android:id="@+id/tv_last_name_error"
+                            style="@style/Widget.FireWire.AuthFieldError"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
                     </LinearLayout>
                 </LinearLayout>
 
                 <TextView
                     android:id="@+id/tv_email_name"
-                    style="@style/TextAppearance.FireWire.Subtitle"
+                    style="@style/Widget.FireWire.AuthCaption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
-                    android:letterSpacing="0.08"
-                    android:text="@string/email_address" />
+                    android:labelFor="@+id/et_email_address"
+                    android:text="@string/fw_auth_email_label" />
 
                 <EditText
                     android:id="@+id/et_email_address"
+                    style="@style/Widget.FireWire.AuthInput"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="7dp"
-                    android:paddingLeft="14dp"
-                    android:paddingRight="14dp"
-                    android:hint="@string/your_mail"
+                    android:hint="@string/fw_auth_email_hint"
                     android:inputType="textEmailAddress"
-                    android:maxLines="1"
-                    android:background="@drawable/fw_input_bg"
-                    android:fontFamily="@font/poppins_semibold"
-                    android:textSize="@dimen/fw_text_section"
-                    android:textColor="@color/fw_text"
-                    android:textColorHint="@color/fw_muted" />
+                    android:autofillHints="emailAddress"
+                    android:imeOptions="actionNext" />
+
+                <TextView
+                    android:id="@+id/tv_email_error"
+                    style="@style/Widget.FireWire.AuthFieldError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
                 <!-- phone / title -->
                 <LinearLayout
+                    android:id="@+id/ll_phone_row"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
@@ -160,29 +167,30 @@
 
                         <TextView
                             android:id="@+id/tv_phone_num"
-                            style="@style/TextAppearance.FireWire.Subtitle"
+                            style="@style/Widget.FireWire.AuthCaption"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:letterSpacing="0.08"
-                            android:text="@string/phone_num" />
+                            android:labelFor="@+id/et_phone"
+                            android:text="@string/fw_auth_phone_label" />
 
                         <EditText
                             android:id="@+id/et_phone"
+                            style="@style/Widget.FireWire.AuthInput"
                             android:layout_width="match_parent"
-                            android:layout_height="50dp"
+                            android:layout_height="wrap_content"
                             android:layout_marginTop="7dp"
-                            android:paddingLeft="14dp"
-                            android:paddingRight="14dp"
-                            android:hint="@string/enter_your_phone"
+                            android:hint="@string/fw_auth_phone_hint"
                             android:inputType="phone"
                             android:digits="0123456789"
                             android:maxLength="10"
-                            android:maxLines="1"
-                            android:background="@drawable/fw_input_bg"
-                            android:fontFamily="@font/poppins_semibold"
-                            android:textSize="@dimen/fw_text_section"
-                            android:textColor="@color/fw_text"
-                            android:textColorHint="@color/fw_muted" />
+                            android:autofillHints="phone"
+                            android:imeOptions="actionNext" />
+
+                        <TextView
+                            android:id="@+id/tv_phone_error"
+                            style="@style/Widget.FireWire.AuthFieldError"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -194,39 +202,39 @@
 
                         <TextView
                             android:id="@+id/tv_title_pos"
-                            style="@style/TextAppearance.FireWire.Subtitle"
+                            style="@style/Widget.FireWire.AuthCaption"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:letterSpacing="0.08"
-                            android:text="@string/title_position" />
+                            android:labelFor="@+id/et_title"
+                            android:text="@string/fw_auth_title_label" />
 
                         <EditText
                             android:id="@+id/et_title"
+                            style="@style/Widget.FireWire.AuthInput"
                             android:layout_width="match_parent"
-                            android:layout_height="50dp"
+                            android:layout_height="wrap_content"
                             android:layout_marginTop="7dp"
-                            android:paddingLeft="14dp"
-                            android:paddingRight="14dp"
-                            android:hint="@string/enter_your_title"
-                            android:inputType="text"
-                            android:maxLines="1"
-                            android:background="@drawable/fw_input_bg"
-                            android:fontFamily="@font/poppins_semibold"
-                            android:textSize="@dimen/fw_text_section"
-                            android:textColor="@color/fw_text"
-                            android:textColorHint="@color/fw_muted" />
+                            android:hint="@string/fw_auth_title_hint"
+                            android:inputType="text|textCapWords"
+                            android:imeOptions="actionNext" />
+
+                        <TextView
+                            android:id="@+id/tv_title_error"
+                            style="@style/Widget.FireWire.AuthFieldError"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
                     </LinearLayout>
                 </LinearLayout>
 
                 <!-- password -->
                 <TextView
                     android:id="@+id/tv_password"
-                    style="@style/TextAppearance.FireWire.Subtitle"
+                    style="@style/Widget.FireWire.AuthCaption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
-                    android:letterSpacing="0.08"
-                    android:text="@string/password" />
+                    android:labelFor="@+id/et_password"
+                    android:text="@string/fw_auth_password_label" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_password"
@@ -236,18 +244,14 @@
 
                     <EditText
                         android:id="@+id/et_password"
+                        style="@style/Widget.FireWire.AuthInput"
                         android:layout_width="0dp"
-                        android:layout_height="50dp"
-                        android:paddingLeft="14dp"
+                        android:layout_height="wrap_content"
                         android:paddingRight="52dp"
-                        android:hint="@string/enter_password"
+                        android:hint="@string/fw_auth_new_password_hint"
                         android:inputType="textPassword"
-                        android:maxLines="1"
-                        android:background="@drawable/fw_input_bg"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:textSize="@dimen/fw_text_section"
-                        android:textColor="@color/fw_text"
-                        android:textColorHint="@color/fw_muted"
+                        android:autofillHints="newPassword"
+                        android:imeOptions="actionNext"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -266,15 +270,21 @@
                         app:layout_constraintTop_toTopOf="@+id/et_password" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <TextView
+                    android:id="@+id/tv_password_error"
+                    style="@style/Widget.FireWire.AuthFieldError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
                 <!-- confirm password -->
                 <TextView
                     android:id="@+id/tv_confirm_password"
-                    style="@style/TextAppearance.FireWire.Subtitle"
+                    style="@style/Widget.FireWire.AuthCaption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
-                    android:letterSpacing="0.08"
-                    android:text="@string/confirm_password" />
+                    android:labelFor="@+id/et_confirm_password"
+                    android:text="@string/fw_auth_confirm_label" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_confirm_password"
@@ -284,18 +294,14 @@
 
                     <EditText
                         android:id="@+id/et_confirm_password"
+                        style="@style/Widget.FireWire.AuthInput"
                         android:layout_width="0dp"
-                        android:layout_height="50dp"
-                        android:paddingLeft="14dp"
+                        android:layout_height="wrap_content"
                         android:paddingRight="52dp"
-                        android:hint="@string/enter_confirm_password"
+                        android:hint="@string/fw_auth_confirm_hint"
                         android:inputType="textPassword"
-                        android:maxLines="1"
-                        android:background="@drawable/fw_input_bg"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:textSize="@dimen/fw_text_section"
-                        android:textColor="@color/fw_text"
-                        android:textColorHint="@color/fw_muted"
+                        android:autofillHints="newPassword"
+                        android:imeOptions="actionDone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -313,7 +319,27 @@
                         app:layout_constraintBottom_toBottomOf="@+id/et_confirm_password"
                         app:layout_constraintTop_toTopOf="@+id/et_confirm_password" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <TextView
+                    android:id="@+id/tv_confirm_password_error"
+                    style="@style/Widget.FireWire.AuthFieldError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tv_form_error"
+                    style="@style/Widget.FireWire.AuthBanner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp" />
             </LinearLayout>
+
+            <TextView
+                style="@style/Widget.FireWire.AuthHint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/fw_auth_register_hint" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
@@ -333,32 +359,26 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_sign_in"
+            style="@style/Widget.FireWire.AuthButton"
             android:layout_width="match_parent"
-            android:layout_height="54dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginTop="12dp"
-            android:background="@drawable/fw_button_bg"
-            android:gravity="center"
-            android:text="@string/sign_up"
-            android:textAllCaps="true"
-            android:letterSpacing="0.08"
-            android:fontFamily="@font/poppins_bold"
-            android:textSize="@dimen/fw_text_section"
-            android:textColor="@color/white" />
+            android:text="@string/sign_up" />
 
         <TextView
             android:id="@+id/tv_have_account"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="6dp"
             android:minHeight="@dimen/fw_touch_target"
             android:gravity="center"
-            android:text="@string/have_account_signin"
+            android:text="@string/fw_auth_signin_link"
             android:fontFamily="@font/poppins_semibold"
             android:textSize="@dimen/fw_text_body"
-            android:textColor="@color/fw_red" />
+            android:textColor="@color/fw_muted" />
     </LinearLayout>
 
     <ProgressBar

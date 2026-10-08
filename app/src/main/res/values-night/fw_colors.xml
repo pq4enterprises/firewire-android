@@ -20,6 +20,9 @@
     <color name="fw_hairline">#1CFFFFFF</color>
     <!-- fw_red at 20% -->
     <color name="fw_red_tint">#33E5342A</color>
+    <!-- auth inline messages: lighter on dark surfaces -->
+    <color name="fw_error_text">#FF8A80</color>
+    <color name="fw_success_text">#6EDC9F</color>
 
     <!-- accent tints at 20% alpha (menu shortcut tiles) -->
     <color name="fw_orange_tint">#33E0842F</color>

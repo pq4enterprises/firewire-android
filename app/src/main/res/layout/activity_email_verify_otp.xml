@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- VERIFY EMAIL — 2026 design system. The email is prefilled and read-only;
-     the OTP is the only input. IDs are load-bearing: VerifyEmailOtpActivity
-     binds toolbar, progress, et_email_address, tv_otp, et_otp, tvTimer,
-     tv_resend and btn_verify_otp. tv_resend starts gone — the countdown
-     reveals it. -->
+     the code is the only input. Mirrors iOS VerifyEmailViewController.
+     IDs are load-bearing: VerifyEmailOtpActivity binds toolbar, progress,
+     et_email_address, tv_otp, et_otp, tv_otp_error, tvTimer, tv_resend,
+     tv_form_error and btn_verify_otp. -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -30,8 +30,37 @@
             android:orientation="vertical"
             android:paddingLeft="@dimen/fw_screen_margin"
             android:paddingRight="@dimen/fw_screen_margin"
-            android:paddingTop="6dp"
+            android:paddingTop="12dp"
             android:paddingBottom="20dp">
+
+            <!-- icon + explanation -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:paddingTop="10dp"
+                android:paddingBottom="16dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp">
+
+                <ImageView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:padding="15dp"
+                    android:background="@drawable/fw_auth_icon_circle_bg"
+                    android:src="@drawable/fw_ic_envelope"
+                    android:importantForAccessibility="no"
+                    app:tint="@color/fw_red" />
+
+                <TextView
+                    style="@style/Widget.FireWire.AuthBody"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:text="@string/fw_auth_verify_intro" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -42,99 +71,95 @@
 
                 <TextView
                     android:id="@+id/tv_email_name"
-                    style="@style/TextAppearance.FireWire.Subtitle"
+                    style="@style/Widget.FireWire.AuthCaption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:letterSpacing="0.08"
-                    android:text="@string/email_address" />
+                    android:text="@string/fw_auth_email_label" />
 
                 <EditText
                     android:id="@+id/et_email_address"
+                    style="@style/Widget.FireWire.AuthInput"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="7dp"
-                    android:paddingLeft="14dp"
-                    android:paddingRight="14dp"
                     android:enabled="false"
                     android:focusableInTouchMode="false"
                     android:clickable="false"
                     android:inputType="textEmailAddress"
-                    android:maxLines="1"
-                    android:background="@drawable/fw_input_bg"
-                    android:fontFamily="@font/poppins_semibold"
-                    android:textSize="@dimen/fw_text_section"
-                    android:textColor="@color/fw_muted"
-                    android:textColorHint="@color/fw_muted" />
-
-                <TextView
-                    android:id="@+id/tv_otp"
-                    style="@style/TextAppearance.FireWire.Subtitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:visibility="visible"
-                    android:letterSpacing="0.08"
-                    android:text="@string/otp" />
-
-                <EditText
-                    android:id="@+id/et_otp"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="7dp"
-                    android:paddingLeft="14dp"
-                    android:paddingRight="14dp"
-                    android:visibility="visible"
-                    android:hint="@string/otp"
-                    android:inputType="number"
-                    android:maxLines="1"
-                    android:letterSpacing="0.25"
-                    android:background="@drawable/fw_input_bg"
-                    android:fontFamily="monospace"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/fw_text_section"
-                    android:textColor="@color/fw_text"
-                    android:textColorHint="@color/fw_muted" />
-
-                <TextView
-                    android:id="@+id/tvTimer"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:fontFamily="monospace"
-                    android:letterSpacing="0.05"
-                    android:textSize="@dimen/fw_text_caption"
                     android:textColor="@color/fw_muted" />
 
                 <TextView
-                    android:id="@+id/tv_resend"
+                    android:id="@+id/tv_otp"
+                    style="@style/Widget.FireWire.AuthCaption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:minHeight="@dimen/fw_touch_target"
-                    android:gravity="center_vertical"
-                    android:visibility="gone"
-                    android:text="@string/send_otp"
-                    android:textAllCaps="true"
-                    android:letterSpacing="0.05"
-                    android:fontFamily="@font/poppins_bold"
-                    android:textSize="@dimen/fw_text_caption"
-                    android:textColor="@color/fw_red" />
+                    android:layout_marginTop="14dp"
+                    android:labelFor="@+id/et_otp"
+                    android:text="@string/fw_auth_verification_code" />
+
+                <EditText
+                    android:id="@+id/et_otp"
+                    style="@style/Widget.FireWire.AuthCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp"
+                    android:hint="@string/fw_auth_code_placeholder"
+                    android:autofillHints="smsOTPCode" />
+
+                <TextView
+                    android:id="@+id/tv_otp_error"
+                    style="@style/Widget.FireWire.AuthFieldError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/tvTimer"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="monospace"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.05"
+                        android:textSize="@dimen/fw_text_chip"
+                        android:textColor="@color/fw_muted" />
+
+                    <TextView
+                        android:id="@+id/tv_resend"
+                        style="@style/Widget.FireWire.AuthLink"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/fw_auth_resend_code" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_form_error"
+                    style="@style/Widget.FireWire.AuthBanner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp" />
             </LinearLayout>
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_verify_otp"
+                style="@style/Widget.FireWire.AuthButton"
                 android:layout_width="match_parent"
-                android:layout_height="54dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:visibility="visible"
-                android:background="@drawable/fw_button_bg"
-                android:gravity="center"
-                android:text="@string/verify_otp"
-                android:textAllCaps="true"
-                android:letterSpacing="0.08"
-                android:fontFamily="@font/poppins_bold"
-                android:textSize="@dimen/fw_text_section"
-                android:textColor="@color/white" />
+                android:text="@string/fw_auth_verify" />
+
+            <TextView
+                style="@style/Widget.FireWire.AuthHint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/fw_auth_verify_hint" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

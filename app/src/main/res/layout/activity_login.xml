@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- SIGN IN — 2026 design system (activity_login.xml, inflated by LoginNewActivity). Hero panel with the mark over a dimmed
-     station photo, then a field card and the primary action.
+<!-- SIGN IN — 2026 design system (activity_login.xml, inflated by LoginNewActivity).
+     Hero panel with the mark over a dimmed map, then the social row, a field card
+     with inline errors, and the primary action. Mirrors iOS LoginViewController.
      IDs are load-bearing: LoginNewActivity binds ns_view, progress, cv_google,
      cv_fb, et_email, et_password, btnShowHidePassword, tv_forgot, btn_sign_in,
-     tv_register and tv_terms_condition. ll_fb stays gone — Facebook sign-in is
+     tv_register, tv_terms_condition plus the inline tv_notice / tv_email_error /
+     tv_password_error / tv_form_error. ll_fb stays gone — Facebook sign-in is
      switched off in production. -->
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -22,7 +24,7 @@
         <!-- ===== hero ===== -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="232dp">
+            android:layout_height="@dimen/fw_auth_hero_height">
 
             <ImageView
                 android:id="@+id/bgImage"
@@ -44,27 +46,32 @@
 
             <ImageView
                 android:id="@+id/iv_logo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/fw_auth_hero_logo_w"
+                android:layout_height="@dimen/fw_auth_hero_logo_h"
                 android:src="@drawable/ic_logo_red"
                 android:importantForAccessibility="no"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toTopOf="@+id/iv_get_started"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintVertical_chainStyle="packed" />
+                app:layout_constraintVertical_chainStyle="packed"
+                app:layout_constraintVertical_bias="0.6" />
 
             <TextView
                 android:id="@+id/iv_get_started"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
+                android:layout_marginTop="12dp"
                 android:text="@string/get_started"
                 android:textAllCaps="true"
                 android:letterSpacing="0.1"
                 android:fontFamily="@font/poppins_bold"
-                android:textSize="@dimen/fw_text_display"
-                android:textColor="@color/white"
+                android:textSize="@dimen/fw_auth_hero_title"
+                android:textColor="@android:color/white"
+                android:maxLines="1"
+                app:autoSizeTextType="uniform"
+                app:autoSizeMinTextSize="18sp"
+                app:autoSizeMaxTextSize="@dimen/fw_auth_hero_title"
                 app:layout_constraintTop_toBottomOf="@+id/iv_logo"
                 app:layout_constraintBottom_toTopOf="@+id/tv_sub_content"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -74,9 +81,10 @@
                 android:id="@+id/tv_sub_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:layout_marginLeft="40dp"
-                android:layout_marginRight="40dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginLeft="32dp"
+                android:layout_marginRight="32dp"
+                android:layout_marginBottom="16dp"
                 android:gravity="center"
                 android:fontFamily="@font/poppins_medium"
                 android:textSize="@dimen/fw_text_body"
@@ -107,28 +115,30 @@
             android:orientation="vertical"
             android:paddingLeft="@dimen/fw_screen_margin"
             android:paddingRight="@dimen/fw_screen_margin"
-            android:paddingTop="18dp"
+            android:paddingTop="14dp"
             android:paddingBottom="20dp">
+
+            <!-- session-ended / password-updated notice -->
+            <TextView
+                android:id="@+id/tv_notice"
+                style="@style/Widget.FireWire.AuthBanner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp" />
 
             <TextView
                 android:id="@+id/tv_connect_with"
+                style="@style/Widget.FireWire.AuthMono"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:fontFamily="monospace"
-                android:letterSpacing="0.15"
-                android:text="@string/login_connect_with"
-                android:textAllCaps="true"
-                android:textColor="@color/fw_muted"
-                android:textSize="@dimen/fw_text_chip"
-                android:textStyle="bold" />
+                android:text="@string/login_connect_with" />
 
             <LinearLayout
                 android:id="@+id/ll_g_fb"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:weightSum="2">
+                android:layout_marginTop="10dp">
 
                 <LinearLayout
                     android:id="@+id/ll_google"
@@ -136,13 +146,18 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content">
 
-                    <androidx.cardview.widget.CardView
+                    <com.google.android.material.card.MaterialCardView
                         android:id="@+id/cv_google"
                         android:layout_width="match_parent"
-                        android:layout_height="54dp"
+                        android:layout_height="@dimen/fw_auth_button_min_height"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:contentDescription="@string/login_connect_with"
                         app:cardBackgroundColor="@color/fw_surface"
                         app:cardCornerRadius="@dimen/fw_corner_medium"
-                        app:cardElevation="0dp">
+                        app:cardElevation="0dp"
+                        app:strokeWidth="@dimen/fw_hairline_width"
+                        app:strokeColor="@color/fw_hairline">
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -151,7 +166,7 @@
                             android:importantForAccessibility="no"
                             android:src="@drawable/ic_google" />
 
-                    </androidx.cardview.widget.CardView>
+                    </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
 
                 <LinearLayout
@@ -164,7 +179,7 @@
                     <androidx.cardview.widget.CardView
                         android:id="@+id/cv_fb"
                         android:layout_width="match_parent"
-                        android:layout_height="54dp"
+                        android:layout_height="@dimen/fw_auth_button_min_height"
                         android:layout_marginStart="12dp"
                         app:cardBackgroundColor="@color/fw_surface"
                         app:cardCornerRadius="@dimen/fw_corner_medium"
@@ -182,16 +197,12 @@
 
             <TextView
                 android:id="@+id/tv_or"
+                style="@style/Widget.FireWire.AuthMono"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
                 android:gravity="center"
-                android:text="@string/or"
-                android:textAllCaps="true"
-                android:fontFamily="monospace"
-                android:letterSpacing="0.15"
-                android:textColor="@color/fw_muted"
-                android:textSize="@dimen/fw_text_chip" />
+                android:text="@string/or" />
 
             <!-- field card -->
             <LinearLayout
@@ -204,37 +215,37 @@
 
                 <TextView
                     android:id="@+id/tv_email"
-                    style="@style/TextAppearance.FireWire.Subtitle"
+                    style="@style/Widget.FireWire.AuthCaption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:letterSpacing="0.08"
-                    android:text="@string/enter_email" />
+                    android:labelFor="@+id/et_email"
+                    android:text="@string/fw_auth_email_label" />
 
                 <EditText
                     android:id="@+id/et_email"
+                    style="@style/Widget.FireWire.AuthInput"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="7dp"
-                    android:paddingLeft="14dp"
-                    android:paddingRight="14dp"
-                    android:hint="@string/enter_email"
+                    android:hint="@string/fw_auth_email_hint"
                     android:inputType="textEmailAddress"
-                    android:imeOptions="actionNext"
-                    android:maxLines="1"
-                    android:background="@drawable/fw_input_bg"
-                    android:fontFamily="@font/poppins_semibold"
-                    android:textSize="@dimen/fw_text_section"
-                    android:textColor="@color/fw_text"
-                    android:textColorHint="@color/fw_muted" />
+                    android:autofillHints="emailAddress"
+                    android:imeOptions="actionNext" />
+
+                <TextView
+                    android:id="@+id/tv_email_error"
+                    style="@style/Widget.FireWire.AuthFieldError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
                 <TextView
                     android:id="@+id/tv_password"
-                    style="@style/TextAppearance.FireWire.Subtitle"
+                    style="@style/Widget.FireWire.AuthCaption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
-                    android:letterSpacing="0.08"
-                    android:text="@string/enter_password" />
+                    android:labelFor="@+id/et_password"
+                    android:text="@string/fw_auth_password_label" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_password"
@@ -244,19 +255,14 @@
 
                     <EditText
                         android:id="@+id/et_password"
+                        style="@style/Widget.FireWire.AuthInput"
                         android:layout_width="0dp"
-                        android:layout_height="50dp"
-                        android:paddingLeft="14dp"
+                        android:layout_height="wrap_content"
                         android:paddingRight="52dp"
-                        android:hint="@string/enter_password"
+                        android:hint="@string/fw_auth_password_hint"
                         android:inputType="textPassword"
-                        android:imeOptions="actionDone"
-                        android:maxLines="1"
-                        android:background="@drawable/fw_input_bg"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:textSize="@dimen/fw_text_section"
-                        android:textColor="@color/fw_text"
-                        android:textColorHint="@color/fw_muted"
+                        android:autofillHints="password"
+                        android:imeOptions="actionGo"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -276,58 +282,56 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
+                    android:id="@+id/tv_password_error"
+                    style="@style/Widget.FireWire.AuthFieldError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <!-- server / network error -->
+                <TextView
+                    android:id="@+id/tv_form_error"
+                    style="@style/Widget.FireWire.AuthBanner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp" />
+
+                <TextView
                     android:id="@+id/tv_forgot"
+                    style="@style/Widget.FireWire.AuthLink"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
                     android:layout_marginTop="4dp"
-                    android:minHeight="@dimen/fw_touch_target"
-                    android:gravity="center_vertical"
-                    android:text="@string/forgot"
-                    android:textAllCaps="true"
-                    android:letterSpacing="0.05"
-                    android:fontFamily="@font/poppins_bold"
-                    android:textSize="@dimen/fw_text_caption"
-                    android:textColor="@color/fw_red" />
+                    android:text="@string/fw_auth_forgot" />
             </LinearLayout>
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_sign_in"
+                style="@style/Widget.FireWire.AuthButton"
                 android:layout_width="match_parent"
-                android:layout_height="54dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/fw_button_bg"
-                android:gravity="center"
-                android:text="@string/sign_in"
-                android:textAllCaps="true"
-                android:letterSpacing="0.08"
-                android:fontFamily="@font/poppins_bold"
-                android:textSize="@dimen/fw_text_section"
-                android:textColor="@color/white" />
+                android:text="@string/sign_in" />
 
             <TextView
                 android:id="@+id/tv_register"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="6dp"
                 android:minHeight="@dimen/fw_touch_target"
                 android:gravity="center"
-                android:text="@string/account_register"
+                android:text="@string/fw_auth_register_link"
                 android:fontFamily="@font/poppins_semibold"
                 android:textSize="@dimen/fw_text_body"
-                android:textColor="@color/fw_red" />
+                android:textColor="@color/fw_muted" />
 
             <TextView
                 android:id="@+id/tv_terms_condition"
+                style="@style/Widget.FireWire.AuthHint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:gravity="center"
-                android:lineSpacingMultiplier="1.2"
-                android:text="@string/terms_condition"
-                android:fontFamily="@font/poppins_medium"
-                android:textSize="@dimen/fw_text_caption"
-                android:textColor="@color/fw_muted" />
+                android:layout_marginTop="2dp"
+                android:text="@string/terms_condition" />
 
         </LinearLayout>
 

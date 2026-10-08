@@ -2,7 +2,6 @@ package com.pioneer.nycfirewire.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.CountDownTimer
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.onesignal.OneSignal
@@ -11,10 +10,10 @@ import com.pioneer.nycfirewire.databinding.ActivityEmailVerifyOtpBinding
 import com.pioneer.nycfirewire.model.user.request.ResendOtpRequest
 import com.pioneer.nycfirewire.model.user.request.VerifyEmailOtpRequest
 import com.pioneer.nycfirewire.model.user.response.LoginResponse
-import com.pioneer.nycfirewire.model.user.response.RegisterResponse
 import com.pioneer.nycfirewire.prefs
 import com.pioneer.nycfirewire.resource.Resource
 import com.pioneer.nycfirewire.resource.ResourceState
+import com.pioneer.nycfirewire.utils.AuthUi
 import com.pioneer.nycfirewire.utils.Constants
 import com.pioneer.nycfirewire.utils.Constants.VERIFY_EMAIL
 import com.pioneer.nycfirewire.utils.Constants.CODE_SUCCESS
@@ -22,7 +21,6 @@ import com.pioneer.nycfirewire.utils.Constants.EMAIL_ID
 import com.pioneer.nycfirewire.utils.Constants.FORGOT_PASSWORD
 import com.pioneer.nycfirewire.utils.Constants.FROM_PAGE
 import com.pioneer.nycfirewire.utils.Constants.FROM_START
-import com.pioneer.nycfirewire.utils.Constants.LOGIN
 import com.pioneer.nycfirewire.utils.IntentUtils.UPDATE_PROFILE
 import com.pioneer.nycfirewire.utils.gone
 import com.pioneer.nycfirewire.utils.visible
@@ -30,14 +28,21 @@ import com.pioneer.nycfirewire.viewModel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 
+/**
+ * Verify email (2026 auth redesign). Presentation only: inline code errors,
+ * a banner for server/network errors, resend with countdown (RESEND stays
+ * visible but disabled while counting), auto-submit at six digits. The
+ * verify-email-otp / resend-email-otp calls and session storage are unchanged.
+ */
 @AndroidEntryPoint
 class VerifyEmailOtpActivity : BaseActivity() {
 
     private lateinit var binding: ActivityEmailVerifyOtpBinding
     private lateinit var vm: UserViewModel
     var email=""
-    private var countDownTimer: CountDownTimer? = null
+    private var countdown: AuthUi.ResendCountdown? = null
     private var fromPage="Register"
+    private var isVerifying = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +54,8 @@ class VerifyEmailOtpActivity : BaseActivity() {
         binding.toolbar.tvToolbarTitle.visible()
         binding.toolbar.ivFeed.gone()
         binding.toolbar.ivMenu.setOnClickListener { finish() }
-         startOtpTimer()
+        countdown = AuthUi.ResendCountdown(binding.tvTimer, binding.tvResend)
+        startOtpTimer()
         initExtra()
         initApiCall()
         clickEvent()
@@ -70,6 +76,7 @@ class VerifyEmailOtpActivity : BaseActivity() {
         if(fromPage==UPDATE_PROFILE ){
             resendOtp()
         }
+        binding.etOtp.requestFocus()
     }
 
     private fun clickEvent(){
@@ -80,6 +87,9 @@ class VerifyEmailOtpActivity : BaseActivity() {
         binding.tvResend.setOnClickListener {
             resendOtp()
         }
+
+        AuthUi.autoSubmitCode(binding.etOtp) { verifyOtp() }
+        AuthUi.clearOnEdit(binding.etOtp, binding.tvOtpError, binding.tvFormError)
     }
 
     private fun initApiCall() {
@@ -92,32 +102,32 @@ class VerifyEmailOtpActivity : BaseActivity() {
         })
     }
 
+    private fun showFormError(message: String?) {
+        AuthUi.showBanner(binding.tvFormError, AuthUi.friendly(this, message), AuthUi.Banner.ERROR)
+    }
 
 
     private fun updateResendOtp(response: Resource<LoginResponse>?) {
 
         when(response?.state){
-            ResourceState.LOADING -> {binding.progress.visible()
-                binding.tvResend.gone()}
+            ResourceState.LOADING -> binding.progress.visible()
             ResourceState.SUCCESS -> {
                 startOtpTimer()
                 binding.progress.gone()
-                binding.tvResend.visible()
                 response.data?.let { it1 ->
                     if (it1.code== Constants.CODE_SUCCESS){
-                        showSnack(it1.message)
-
+                        AuthUi.showBanner(binding.tvFormError, getString(R.string.fw_auth_new_code_sent), AuthUi.Banner.SUCCESS)
                     }else if(it1.code== Constants.INVALID_OTP){
-                        // binding.etOtp.setText("")
-                        showSnack(it1.message.toString())
+                        showFormError(it1.message.toString())
+                    }else{
+                        showFormError(it1.message.toString())
                     }
                 }
             }
             ResourceState.ERROR -> {
                 startOtpTimer()
                 binding.progress.gone()
-                binding.tvResend.visible()
-                showAlert(response.message)
+                showFormError(response.message)
             }
             else -> {}
         }
@@ -127,11 +137,10 @@ class VerifyEmailOtpActivity : BaseActivity() {
     private fun updateVerifyOtp(response: Resource<LoginResponse>?) {
 
         when(response?.state){
-            ResourceState.LOADING -> {binding.progress.visible()
-            binding.tvResend.gone()}
+            ResourceState.LOADING -> binding.progress.visible()
             ResourceState.SUCCESS -> {
                 binding.progress.gone()
-                binding.tvResend.visible()
+                isVerifying = false
                 response.data?.let { it1 ->
                     if (it1.code== Constants.CODE_SUCCESS){
                         if(fromPage==UPDATE_PROFILE || fromPage==FORGOT_PASSWORD){
@@ -155,15 +164,20 @@ class VerifyEmailOtpActivity : BaseActivity() {
                         }
 
                     }else if(it1.code== Constants.INVALID_OTP){
-                        // binding.etOtp.setText("")
-                        showSnack(it1.message.toString())
+                        binding.etOtp.setText("")
+                        showFormError(getString(R.string.fw_auth_error_code_invalid))
+                        binding.etOtp.requestFocus()
+                    }else if(it1.code== "already_registered_login"){
+                        AuthUi.showBanner(binding.tvFormError, getString(R.string.fw_auth_already_verified), AuthUi.Banner.INFO)
+                    }else{
+                        showFormError(it1.message)
                     }
                 }
             }
             ResourceState.ERROR -> {
                 binding.progress.gone()
-                binding.tvResend.visible()
-                showAlert(response.message)
+                isVerifying = false
+                showFormError(response.message)
             }
             else -> {}
         }
@@ -182,43 +196,33 @@ class VerifyEmailOtpActivity : BaseActivity() {
 
 
     private fun verifyOtp(){
-        val otp= binding.etOtp.text.toString()
-        when {
-            otp.isEmpty() -> showSnack(getString(R.string.enter_otp))
-            else -> vm.verifyOtpEmail(VerifyEmailOtpRequest(email,otp))
+        if (isVerifying) return
+        val otp= binding.etOtp.text.toString().filter { it.isDigit() }
+        if (otp.length < 6) {
+            AuthUi.setFieldError(binding.etOtp, binding.tvOtpError, getString(R.string.fw_auth_error_code_incomplete))
+            return
         }
+        hideKeyboard()
+        AuthUi.hideBanner(binding.tvFormError)
+        isVerifying = true
+        vm.verifyOtpEmail(VerifyEmailOtpRequest(email,otp))
     }
 
     private fun resendOtp(){
         binding.etOtp.setText("")
-        binding.tvTimer.text = "Sending OTP..."
+        AuthUi.hideBanner(binding.tvFormError)
+        countdown?.showSending()
         vm.resendOtpEmail(ResendOtpRequest(email))
 
     }
 
 
     private fun startOtpTimer() {
-        countDownTimer?.cancel()
-
-        countDownTimer = object : CountDownTimer(30000, 1000) {
-
-            override fun onTick(millisUntilFinished: Long) {
-                val seconds = millisUntilFinished / 1000
-                binding.tvTimer.text = String.format(
-                    "Resend OTP in 00:%02d",
-                    seconds
-                )
-            }
-
-            override fun onFinish() {
-                binding.tvTimer.text = "Didn't receive the OTP?"
-                binding.tvResend.visible()
-            }
-        }.start()
+        countdown?.start()
     }
 
     override fun onDestroy() {
-        countDownTimer?.cancel()
+        countdown?.cancel()
         super.onDestroy()
     }
 

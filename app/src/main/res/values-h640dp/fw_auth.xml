@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- auth hero on regular-height phones -->
+<resources>
+    <dimen name="fw_auth_hero_height">232dp</dimen>
+    <dimen name="fw_auth_hero_logo_w">66dp</dimen>
+    <dimen name="fw_auth_hero_logo_h">71dp</dimen>
+    <dimen name="fw_auth_hero_title">30sp</dimen>
+</resources>

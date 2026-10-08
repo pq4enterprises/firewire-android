@@ -21,6 +21,12 @@
     <!-- soft red fill behind red text (signal chip) -->
     <color name="fw_red_tint">#FDECEA</color>
 
+    <!-- auth inline messages -->
+    <color name="fw_error_text">#C42A20</color>
+    <color name="fw_success_text">#0E7A47</color>
+    <!-- fw_red at 25%: border of the error banner -->
+    <color name="fw_banner_error_stroke">#40E5342A</color>
+
     <!-- semantic accents (same in both modes) -->
     <color name="fw_success">#17B26A</color>
     <color name="fw_warning">#F5B93C</color>

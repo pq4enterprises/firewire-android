@@ -1,25 +1,13 @@
 package com.pioneer.nycfirewire.activity
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.TextPaint
 import android.text.method.HideReturnsTransformationMethod
-import android.text.method.LinkMovementMethod
 import android.text.method.PasswordTransformationMethod
-import android.text.style.ClickableSpan
-import android.text.style.ForegroundColorSpan
 import android.util.Log
-import android.view.View
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.facebook.*
-import com.facebook.appevents.ml.Utils
 import com.pioneer.nycfirewire.model.user.request.LoginRequest
 import com.pioneer.nycfirewire.model.user.response.LoginResponse
 import com.pioneer.nycfirewire.data.auth.TokenAuthenticator
@@ -50,20 +38,29 @@ import com.onesignal.OneSignal
 import com.pioneer.nycfirewire.R
 import com.pioneer.nycfirewire.databinding.ActivityLoginBinding
 import com.pioneer.nycfirewire.utils.AppUtils
+import com.pioneer.nycfirewire.utils.AuthUi
 import com.pioneer.nycfirewire.utils.Constants.CODE_EMAIL_NOT_VERIFIED
 import com.pioneer.nycfirewire.utils.Constants.EMAIL_ID
-import com.pioneer.nycfirewire.utils.Constants.FORGOT_PASSWORD
 import com.pioneer.nycfirewire.utils.Constants.FROM_PAGE
 import com.pioneer.nycfirewire.utils.Constants.LOGIN
 import com.pioneer.nycfirewire.utils.gone
-import com.pioneer.nycfirewire.utils.isValidEmail
-import com.pioneer.nycfirewire.utils.showToast
 import com.pioneer.nycfirewire.utils.startNewActivity
 import com.pioneer.nycfirewire.utils.visible
 
 
+/**
+ * Sign in (2026 auth redesign). Presentation only: validation and server
+ * errors are inline (field outline + message, or a banner inside the card),
+ * the session-ended notice is an inline banner, link text uses design tokens.
+ * API calls, token storage and the social providers are unchanged.
+ */
 @AndroidEntryPoint
 class LoginNewActivity: BaseActivity() {
+
+    companion object {
+        /** One-shot success notice to show on arrival (e.g. after a password reset). */
+        const val EXTRA_SUCCESS_NOTICE = "success_notice"
+    }
 
     private var callbackManager: CallbackManager? = null
     private lateinit var binding: ActivityLoginBinding
@@ -84,13 +81,8 @@ class LoginNewActivity: BaseActivity() {
         initUi()
         initViewModel()
         clickEvent()
-        showSessionExpiredNoticeIfNeeded()
+        showArrivalNoticeIfNeeded()
         callbackManager = CallbackManager.Factory.create();
-
-        if(prefs.isDarkMode) {
-            binding.nsView.setBackgroundColor(resources.getColor(R.color.white))
-        }else binding.nsView.background =resources.getDrawable(R.drawable.ic_login_bg)
-
     }
 
     override fun onResume() {
@@ -114,12 +106,15 @@ class LoginNewActivity: BaseActivity() {
      * Set by TokenAuthenticator in the one case where re-authentication is unavoidable
      * (the refresh token itself is dead). Everything the user needs to recover is
      * already on this screen — email, password, Forgot Password, and social sign-in —
-     * so this is a non-blocking snackbar, not a modal the user has to dismiss before
-     * they can type.
+     * so this is a persistent inline banner, not a modal the user has to dismiss
+     * before they can type. The same banner carries the "password updated" notice
+     * when the user arrives from the reset flow.
      */
-    private fun showSessionExpiredNoticeIfNeeded() {
+    private fun showArrivalNoticeIfNeeded() {
         if (intent.getBooleanExtra(TokenAuthenticator.EXTRA_SESSION_EXPIRED, false)) {
-            showSnack(getString(R.string.session_ended_sign_in_again))
+            AuthUi.showBanner(binding.tvNotice, getString(R.string.fw_auth_session_ended), AuthUi.Banner.INFO)
+        } else intent.getStringExtra(EXTRA_SUCCESS_NOTICE)?.let {
+            AuthUi.showBanner(binding.tvNotice, it, AuthUi.Banner.SUCCESS)
         }
     }
 
@@ -147,14 +142,18 @@ class LoginNewActivity: BaseActivity() {
                     }
                 }else if(response.data?.code== CODE_EMAIL_NOT_VERIFIED){
                     moveToOtpScreen(binding.etEmail.text.toString())
-                }else showToast(this,response.data?.message.toString())
-                    //showSnack(response.data?.message.toString())
+                }else showFormError(response.data?.message)
             }
             ResourceState.ERROR -> {
                 binding.progress.gone()
-                showAlert(response.message)
+                showFormError(response.message)
             }
         }
+    }
+
+    private fun showFormError(message: String?) {
+        AuthUi.showBanner(binding.tvFormError, AuthUi.friendly(this, message), AuthUi.Banner.ERROR)
+        binding.nsView.post { binding.nsView.smoothScrollTo(0, binding.tvFormError.bottom) }
     }
 
     private fun moveToOtpScreen(email: String) {
@@ -166,26 +165,11 @@ class LoginNewActivity: BaseActivity() {
     }
 
     private fun clickEvent() {
-        binding.btnSignIn.setOnClickListener {
-            if (isOnline(this)) {
-                if (binding.etEmail.text.toString().isEmpty()) {
-                    showSnack(getString(R.string.enter_email))
-                } else if (!isValidEmail(binding.etEmail.text.toString())) {
-                    showSnack(getString(R.string.enter_valid_email))
-                } else if (binding.etPassword.text.toString().isEmpty()) {
-                    showSnack(getString(R.string.enter_password))
-                } else {
-                    val loginRequest = LoginRequest(
-                        email = binding.etEmail.text.toString(),
-                        password = binding.etPassword.text.toString()
-                    )
-                    vm.loginUser(loginRequest)
-                }
-            } else {
-                showSnack(getString(R.string.check_network_connection))
-            }
+        binding.btnSignIn.setOnClickListener { attemptSignIn() }
+        AuthUi.submitOnDone(binding.etPassword) { attemptSignIn() }
+        AuthUi.clearOnEdit(binding.etEmail, binding.tvEmailError, binding.tvFormError)
+        AuthUi.clearOnEdit(binding.etPassword, binding.tvPasswordError, binding.tvFormError)
 
-        }
         binding.cvFb.setOnClickListener {
             isFaceBook= true
             LoginManager.getInstance()
@@ -224,10 +208,25 @@ class LoginNewActivity: BaseActivity() {
                 binding.nsView.smoothScrollTo(0, v.bottom)
             }
         }
+    }
 
+    /** Inline validation (same rules as iOS), then the unchanged login call. */
+    private fun attemptSignIn() {
+        hideKeyboard()
+        AuthUi.hideBanner(binding.tvFormError)
+        val email = binding.etEmail.text.toString().trim()
+        val password = binding.etPassword.text.toString()
+        val emailError = AuthUi.emailError(this, email)
+        val passwordError = AuthUi.passwordError(this, password)
+        AuthUi.setFieldError(binding.etEmail, binding.tvEmailError, emailError)
+        AuthUi.setFieldError(binding.etPassword, binding.tvPasswordError, passwordError)
+        if (emailError != null || passwordError != null) return
 
-
-
+        if (isOnline(this)) {
+            vm.loginUser(LoginRequest(email = email, password = password))
+        } else {
+            showFormError(getString(R.string.fw_auth_no_connection))
+        }
     }
 
     private fun fbLogin() {
@@ -263,7 +262,7 @@ class LoginNewActivity: BaseActivity() {
 
             if(AppUtils.isNetworkConnected(this)) {
                 vm.postSocialLogin(SocialLoginRequest(accessToken?.token.toString(), FACEBOOK))
-            }else showSnack(getString(R.string.check_network_connection))
+            }else showFormError(getString(R.string.fw_auth_no_connection))
 
         }
 
@@ -311,11 +310,12 @@ class LoginNewActivity: BaseActivity() {
                         firstName = personName.toString(),
                         lastName = familyName.toString(),
                         email = personEmail.toString()))
-                }else showSnack(getString(R.string.check_network_connection))
+                }else showFormError(getString(R.string.fw_auth_no_connection))
 
             } else {
-                // Show a login failure UI
-                showToast(this,"Error occured")
+                // The user backed out of the Google sheet, or Play Services refused: stay quiet
+                // unless it looks like a real failure (same behaviour as before, minus the toast).
+                Log.d("Google Sign-In", "No account returned")
             }
         }catch (e:Exception){
             e.printStackTrace()
@@ -325,8 +325,12 @@ class LoginNewActivity: BaseActivity() {
 
 
     private fun initUi() {
-        setMessageWithClickableLink(this,binding.tvRegister)
-        setMessageForTermsAndCondition(this,binding.tvTermsCondition)
+        AuthUi.setLinkSentence(binding.tvRegister, getString(R.string.fw_auth_register_link), "Register") {
+            startActivity(Intent(this@LoginNewActivity, RegisterActivity::class.java))
+        }
+        AuthUi.setLinkSentence(binding.tvTermsCondition, getString(R.string.terms_condition), "Terms and Conditions", uppercase = false) {
+            moveToLink("https://nycfirewire.net/terms")
+        }
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id)) // OAuth 2.0 client ID
@@ -342,59 +346,5 @@ class LoginNewActivity: BaseActivity() {
             }
         }
     }
-
-    private fun setMessageWithClickableLink(context: Context, textView: TextView) {
-        val content = context.getString(R.string.account_register)
-        val clickableSpan = object : ClickableSpan(){
-            override fun onClick(widget: View) {
-                val intent= Intent(this@LoginNewActivity, RegisterActivity::class.java)
-                startActivity(intent)
-            }
-
-            override fun updateDrawState(ds: TextPaint) {
-                ds.isUnderlineText=false
-            }
-        }
-        val startIndex = content.indexOf("Register")
-        val endIndex = content.lastIndexOf("Register")+"Register".length
-        val spannableString = SpannableString(content)
-        val spanColor= ForegroundColorSpan(Color.RED)
-
-        spannableString.setSpan(clickableSpan, startIndex, endIndex,   Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        spannableString.setSpan(spanColor, startIndex, endIndex,   Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        textView.setText(spannableString)
-        textView.setTextColor(getColor(R.color.black))
-        textView.setMovementMethod(LinkMovementMethod.getInstance())
-        textView.setHighlightColor(Color.TRANSPARENT)
-    }
-
-
-    private fun setMessageForTermsAndCondition(context: Context, textView: TextView) {
-        val content = context.getString(R.string.terms_condition)
-        val clickableSpan = object : ClickableSpan(){
-            override fun onClick(widget: View) {
-                moveToLink("https://nycfirewire.net/terms")
-            }
-
-            override fun updateDrawState(ds: TextPaint) {
-                ds.isUnderlineText=false
-            }
-        }
-        val startIndex = content.indexOf("Terms and Conditions")
-        val endIndex = content.lastIndexOf("Terms and Conditions")+"Terms and Conditions".length
-        val spannableString = SpannableString(content)
-        val spanColor= ForegroundColorSpan(Color.RED)
-
-        spannableString.setSpan(clickableSpan, startIndex, endIndex,   Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        spannableString.setSpan(spanColor, startIndex, endIndex,   Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        textView.setText(spannableString)
-        textView.setTextColor(getColor(R.color.black))
-        textView.setMovementMethod(LinkMovementMethod.getInstance())
-        textView.setHighlightColor(Color.TRANSPARENT)
-    }
-
-
-
-
 
 }
