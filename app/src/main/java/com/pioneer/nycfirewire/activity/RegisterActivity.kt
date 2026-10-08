@@ -43,6 +43,7 @@ class RegisterActivity : BaseActivity() {
         initUi()
         initViewModel()
         clickEvent()
+        AuthUi.applyEdgeToEdge(this, binding.root, topBar = binding.toolbar.root, bottomPad = binding.llSaveBar, darkTop = false)
     }
 
     override fun onResume() {

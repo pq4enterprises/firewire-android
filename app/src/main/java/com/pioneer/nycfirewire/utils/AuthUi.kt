@@ -1,7 +1,9 @@
 package com.pioneer.nycfirewire.utils
 
+import android.app.Activity
 import android.content.Context
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Typeface
 import android.os.CountDownTimer
 import android.text.Editable
@@ -19,6 +21,9 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.widget.TextViewCompat
 import com.pioneer.nycfirewire.R
 
@@ -165,6 +170,74 @@ object AuthUi {
                 child.layoutParams = lp
             }
         }
+    }
+
+    /**
+     * Edge-to-edge for the auth screens only (the rest of the app keeps BaseActivity's
+     * padded content frame — logged as a post-launch item).
+     *
+     * BaseActivity pads android.R.id.content for the system bars, which is what paints
+     * the window background (app_red) above and below every screen. Here that listener
+     * is replaced so the root fills the window and the insets land on the views that
+     * own them: [topBar] (toolbar or hero) grows by the status-bar height and keeps its
+     * content below the cutout; [bottomPad] (scroll view or pinned footer) gets the
+     * larger of the navigation-bar and keyboard insets, so nothing sits under either,
+     * with gesture or 3-button navigation.
+     *
+     * [darkTop] = the top area is always dark (login hero) → light status-bar icons in
+     * both themes; otherwise icons follow the theme.
+     */
+    fun applyEdgeToEdge(activity: Activity, root: View, topBar: View, bottomPad: View, darkTop: Boolean) {
+        val night = (activity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+        // The app theme paints the bars app_red on Android 14 and below (ignored on 15+,
+        // where edge-to-edge is enforced); these screens draw their own content there.
+        @Suppress("DEPRECATION")
+        activity.window.statusBarColor = android.graphics.Color.TRANSPARENT
+        @Suppress("DEPRECATION")
+        activity.window.navigationBarColor = android.graphics.Color.TRANSPARENT
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            activity.window.isNavigationBarContrastEnforced = false
+        }
+        // Icon contrast: the theme asks for dark status icons; re-assert after layout so the
+        // request wins over the theme / BaseActivity (the login hero needs light icons).
+        val applyAppearance = {
+            val controller = WindowInsetsControllerCompat(activity.window, activity.window.decorView)
+            controller.isAppearanceLightStatusBars = if (darkTop) false else !night
+            controller.isAppearanceLightNavigationBars = !night
+        }
+        applyAppearance()
+        root.post(applyAppearance)
+
+        // Replace BaseActivity's frame padding so the root draws under the bars.
+        val content = activity.findViewById<View>(android.R.id.content)
+        ViewCompat.setOnApplyWindowInsetsListener(content) { v, insets ->
+            v.setPadding(0, 0, 0, 0)
+            insets
+        }
+
+        val baseTopHeight = topBar.layoutParams.height
+        val basePadding = intArrayOf(bottomPad.paddingLeft, bottomPad.paddingTop, bottomPad.paddingRight, bottomPad.paddingBottom)
+        ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+
+            // sides: cutouts / 3-button bar in landscape; nothing in portrait
+            v.setPadding(bars.left, 0, bars.right, 0)
+
+            // top: the bar/hero extends under the status bar, its content stays below it
+            topBar.setPadding(topBar.paddingLeft, bars.top, topBar.paddingRight, topBar.paddingBottom)
+            if (baseTopHeight > 0) {
+                val lp = topBar.layoutParams
+                lp.height = baseTopHeight + bars.top
+                topBar.layoutParams = lp
+            }
+
+            // bottom: keyboard wins over the navigation bar
+            val bottom = maxOf(bars.bottom, ime.bottom)
+            bottomPad.setPadding(basePadding[0], basePadding[1], basePadding[2], basePadding[3] + bottom)
+            insets
+        }
+        ViewCompat.requestApplyInsets(root)
     }
 
     /** 30-second resend countdown shared by the two code-entry screens. */

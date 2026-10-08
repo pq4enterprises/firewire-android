@@ -82,6 +82,7 @@ class LoginNewActivity: BaseActivity() {
         initViewModel()
         clickEvent()
         showArrivalNoticeIfNeeded()
+        AuthUi.applyEdgeToEdge(this, binding.root, topBar = binding.hero, bottomPad = binding.nsView, darkTop = true)
         callbackManager = CallbackManager.Factory.create();
     }
 

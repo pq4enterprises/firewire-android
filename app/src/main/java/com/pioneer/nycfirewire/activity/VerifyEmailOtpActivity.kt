@@ -59,6 +59,7 @@ class VerifyEmailOtpActivity : BaseActivity() {
         initExtra()
         initApiCall()
         clickEvent()
+        AuthUi.applyEdgeToEdge(this, binding.root, topBar = binding.toolbar.root, bottomPad = binding.nsView, darkTop = false)
 
     }
 
