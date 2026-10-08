@@ -245,7 +245,27 @@ class NavigationMenuActivity: BaseActivity() {
                     bindingItem.ivIcon.imageTintList = null
                     bindingItem.ivIcon.backgroundTintList = ColorStateList.valueOf(
                         ContextCompat.getColor(this@NavigationMenuActivity, R.color.fw_surface2))
-                    Glide.with(this@NavigationMenuActivity).load(it.imageUrl).into(bindingItem.ivIcon)
+                    // A dead icon URL used to leave the circle blank (every production
+                    // link pointed at a lapsed domain in 10.2). Fall back to the
+                    // built-in globe, tinted like the static tiles, if the load fails.
+                    Glide.with(this@NavigationMenuActivity).load(it.imageUrl)
+                        .listener(object : com.bumptech.glide.request.RequestListener<android.graphics.drawable.Drawable> {
+                            override fun onLoadFailed(
+                                e: com.bumptech.glide.load.engine.GlideException?, model: Any?,
+                                target: com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable>, isFirstResource: Boolean
+                            ): Boolean {
+                                bindingItem.ivIcon.setImageResource(R.drawable.fw_ic_globe)
+                                bindingItem.ivIcon.imageTintList = ColorStateList.valueOf(
+                                    ContextCompat.getColor(this@NavigationMenuActivity, R.color.app_red))
+                                return true
+                            }
+                            override fun onResourceReady(
+                                resource: android.graphics.drawable.Drawable, model: Any,
+                                target: com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable>?,
+                                dataSource: com.bumptech.glide.load.DataSource, isFirstResource: Boolean
+                            ): Boolean = false
+                        })
+                        .into(bindingItem.ivIcon)
                 } else {
                     bindingItem.ivIcon.setImageResource(it.image)
                     bindingItem.ivIcon.imageTintList = ColorStateList.valueOf(
