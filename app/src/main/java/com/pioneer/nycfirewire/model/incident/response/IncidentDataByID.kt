@@ -16,6 +16,10 @@ data class IncidentDataByID(
     val commentCount: String? = "",
     val likeCount: String? = "",
     val respondingUnits: ArrayList<String>? = null,
+    // server-resolved chip colors + legend (absent on older servers)
+    val respondingUnitColors: ArrayList<UnitColor>? = null,
+    val unitLegend: ArrayList<UnitLegend>? = null,
+    val unitColorsConfigured: Boolean? = null,
     val points: List<Points>?=null,
     val field1Value:String?="",
     val field2Value:String?="",

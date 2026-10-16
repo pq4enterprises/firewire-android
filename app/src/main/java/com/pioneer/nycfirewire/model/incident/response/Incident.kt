@@ -17,6 +17,11 @@ data class Incident(
     val field4Value: String? = "",
     // responding units, rendered as colour-coded chips on the detail screen
     val respondingUnits: ArrayList<String>? = null,
+    // server-resolved chip colors (12.1.2 / 10.4+). Null on list responses and on
+    // older servers: the hardcoded UnitCategory classifier is the fallback then.
+    val respondingUnitColors: ArrayList<UnitColor>? = null,
+    val unitLegend: ArrayList<UnitLegend>? = null,
+    val unitColorsConfigured: Boolean? = null,
     val commentCount:String?="0",
     var likeCount:String?="",
     val createdAt:String?="",
@@ -152,3 +157,22 @@ data class IncidentSubLocality(
     "likeCount": 0
 }*/
 
+/** One resolved unit chip color from the server (hex #RRGGBB or #RRGGBBAA). */
+@Parcelize
+data class UnitColor(
+    val unit: String? = "",
+    val bg: String? = "",
+    val fg: String? = "",
+    val bgDark: String? = null,
+    val fgDark: String? = null,
+    val category: String? = "",
+) : Parcelable
+
+/** One legend entry (category label + swatch color) from the server. */
+@Parcelize
+data class UnitLegend(
+    val key: String? = "",
+    val label: String? = "",
+    val color: String? = "",
+    val colorDark: String? = null,
+) : Parcelable

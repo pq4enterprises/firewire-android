@@ -58,6 +58,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import com.pioneer.nycfirewire.utils.FirehouseMarker
 import com.pioneer.nycfirewire.utils.UnitCategory
+import com.pioneer.nycfirewire.utils.UnitColors
 
 @AndroidEntryPoint
 class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
@@ -166,6 +167,9 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
                      // carried through so the redesigned units card and signal
                      // chip can render from wireDetails rather than the raw item
                      respondingUnits= dataItem.respondingUnits,
+                     respondingUnitColors= dataItem.respondingUnitColors,
+                     unitLegend= dataItem.unitLegend,
+                     unitColorsConfigured= dataItem.unitColorsConfigured,
                      field4Value= dataItem.field4Value,
                      subLocalityDetails= arrayListOf(subLocalityData))
                       //response.data.data
@@ -407,26 +411,77 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
 
         binding.tvUnitsCount.text = units.size.toString()
         binding.tvUnitsCount.visible()
-        binding.llUnitsLegend.visible()
         binding.chipGroupUnits.visible()
         binding.tvNoUnits.gone()
 
         val padH = resources.getDimensionPixelSize(R.dimen.fw_unit_chip_pad_h)
         val padV = resources.getDimensionPixelSize(R.dimen.fw_unit_chip_pad_v)
+        val dark = UnitColors.isDarkMode(this)
+
+        // Server-resolved colors (per-locality scheme, editable in the portal).
+        // Only when the field is present; otherwise the hardcoded classifier.
+        val serverColors = wireDetails.respondingUnitColors
+        val byUnit = serverColors?.associateBy { it.unit?.trim()?.uppercase().orEmpty() }
 
         units.forEach { unit ->
-            val category = UnitCategory.classify(unit)
+            val server = byUnit?.get(unit)
+            val (bgColor, fgColor) = if (serverColors != null) {
+                UnitColors.chipColors(this, server, dark)
+            } else {
+                val category = UnitCategory.classify(unit)
+                Pair(ContextCompat.getColor(this, category.bgColorRes), ContextCompat.getColor(this, category.fgColorRes))
+            }
             val chip = TextView(this).apply {
                 text = unit
                 setTextSize(TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.fw_text_caption))
                 typeface = ResourcesCompat.getFont(context, R.font.poppins_semibold)
-                setTextColor(ContextCompat.getColor(context, category.fgColorRes))
+                setTextColor(fgColor)
                 background = ContextCompat.getDrawable(context, R.drawable.fw_chip_bg)
-                backgroundTintList = ContextCompat.getColorStateList(context, category.bgColorRes)
+                backgroundTintList = android.content.res.ColorStateList.valueOf(bgColor)
                 setPadding(padH, padV, padH, padV)
             }
             binding.chipGroupUnits.addView(chip)
         }
+
+        bindUnitLegend(serverColors != null, dark)
+    }
+
+    /**
+     * Legend row. With server colors the legend comes from the scheme (and is
+     * hidden when the locality has none, i.e. everything is gray). Without
+     * server colors the static XML legend (engine / truck / marine / chief /
+     * SOC) is shown as before.
+     */
+    private fun bindUnitLegend(serverMode: Boolean, dark: Boolean) {
+        val legend = binding.llUnitsLegend
+        if (!serverMode) {
+            if (legend.tag == "server") { legend.removeAllViews(); legend.tag = null; layoutInflater.inflate(R.layout.view_units_legend_static, legend, true) }
+            legend.visible()
+            return
+        }
+        val items = wireDetails.unitLegend.orEmpty()
+        legend.removeAllViews()
+        legend.tag = "server"
+        if (items.isEmpty()) { legend.gone(); return }
+        val dot = resources.getDimensionPixelSize(R.dimen.fw_legend_dot_size)
+        val gap = (10 * resources.displayMetrics.density).toInt()
+        items.forEachIndexed { i, item ->
+            val swatch = android.view.View(this).apply {
+                layoutParams = android.widget.LinearLayout.LayoutParams(dot, dot).also { if (i > 0) it.marginStart = gap }
+                background = ContextCompat.getDrawable(context, R.drawable.fw_legend_dot)
+                backgroundTintList = android.content.res.ColorStateList.valueOf(
+                    UnitColors.parseHex(if (dark) item.colorDark ?: item.color else item.color) ?: ContextCompat.getColor(context, R.color.fw_muted))
+            }
+            val label = TextView(this).apply {
+                layoutParams = android.widget.LinearLayout.LayoutParams(android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT).also { it.marginStart = (4 * resources.displayMetrics.density).toInt() }
+                text = item.label.orEmpty()
+                setTextColor(ContextCompat.getColor(context, R.color.fw_muted))
+                setTextSize(TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.fw_text_legend))
+                typeface = ResourcesCompat.getFont(context, R.font.poppins_semibold)
+            }
+            legend.addView(swatch); legend.addView(label)
+        }
+        legend.visible()
     }
 
     /**

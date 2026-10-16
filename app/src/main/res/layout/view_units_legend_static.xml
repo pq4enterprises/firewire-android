@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Static unit legend (engine / truck / marine / chief / SOC): the fallback
+     shown when the server sends no unit colors. With server colors the
+     activity rebuilds ll_units_legend from the locality's scheme. -->
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+                    <View
+                        android:layout_width="@dimen/fw_legend_dot_size"
+                        android:layout_height="@dimen/fw_legend_dot_size"
+                        android:background="@drawable/fw_legend_dot"
+                        android:backgroundTint="@color/fw_unit_engine_bg"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:text="@string/units_engine"
+                        android:textColor="@color/fw_muted"
+                        android:textSize="@dimen/fw_text_legend"
+                        android:fontFamily="@font/poppins_semibold"/>
+
+                    <View
+                        android:layout_width="@dimen/fw_legend_dot_size"
+                        android:layout_height="@dimen/fw_legend_dot_size"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/fw_legend_dot"
+                        android:backgroundTint="@color/fw_unit_truck_bg"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:text="@string/units_truck"
+                        android:textColor="@color/fw_muted"
+                        android:textSize="@dimen/fw_text_legend"
+                        android:fontFamily="@font/poppins_semibold"/>
+
+                    <View
+                        android:layout_width="@dimen/fw_legend_dot_size"
+                        android:layout_height="@dimen/fw_legend_dot_size"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/fw_legend_dot"
+                        android:backgroundTint="@color/fw_unit_marine_bg"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:text="@string/units_marine"
+                        android:textColor="@color/fw_muted"
+                        android:textSize="@dimen/fw_text_legend"
+                        android:fontFamily="@font/poppins_semibold"/>
+
+                    <View
+                        android:layout_width="@dimen/fw_legend_dot_size"
+                        android:layout_height="@dimen/fw_legend_dot_size"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/fw_legend_dot"
+                        android:backgroundTint="@color/fw_unit_chief_bg"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:text="@string/units_chief"
+                        android:textColor="@color/fw_muted"
+                        android:textSize="@dimen/fw_text_legend"
+                        android:fontFamily="@font/poppins_semibold"/>
+
+                    <View
+                        android:layout_width="@dimen/fw_legend_dot_size"
+                        android:layout_height="@dimen/fw_legend_dot_size"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/fw_legend_dot"
+                        android:backgroundTint="@color/fw_unit_soc_legend"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:text="@string/units_soc"
+                        android:textColor="@color/fw_muted"
+                        android:textSize="@dimen/fw_text_legend"
+                        android:fontFamily="@font/poppins_semibold"/>
+</merge>
