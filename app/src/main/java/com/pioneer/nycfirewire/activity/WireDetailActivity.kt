@@ -464,22 +464,30 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
         legend.tag = "server"
         if (items.isEmpty()) { legend.gone(); return }
         val dot = resources.getDimensionPixelSize(R.dimen.fw_legend_dot_size)
-        val gap = (10 * resources.displayMetrics.density).toInt()
-        items.forEachIndexed { i, item ->
+        val density = resources.displayMetrics.density
+        // one wrapping item per category: dot + label kept together (ChipGroup is a FlowLayout)
+        items.forEach { item ->
+            val row = android.widget.LinearLayout(this).apply {
+                orientation = android.widget.LinearLayout.HORIZONTAL
+                gravity = android.view.Gravity.CENTER_VERTICAL
+                layoutParams = android.view.ViewGroup.MarginLayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT)
+            }
             val swatch = android.view.View(this).apply {
-                layoutParams = android.widget.LinearLayout.LayoutParams(dot, dot).also { if (i > 0) it.marginStart = gap }
+                layoutParams = android.widget.LinearLayout.LayoutParams(dot, dot)
                 background = ContextCompat.getDrawable(context, R.drawable.fw_legend_dot)
                 backgroundTintList = android.content.res.ColorStateList.valueOf(
                     UnitColors.parseHex(if (dark) item.colorDark ?: item.color else item.color) ?: ContextCompat.getColor(context, R.color.fw_muted))
             }
             val label = TextView(this).apply {
-                layoutParams = android.widget.LinearLayout.LayoutParams(android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT).also { it.marginStart = (4 * resources.displayMetrics.density).toInt() }
+                layoutParams = android.widget.LinearLayout.LayoutParams(android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT).also { it.marginStart = (4 * density).toInt() }
                 text = item.label.orEmpty()
                 setTextColor(ContextCompat.getColor(context, R.color.fw_muted))
                 setTextSize(TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.fw_text_legend))
                 typeface = ResourcesCompat.getFont(context, R.font.poppins_semibold)
+                maxLines = 1
             }
-            legend.addView(swatch); legend.addView(label)
+            row.addView(swatch); row.addView(label)
+            legend.addView(row)
         }
         legend.visible()
     }

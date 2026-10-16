@@ -309,17 +309,19 @@
                         tools:visibility="visible"/>
                 </LinearLayout>
 
-                <LinearLayout
+                <com.google.android.material.chip.ChipGroup
                     android:id="@+id/ll_units_legend"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal"
+                    app:chipSpacingHorizontal="10dp"
+                    app:chipSpacingVertical="4dp"
+                    app:singleLine="false"
                     android:visibility="gone"
                     tools:visibility="visible">
                     <include layout="@layout/view_units_legend_static" />
-                </LinearLayout>
+                </com.google.android.material.chip.ChipGroup>
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/chip_group_units"
