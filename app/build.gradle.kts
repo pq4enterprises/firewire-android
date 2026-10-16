@@ -30,8 +30,8 @@ android {
         applicationId = "com.pioneer.nycfirewire"
         minSdk = 24
         targetSdk = 36
-        versionCode = 115
-        versionName = "10.3"
+        versionCode = 116
+        versionName = "10.4"
        /* versionCode = 25
         versionName = "2.5"*/
 
