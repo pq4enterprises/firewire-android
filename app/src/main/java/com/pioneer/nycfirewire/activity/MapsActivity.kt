@@ -105,6 +105,9 @@ import com.pioneer.nycfirewire.utils.Constants.FROM_START
 import com.pioneer.nycfirewire.utils.Constants.USER_BASIC_USER
 import com.pioneer.nycfirewire.utils.Constants.USER_PREMIUM_FREE
 import com.pioneer.nycfirewire.utils.DateUtils.getExpiryTime
+import com.pioneer.nycfirewire.utils.DateUtils.formatToIso8601
+import com.pioneer.nycfirewire.utils.DateUtils.getExpiryDate
+import com.pioneer.nycfirewire.model.payment.PaymentRequest
 import com.pioneer.nycfirewire.utils.IntentUtils.BUN_WIRE_LIST_DETAIL
 import com.pioneer.nycfirewire.utils.IntentUtils.EXTRA_WIRE_DETAILS
 import com.pioneer.nycfirewire.utils.IntentUtils.FILTER_DATA
@@ -127,6 +130,8 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
     private var incidentList= ArrayList<Incident>()
     private val locationArrayList= ArrayList<LatLng>()
     private lateinit var billingClient: BillingClient
+    /** Purchase tokens already sent to /payment this session (no duplicate rows). */
+    private val reportedPurchaseTokens = mutableSetOf<String>()
     private var profileDetails= UserDetails()
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private val UPDATE_REQUEST_CODE = 123
@@ -351,41 +356,77 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
             showUpdateResponse(it)
         })
 
-
+        // /payment answered for a subscription found at sign-in / app open: the
+        // server has flipped the role, mirror it locally so the premium gates open
+        // without a visit to My Account.
+        vm.paymentLiveData.observe(this, Observer { response ->
+            if (response.state == ResourceState.SUCCESS && response.data?.code == Constants.CODE_SUCCESS) {
+                prefs.userRole = USER_PREMIUM_FREE
+                Log.d("Billing", "Out-of-app subscription reported; role is now premium_free")
+            } else if (response.state == ResourceState.ERROR) {
+                Log.e("Billing", "Reporting out-of-app subscription failed: ${response.message}")
+            }
+        })
     }
 
+    /**
+     * Runs after the profile loads on every home-screen open (so right after sign-in).
+     * A subscription that started OUTSIDE the app, e.g. a Play promo code redeemed from
+     * the relaunch email link or a resubscribe in Play > Subscriptions, only ever shows
+     * up here. It must be acknowledged (Play refunds unacknowledged purchases after a
+     * few days) and reported to /payment, which is what makes the account premium.
+     * Before, this only rewrote the role through the profile endpoint and never
+     * acknowledged anything.
+     */
     private fun checkIfUserAlreadyPurchased() {
         billingClient.queryPurchasesAsync(
             QueryPurchasesParams.newBuilder()
-                .setProductType(BillingClient.ProductType.SUBS) // or SUBS if subscription
+                .setProductType(BillingClient.ProductType.SUBS)
                 .build()
         ) { billingResult, purchasesList ->
-            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                if (purchasesList.isNullOrEmpty()) {
-                    // No active subscriptions
-                    Log.d("SubscriptionCheck", "No active subscriptions")
-                } else {
-                    for (purchase in purchasesList) {
-                       //if (purchase.products.contains(SUB_PRODUCT_ID)) {
-                            val isAutoRenewing = purchase.isAutoRenewing
-                            val expiryTime = getExpiryTime(purchase.purchaseTime)
-                            val currentTime = System.currentTimeMillis()
-                            val isExpired = !isAutoRenewing && (expiryTime < currentTime)
-                            if (isExpired && prefs.userRole == USER_PREMIUM_FREE) {
-                                Log.d("SubscriptionCheck", "Subscription is expired")
-                                    userApiCall(USER_BASIC_USER)
-                            } else if(prefs.userRole == USER_BASIC_USER){
-                                    userApiCall(USER_PREMIUM_FREE)
-                                Log.d("SubscriptionCheck", "Subscription is active")
-                            }
-                       // }
+            if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) return@queryPurchasesAsync
+            if (purchasesList.isNullOrEmpty()) {
+                Log.d("SubscriptionCheck", "No active subscriptions")
+                return@queryPurchasesAsync
+            }
+            for (purchase in purchasesList) {
+                val isExpired = !purchase.isAutoRenewing &&
+                        getExpiryTime(purchase.purchaseTime) < System.currentTimeMillis()
+                if (isExpired) {
+                    if (prefs.userRole == USER_PREMIUM_FREE) {
+                        Log.d("SubscriptionCheck", "Subscription is expired")
+                        userApiCall(USER_BASIC_USER)
                     }
-
-
-                }} else {
-                //showSnack("Error checking purchases: ${billingResult.debugMessage}")
+                    continue
+                }
+                if (purchase.purchaseState != Purchase.PurchaseState.PURCHASED) continue
+                val token = purchase.purchaseToken
+                if (token.isNullOrEmpty()) continue
+                when {
+                    !purchase.isAcknowledged -> acknowledgePurchase(token, purchase)
+                    prefs.userRole == USER_BASIC_USER -> reportOutOfAppPurchase(purchase)
+                }
             }
         }
+    }
+
+    private fun reportOutOfAppPurchase(purchase: Purchase) {
+        val token = purchase.purchaseToken
+        if (token.isNullOrEmpty() || !reportedPurchaseTokens.add(token)) return
+        val request = PaymentRequest(
+            userId = prefs.userId.orEmpty(),
+            paymentMethod = "Play Store",
+            paymentToken = token,
+            transactionId = purchase.orderId.orEmpty(),
+            amount = "",
+            currency = "",
+            status = "success",
+            purchaseDate = formatToIso8601(purchase.purchaseTime),
+            expiredDate = getExpiryDate(purchase.purchaseTime),
+            type = if (purchase.isAutoRenewing) "Auto-renewable subscription" else "One-time"
+        )
+        Log.d("Billing", "Reporting out-of-app subscription orderId=${purchase.orderId}")
+        vm.paymentPost(request)
     }
 
     private fun userApiCall(role: String){
@@ -1024,8 +1065,8 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
         billingClient.acknowledgePurchase(params) { billingResult ->
             println("billingResult:"+ billingResult.responseCode )
             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-               // callPaymentBackendApi(purchase)
                 println("acknowledge Purchase completed")
+                reportOutOfAppPurchase(purchase)
             }else{
                 println("Exit in acknowledge Purchase")
             }
