@@ -317,6 +317,18 @@
                     android:letterSpacing="0.08"
                     android:text="@string/get_now" />
 
+                <!-- relaunch promo: shown with GET NOW only -->
+                <TextView
+                    android:id="@+id/tv_promo_hint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="@dimen/fw_text_caption"
+                    android:textColor="@color/fw_gold_muted"
+                    android:text="@string/fw_promo_hint" />
+
                 <!-- subscriber CTA -->
                 <TextView
                     android:id="@+id/btn_manage_subscription"

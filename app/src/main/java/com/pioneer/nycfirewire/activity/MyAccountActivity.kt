@@ -165,6 +165,7 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener {
             if (isPremium()) {
                 binding.llPriceHeader.gone()
                 binding.btnGetNow.gone()
+                binding.tvPromoHint.gone()
                 binding.llSubscribedHeader.visible()
                 binding.btnManageSubscription.visible()
                 binding.tvFullAccess.text = "Premium Account"
@@ -173,6 +174,7 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener {
                 binding.btnManageSubscription.gone()
                 binding.llPriceHeader.visible()
                 binding.btnGetNow.visible()
+                binding.tvPromoHint.visible()
                 binding.tvFullAccess.text = "Basic Account"
             }
         }
@@ -197,11 +199,33 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener {
             QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.SUBS).build()
         ) { billingResult, purchasesList ->
             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                val hasActiveSubscription = purchasesList?.any { purchase ->
+                val activePurchases = purchasesList?.filter { purchase ->
                     purchase.products.contains(SUB_PRODUCT_ID) &&
                             (purchase.isAutoRenewing || purchase.purchaseTime >= System.currentTimeMillis())
-                } ?: false
-                updateSubscriptionUI(hasActiveSubscription)
+                }.orEmpty()
+                updateSubscriptionUI(activePurchases.isNotEmpty())
+
+                // A subscription started OUTSIDE the app (a Play promo code redeemed in
+                // the Play Store, a resubscribe from Play > Subscriptions) never reaches
+                // onPurchasesUpdated. It still has to be acknowledged (Play refunds it
+                // otherwise) and reported to the server so the role flips to premium.
+                val serverStillBasic = (prefs.userRole ?: "").let { it.isEmpty() || it == Constants.USER_BASIC_USER }
+                activePurchases
+                    .filter { it.purchaseState == Purchase.PurchaseState.PURCHASED }
+                    .forEach { purchase ->
+                        val token = purchase.purchaseToken
+                        if (token.isNullOrEmpty() || processedPurchaseTokens.contains(token)) return@forEach
+                        when {
+                            !purchase.isAcknowledged -> {
+                                processedPurchaseTokens.add(token)
+                                acknowledgePurchaseWithRetry(billingClient, purchase)
+                            }
+                            serverStillBasic -> {
+                                processedPurchaseTokens.add(token)
+                                runOnUiThread { callPaymentBackendApi(purchase) }
+                            }
+                        }
+                    }
             } else {
                 showSnack("Error checking purchases: ${billingResult.debugMessage}")
             }

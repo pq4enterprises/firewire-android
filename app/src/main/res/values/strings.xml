@@ -52,6 +52,8 @@
     <string name="add_free">An Ad-Free app experience</string>
     <string name="custom_notification">Custom notifications (specific units, boros, incident types, etc.) and more to come!</string>
     <string name="get_now">Get Now</string>
+    <!-- relaunch promo: custom Play promo codes are entered inside the Google Play purchase sheet -->
+    <string name="fw_promo_hint">Have a promo code? Tap GET NOW, then choose Redeem code under the payment method.</string>
     <string name="terms_of_service">Terms Of Service</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="sign_out">Sign Out</string>
