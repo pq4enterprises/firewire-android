@@ -21,6 +21,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.pioneer.nycfirewire.adapter.setUpAdapter
+import com.pioneer.nycfirewire.model.user.response.Feed
 import com.pioneer.nycfirewire.model.user.response.FeedResponse
 import com.pioneer.nycfirewire.model.user.response.FeedsGroupList
 import com.pioneer.nycfirewire.resource.Resource
@@ -78,9 +79,8 @@ class FeedsActivity : BaseActivity() {
 
     private var isActivityPaused=false
 
+    /** Set by the AUDIO_BROADCAST receiver (notification Stop) while we are paused. */
     var isBroadCastReceived= false
-    var mainPosition=-1
-    var subPosition=-1
 
     // instrument-console UI state — presentation only
     private val expandedRegions = HashMap<String, Boolean>()
@@ -108,10 +108,8 @@ class FeedsActivity : BaseActivity() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 if (intent?.action == AUDIO_BROADCAST) {
                     isBroadCastReceived=true
-                    mainPosition= intent.getIntExtra("mainPosition",-1)
-                    subPosition= intent.getIntExtra("position",-1)
                     if (!isActivityPaused) {
-                        updateAudioUI(mainPosition, subPosition)
+                        clearPlayingUi()
                     }
                 }
             }
@@ -128,12 +126,11 @@ class FeedsActivity : BaseActivity() {
 
         isActivityPaused=false
         if(isBroadCastReceived) {
-            updateAudioUI(mainPosition,subPosition)
-            mainPosition=-1
-            subPosition=-1
+            // Playback was stopped from the notification while we were in the
+            // background; the receiver already cleared the persisted playing feed.
+            clearPlayingUi()
             isBroadCastReceived=false
-            prefs.feedMainPosition=-1
-            prefs.feedMainPosition=-1
+            prefs.clearPlayingFeed()
         }
         refreshConsole()
 
@@ -151,21 +148,46 @@ class FeedsActivity : BaseActivity() {
         stopWave()
     }
 
-    private fun updateAudioPlayUI(mainPosition: Int,subPosition: Int) {
-        if(groupMainList.isNotEmpty()) {
-            groupMainList[mainPosition].feedUrlList?.get(subPosition)?.isChecked = true
+    /**
+     * After the list is rebuilt from the server, re-mark the feed that is
+     * playing in [BackgroundAudioService]. The feed is found by identity
+     * (`_id`, then stream URL) — never by the adapter position it had last
+     * time. Positions are not stable: the user can remove that feed's area in
+     * Areas & Alerts, the server can reorder, and a persisted (main, sub) pair
+     * then points past the end of the new list, which is exactly the
+     * IndexOutOfBoundsException Crashlytics reported for 10.4 (build 116).
+     *
+     * If the playing feed is no longer in the list there is no row to stop it
+     * from, so playback is stopped and the persisted state cleared rather than
+     * leaving an orphaned stream running.
+     */
+    private fun restorePlayingFeed() {
+        if (!prefs.isFeedPlaying()) return
+        val playing = findFeed(prefs.playingFeedId, prefs.playingFeedUrl)
+        if (playing != null) {
+            playing.isChecked = true
+        } else {
+            BackgroundAudioService.stopService(this)
+            prefs.clearPlayingFeed()
         }
     }
 
+    private fun findFeed(id: String?, url: String?): Feed? {
+        val all = groupMainList.flatMap { it.feedUrlList ?: emptyList() }
+        if (!id.isNullOrEmpty()) all.firstOrNull { it._id == id }?.let { return it }
+        if (!url.isNullOrEmpty()) all.firstOrNull { it.url == url }?.let { return it }
+        return null
+    }
 
-    private fun updateAudioUI(mainPosition: Int,subPosition: Int) {
-      //  groupMainList[mainPosition].feedUrlList?.get(subPosition)?.isChecked=false
-        groupMainList.forEach{
-            it.feedUrlList?.forEach {
-                it.isChecked=false
-            }
+    /** Drops the "playing" mark from every row and repaints. Index-free. */
+    private fun uncheckAll() {
+        groupMainList.forEach { group ->
+            group.feedUrlList?.forEach { it.isChecked = false }
         }
+    }
 
+    private fun clearPlayingUi() {
+        uncheckAll()
         binding.rvFeed.adapter?.notifyDataSetChanged()
         refreshConsole()
     }
@@ -195,9 +217,7 @@ class FeedsActivity : BaseActivity() {
                     feedsGroup.feedUrlList= mapData.value
                     groupMainList.add(feedsGroup)
                 }
-                if(prefs.feedMainPosition!=-1 && prefs.feedSubPosition!=-1){
-                    updateAudioPlayUI(prefs.feedMainPosition, prefs.feedSubPosition)
-                }
+                restorePlayingFeed()
 
                 updateConsoleTotals()
                 setupAdapter()
@@ -258,9 +278,7 @@ class FeedsActivity : BaseActivity() {
                             subBindingItem.ivPlay.gone()
                             tintDot(subBindingItem.vFeedDot, R.color.fw_red)
 
-                            val mediaUrl = it1.url.toString()
-
-                           playAudio(mediaUrl,pos,pos1)
+                           playAudio(it1)
 
                         }else{
                             subBindingItem.ivPause.gone()
@@ -271,7 +289,6 @@ class FeedsActivity : BaseActivity() {
                             if(prefs.userRole==USER_BASIC_USER){
                                 moveToPaymentPage()
                             }else {
-                                //stopAudio(false, pos,pos1)
 
                                 val hasCheckedItem = groupMainList.any { it.feedUrlList?.any { feedUrl -> feedUrl.isChecked == true } == true }
 
@@ -312,7 +329,7 @@ class FeedsActivity : BaseActivity() {
                                     // fires here too, not just on the switch-feed
                                     // confirmation, so a cold start is counted
                                     analyticMethod(RADIO_CLICKED,"FeedsActivity")
-                                    stopAudio(false, pos,pos1)
+                                    stopAudio(false)
                                     var localCheck= it1.isChecked
                                     groupMainList.forEach {
                                         it.feedUrlList?.forEachIndexed{ index, feed->
@@ -329,7 +346,7 @@ class FeedsActivity : BaseActivity() {
                         }
 
                         subBindingItem.ivPause.setOnClickListener {
-                            stopAudio(true,pos,pos1)
+                            stopAudio(true)
                         }
 
                     }
@@ -341,28 +358,21 @@ class FeedsActivity : BaseActivity() {
 
     //"https://mediaserv33.live-streams.nl:8034/live"
 
-    private fun playAudio(url: String, mainPosition: Int,position:Int) {
-        // Start the audio service to handle playback in the background
-        prefs.feedMainPosition=mainPosition
-        prefs.feedSubPosition= position
-        if(mainPosition!=-1 || position!=-1){
-        BackgroundAudioService.startService(
-            this,
-            url,
-            mainPosition,
-            position,
-            ""
-        )}
+    /** Starts (or keeps) background playback of [feed] and persists its identity. */
+    private fun playAudio(feed: Feed) {
+        val url = feed.url
+        if (url.isNullOrEmpty()) return
+        prefs.setPlayingFeed(feed._id, url)
+        BackgroundAudioService.startService(this, url, "")
     }
 
-    private fun stopAudio(isShowAlert: Boolean, mainPos: Int,subPos:Int) {
-        // Start the audio service to handle playback in the background
+    private fun stopAudio(isShowAlert: Boolean) {
         if(isShowAlert){
-            showAlert(getString(R.string.stop_listening_msg),mainPos,subPos)
+            showStopListeningAlert(getString(R.string.stop_listening_msg))
         }else BackgroundAudioService.stopService(this)
     }
 
-    fun showAlert(message: String? = "",mainPos:Int,position: Int) {
+    private fun showStopListeningAlert(message: String?) {
         AlertDialog.Builder(this)
             .setTitle(resources.getString(R.string.stop_listening))
             .setMessage(message)
@@ -371,11 +381,10 @@ class FeedsActivity : BaseActivity() {
             }
             .setPositiveButton(android.R.string.ok) { _, _ ->
                 BackgroundAudioService.stopService(this)
-                prefs.feedMainPosition= -1
-                prefs.feedSubPosition=-1
-                groupMainList[mainPos].feedUrlList?.get(position)?.isChecked=false
-                binding.rvFeed.adapter?.notifyDataSetChanged()
-                refreshConsole()
+                prefs.clearPlayingFeed()
+                // only one feed can be marked playing, so clearing all rows is
+                // the same result as unchecking "the" row — without an index
+                clearPlayingUi()
             }
             .show()
     }
@@ -398,8 +407,8 @@ class FeedsActivity : BaseActivity() {
 
         // transport mirrors the row pause control for whatever is playing
         binding.btnTransport.setOnClickListener {
-            val playing= playingIndex() ?: return@setOnClickListener
-            stopAudio(true, playing.first, playing.second)
+            if (playingIndex() == null) return@setOnClickListener
+            stopAudio(true)
         }
     }
 
@@ -449,10 +458,10 @@ class FeedsActivity : BaseActivity() {
             stopWave()
             binding.llWave.alpha= 0.28f
         } else {
-            val group= groupMainList[playing.first]
-            val feed= group.feedUrlList?.getOrNull(playing.second)
+            val group= groupMainList.getOrNull(playing.first)
+            val feed= group?.feedUrlList?.getOrNull(playing.second)
             binding.tvChannelName.text= feed?.name
-            binding.tvReadoutRegion.text= group.feedStateName
+            binding.tvReadoutRegion.text= group?.feedStateName
             binding.tvReadoutSource.text= sourceHost(feed?.url)
             setStatus(getString(R.string.scanner_rx), R.color.fw_success)
             binding.ivTransport.setImageResource(R.drawable.fw_ic_pause)

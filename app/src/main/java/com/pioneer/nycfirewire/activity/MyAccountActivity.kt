@@ -355,8 +355,7 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener {
                 prefs.userEmail = ""
                 prefs.soundName = ""
                 BackgroundAudioService.stopService(this)
-                prefs.feedMainPosition = -1
-                prefs.feedSubPosition = -1
+                prefs.clearPlayingFeed()
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                 prefs.isDarkMode = false
                 OneSignal.logout()

@@ -100,7 +100,11 @@ class MyApplication : Application() {
             override fun onActivitySaveInstanceState(p0: Activity, p1: Bundle) {}
             override fun onActivityDestroyed(p0: Activity) {
                 if (activityCount == 0) {
+                    // App swiped away / last screen gone: playback stops here, so the
+                    // persisted playing feed must go with it or the next scanner open
+                    // would try to restore a feed that is no longer playing.
                     BackgroundAudioService.stopService(this@MyApplication)
+                    prefs.clearPlayingFeed()
                 }
 
             }
