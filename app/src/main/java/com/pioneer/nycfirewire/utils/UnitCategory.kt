@@ -11,13 +11,16 @@ import com.pioneer.nycfirewire.R
  * eventually; until then the mapping is hardcoded here and must stay in
  * sync with the iOS UnitCategory implementation.
  */
-enum class UnitCategory(val bgColorRes: Int, val fgColorRes: Int) {
-    ENGINE(R.color.fw_unit_engine_bg, R.color.fw_unit_engine_fg),
-    TRUCK_RESCUE(R.color.fw_unit_truck_bg, R.color.fw_unit_truck_fg),
-    MARINE(R.color.fw_unit_marine_bg, R.color.fw_unit_marine_fg),
-    CHIEF(R.color.fw_unit_chief_bg, R.color.fw_unit_chief_fg),
-    SOC(R.color.fw_unit_soc_bg, R.color.fw_unit_soc_fg),
-    OTHER(R.color.fw_unit_other_bg, R.color.fw_unit_other_fg);
+enum class UnitCategory(val bgColorRes: Int) {
+    // Chip TEXT is not a resource: WireDetailActivity derives it from the
+    // background with UnitColors.contrastingText so every chip reads in light
+    // and dark (black on light backgrounds, white on dark ones).
+    ENGINE(R.color.fw_unit_engine_bg),
+    TRUCK_RESCUE(R.color.fw_unit_truck_bg),
+    MARINE(R.color.fw_unit_marine_bg),
+    CHIEF(R.color.fw_unit_chief_bg),
+    SOC(R.color.fw_unit_soc_bg),
+    OTHER(R.color.fw_unit_other_bg);
 
     companion object {
         private val socPrefixes = listOf("SQUAD", "HAZMAT", "RAC", "SOC", "SATELLITE")

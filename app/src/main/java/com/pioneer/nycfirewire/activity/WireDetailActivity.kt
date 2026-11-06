@@ -417,6 +417,7 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
         val padH = resources.getDimensionPixelSize(R.dimen.fw_unit_chip_pad_h)
         val padV = resources.getDimensionPixelSize(R.dimen.fw_unit_chip_pad_v)
         val dark = UnitColors.isDarkMode(this)
+        val surface = ContextCompat.getColor(this, R.color.fw_surface)
 
         // Server-resolved colors (per-locality scheme, editable in the portal).
         // Only when the field is present; otherwise the hardcoded classifier.
@@ -428,8 +429,9 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
             val (bgColor, fgColor) = if (serverColors != null) {
                 UnitColors.chipColors(this, server, dark)
             } else {
-                val category = UnitCategory.classify(unit)
-                Pair(ContextCompat.getColor(this, category.bgColorRes), ContextCompat.getColor(this, category.fgColorRes))
+                // Text follows the background (black/white by contrast) in light and dark.
+                val bg = ContextCompat.getColor(this, UnitCategory.classify(unit).bgColorRes)
+                Pair(bg, UnitColors.contrastingText(bg, surface))
             }
             val chip = TextView(this).apply {
                 text = unit
