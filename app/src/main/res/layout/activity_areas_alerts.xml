@@ -29,6 +29,17 @@
             android:paddingLeft="@dimen/fw_screen_margin"
             android:paddingRight="@dimen/fw_screen_margin">
 
+            <!-- alert picker hint: areas live here, types & units per area -->
+            <TextView
+                android:id="@+id/tv_filters_hint"
+                style="@style/TextAppearance.FireWire.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:paddingTop="8dp"
+                android:text="@string/areas_alerts_filters_hint" />
+
             <!-- GLOBAL ALERT SOUND card (design screen 13) -> AlertSoundActivity -->
             <LinearLayout
                 android:id="@+id/card_alert_sound"

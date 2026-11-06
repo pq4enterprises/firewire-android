@@ -104,6 +104,7 @@ import com.pioneer.nycfirewire.utils.AppUtils.isNetworkConnected
 import com.pioneer.nycfirewire.utils.Constants.FROM_START
 import com.pioneer.nycfirewire.utils.Constants.USER_BASIC_USER
 import com.pioneer.nycfirewire.utils.Constants.USER_PREMIUM_FREE
+import com.pioneer.nycfirewire.utils.PremiumPrompt
 import com.pioneer.nycfirewire.utils.DateUtils.getExpiryTime
 import com.pioneer.nycfirewire.utils.DateUtils.formatToIso8601
 import com.pioneer.nycfirewire.utils.DateUtils.getExpiryDate
@@ -361,8 +362,11 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
         // without a visit to My Account.
         vm.paymentLiveData.observe(this, Observer { response ->
             if (response.state == ResourceState.SUCCESS && response.data?.code == Constants.CODE_SUCCESS) {
+                val previousRole = prefs.userRole
                 prefs.userRole = USER_PREMIUM_FREE
                 Log.d("Billing", "Out-of-app subscription reported; role is now premium_free")
+                // once per purchase event: only when the role actually flipped
+                PremiumPrompt.showIfJustUpgraded(this, previousRole)
             } else if (response.state == ResourceState.ERROR) {
                 Log.e("Billing", "Reporting out-of-app subscription failed: ${response.message}")
             }

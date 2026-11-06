@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bottom segment of a card split across RecyclerView rows: rounded bottom corners -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:top="-2dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/fw_surface" />
+            <corners
+                android:bottomLeftRadius="@dimen/fw_corner_card"
+                android:bottomRightRadius="@dimen/fw_corner_card" />
+            <stroke android:width="@dimen/fw_hairline_width" android:color="@color/fw_hairline" />
+        </shape>
+    </item>
+</layer-list>

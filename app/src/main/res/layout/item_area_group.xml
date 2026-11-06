@@ -53,6 +53,44 @@
             tools:text="SELECT ALL" />
     </LinearLayout>
 
+    <!-- alert picker entry (one tap, independent of expand state):
+         TYPES & UNITS -> AlertFiltersActivity for this locality -->
+    <LinearLayout
+        android:id="@+id/btn_types_units"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="2dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:minHeight="32dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="8dp"
+        android:background="@drawable/fw_button_outline_bg"
+        android:foreground="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="@dimen/fw_text_chip"
+            android:textColor="@color/fw_red"
+            android:textAllCaps="true"
+            android:letterSpacing="0.03"
+            android:text="@string/areas_alerts_types_units" />
+
+        <ImageView
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_marginLeft="2dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/fw_ic_chevron_right"
+            app:tint="@color/fw_red" />
+    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/ll_rows_card"
         android:layout_width="match_parent"

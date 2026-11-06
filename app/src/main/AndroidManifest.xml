@@ -95,6 +95,11 @@
         <activity android:name=".activity.AreasAlertsActivity"
             android:exported="false" />
 
+        <!-- alert picker: incident types + units for one locality -->
+        <activity android:name=".activity.AlertFiltersActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
 
         <!-- OneSignal 5.x builds each notification on its own fallback channel whose
 

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- alert picker: closes the card when a section has no (matching) options -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tv_empty"
+    style="@style/TextAppearance.FireWire.Caption"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:padding="@dimen/fw_card_pad"
+    android:background="@drawable/fw_card_bg_bottom"
+    tools:text="No units match" />

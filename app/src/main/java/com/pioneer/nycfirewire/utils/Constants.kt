@@ -59,7 +59,10 @@ object Constants {
     var RADIO_CLICKED="radio_clicked"
     var CHANGE_PASSWORD="Change Password"
     var ALERT_SOUND="Alert Sound"
+    var ALERT_FILTERS="Alert Filters"
     var VERIFY_EMAIL="Verify Email"
     var CODE_EMAIL_NOT_VERIFIED="email_not_verified"
     var FROM_PAGE="from_page"
+    var LOCALITY_ID="localityId"
+    var LOCALITY_NAME="localityName"
 }

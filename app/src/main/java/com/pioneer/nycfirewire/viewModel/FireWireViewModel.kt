@@ -43,6 +43,9 @@ import javax.inject.Inject
 import com.pioneer.nycfirewire.model.link.LinkResponse
 import com.pioneer.nycfirewire.model.user.request.UserAreaItem
 import com.pioneer.nycfirewire.model.user.request.UserNotificationItem
+import com.pioneer.nycfirewire.model.alertfilters.AlertFiltersResponse
+import com.pioneer.nycfirewire.model.alertfilters.AlertFiltersUpdateRequest
+import com.pioneer.nycfirewire.model.alertfilters.AlertFiltersUpdateResponse
 
 
 @HiltViewModel
@@ -68,6 +71,18 @@ class FireWireViewModel @Inject constructor(val context: Application,val apiEndP
 
     fun saveUserNotifications(request: List<UserNotificationItem>){
         viewModelScope.launch { fireWireRepo.setUserNotifications(saveAlertsLiveData, request) }
+    }
+
+    // Alert picker screen (AlertFiltersActivity)
+    val alertFiltersLiveData = MutableLiveData<Resource<AlertFiltersResponse>>()
+    val saveAlertFiltersLiveData = MutableLiveData<Resource<AlertFiltersUpdateResponse>>()
+
+    fun getAlertFilters(localityId: String){
+        viewModelScope.launch { fireWireRepo.getAlertFilters(alertFiltersLiveData, localityId) }
+    }
+
+    fun saveAlertFilters(localityId: String, request: AlertFiltersUpdateRequest){
+        viewModelScope.launch { fireWireRepo.updateAlertFilters(saveAlertFiltersLiveData, localityId, request) }
     }
 
     val linkLiveData = MutableLiveData<Resource<LinkResponse>>()
