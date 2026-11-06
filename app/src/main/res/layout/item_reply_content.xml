@@ -84,7 +84,7 @@
         app:layout_constraintEnd_toStartOf="@+id/iv_menu_dot_reply"
         app:layout_constraintTop_toTopOf="@+id/fl_avatar_reply"
         app:layout_constraintBottom_toBottomOf="@+id/fl_avatar_reply"
-        tools:text="10 OCT | 10:15 AM" />
+        tools:text="10 OCT | 10:15" />
 
     <ImageView
         android:id="@+id/iv_menu_dot_reply"

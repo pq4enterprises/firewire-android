@@ -44,7 +44,7 @@
             android:textSize="@dimen/fw_text_caption"
             android:fontFamily="monospace"
             android:letterSpacing="0.05"
-            tools:text="UPDATED 2:41 PM" />
+            tools:text="UPDATED 14:41" />
 
         <TextView
             android:id="@+id/tv_filter"
