@@ -33,6 +33,7 @@ import com.pioneer.nycfirewire.model.payment.PaymentRequest
 import com.pioneer.nycfirewire.model.user.request.DeleteUser
 import com.pioneer.nycfirewire.model.user.request.FilterAreaType
 import com.pioneer.nycfirewire.model.user.request.LocalityUpdate
+import com.pioneer.nycfirewire.model.user.request.MapTypeUpdate
 import com.pioneer.nycfirewire.model.user.request.NotificationAreaData
 import com.pioneer.nycfirewire.model.user.request.PostAreaData
 import com.pioneer.nycfirewire.model.user.request.ProfileUpdateRequest
@@ -42,6 +43,7 @@ import com.pioneer.nycfirewire.resource.ResourceState
 import com.pioneer.nycfirewire.utils.Constants
 import com.pioneer.nycfirewire.utils.Constants.DARK
 import com.pioneer.nycfirewire.utils.Constants.LIGHT
+import com.pioneer.nycfirewire.utils.MapTypePrefs
 import com.pioneer.nycfirewire.utils.NetworkUtils
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -256,6 +258,10 @@ class FireWireRepository @Inject constructor(
         try {
             val result = apiEndPoint.getUserProfile()
             if (result.isSuccessful) {
+                // Every profile load (sign-in, home open, My Account, ...) passes
+                // through here, so this is the one place the server's map
+                // preference is mirrored into prefs for the maps to read.
+                result.body()?.data?.let { MapTypePrefs.syncFromServer(it.mapType) }
                 liveData.setSuccess(result.body())
             } else {
                 liveData.setError(errorHandling(result))
@@ -446,6 +452,30 @@ class FireWireRepository @Inject constructor(
         liveData.setLoading()
         try {
             val result = apiEndPoint.updateLocalityProfile(request)
+            if (result.isSuccessful) {
+                liveData.setSuccess(result.body())
+            } else {
+                liveData.setError(errorHandling(result))
+            }
+
+        } catch (e: Exception) {
+            liveData.setError(e.message.toString())
+        }
+    }
+
+    suspend fun updateMapType(
+        liveData: MutableLiveData<Resource<CommonResponse>>,
+        request: MapTypeUpdate,
+        context: Context
+    ) {
+        if (!NetworkUtils.isOnline(context)) {
+            liveData.setError(context.getString(R.string.network_connection))
+            return
+        }
+
+        liveData.setLoading()
+        try {
+            val result = apiEndPoint.updateMapType(request)
             if (result.isSuccessful) {
                 liveData.setSuccess(result.body())
             } else {

@@ -28,6 +28,7 @@ class Prefs(context: Context) {
     private val SHOW_APP_INTRO = "show_app_intro"
     private val SHOW_HOME_INTRO = "show_home_intro"
     private val SHOW_FEED_INTRO = "show_feed_intro"
+    private val MAP_TYPE = "map_type"
 
     private val preferences: SharedPreferences = context.getSharedPreferences(APP_PREF,Context.MODE_PRIVATE)
 
@@ -150,6 +151,17 @@ class Prefs(context: Context) {
 
     var showFeedIntro:Boolean get() = preferences.getBoolean(SHOW_FEED_INTRO,false)
         set(value) = preferences.edit().putBoolean(SHOW_FEED_INTRO,value).apply()
+
+    /**
+     * Preferred map type for every map in the app, mirrored from the profile's
+     * `mapType` ("standard" | "satellite" | "hybrid"). Keyed per user so two
+     * accounts on one device never see each other's choice. null = never chosen,
+     * in which case each screen keeps its historical default (see MapTypePrefs).
+     */
+    var mapType:String? get() = preferences.getString(mapTypeKey(), null)
+        set(value) = preferences.edit().putString(mapTypeKey(), value).apply()
+
+    private fun mapTypeKey() = MAP_TYPE + "_" + (userId ?: "anon")
 
 
 }

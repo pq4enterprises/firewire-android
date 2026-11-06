@@ -39,6 +39,7 @@ import com.pioneer.nycfirewire.model.incident.response.IncidentDataByID
 import com.pioneer.nycfirewire.model.incident.response.IncidentSubLocality
 import com.pioneer.nycfirewire.model.incident.response.Points
 import com.pioneer.nycfirewire.utils.BitmapFromVector
+import com.pioneer.nycfirewire.utils.MapTypePrefs
 import com.pioneer.nycfirewire.utils.Constants.CODE_SUCCESS
 import com.pioneer.nycfirewire.utils.Constants.INCIDENT_DETAILS
 import com.pioneer.nycfirewire.utils.Constants.INCIDENT_POST
@@ -505,20 +506,33 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
         segments.forEach { (segmentView, mapType) ->
             segmentView.setOnClickListener {
                 if (!::mMap.isInitialized) return@setOnClickListener
+                // Temporary override for this screen only; the persisted default
+                // lives in My Account > Map Type.
                 mMap.mapType = mapType
-                segments.keys.forEach { seg ->
-                    val selected = seg == segmentView
-                    seg.background = if (selected)
-                        ContextCompat.getDrawable(this, R.drawable.fw_map_seg_selected)
-                    else null
-                    seg.setTextColor(
-                        ContextCompat.getColor(
-                            this,
-                            if (selected) R.color.fw_map_seg_text_selected else R.color.white
-                        )
-                    )
-                }
+                highlightMapTypeSegment(mapType)
             }
+        }
+        // Initial highlight follows the user's saved preference (hybrid when unset).
+        highlightMapTypeSegment(MapTypePrefs.googleMapType(GoogleMap.MAP_TYPE_HYBRID))
+    }
+
+    private fun highlightMapTypeSegment(mapType: Int) {
+        val segments = mapOf(
+            binding.tvMapHybrid to GoogleMap.MAP_TYPE_HYBRID,
+            binding.tvMapStreet to GoogleMap.MAP_TYPE_NORMAL,
+            binding.tvMapSatellite to GoogleMap.MAP_TYPE_SATELLITE
+        )
+        segments.forEach { (seg, type) ->
+            val selected = type == mapType
+            seg.background = if (selected)
+                ContextCompat.getDrawable(this, R.drawable.fw_map_seg_selected)
+            else null
+            seg.setTextColor(
+                ContextCompat.getColor(
+                    this,
+                    if (selected) R.color.fw_map_seg_text_selected else R.color.white
+                )
+            )
         }
     }
 
@@ -559,7 +573,9 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_in_night))
-        mMap.mapType = GoogleMap.MAP_TYPE_HYBRID
+        // Saved default from My Account; hybrid is what this screen always forced,
+        // so it stays the fallback for users who never picked one.
+        mMap.mapType = MapTypePrefs.googleMapType(GoogleMap.MAP_TYPE_HYBRID)
 
         pendingIncidentResponse?.let {
             addingMarkerInMap(it.data?.data)

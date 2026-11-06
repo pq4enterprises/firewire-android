@@ -11,6 +11,7 @@ import com.pioneer.nycfirewire.model.payment.PaymentRequest
 import com.pioneer.nycfirewire.model.user.request.DeleteUser
 import com.pioneer.nycfirewire.model.user.request.ForgotPasswordRequest
 import com.pioneer.nycfirewire.model.user.request.LocalityUpdate
+import com.pioneer.nycfirewire.model.user.request.MapTypeUpdate
 import com.pioneer.nycfirewire.model.user.request.LoginRequest
 import com.pioneer.nycfirewire.model.user.request.NotificationAreaData
 import com.pioneer.nycfirewire.model.user.request.PostAreaData
@@ -146,6 +147,9 @@ interface ApiEndPoints {
 
     @PUT("api/app/user/profile")
     suspend fun updateLocalityProfile(@Body request: LocalityUpdate):Response<CommonResponse>
+
+    @PUT("api/app/user/profile")
+    suspend fun updateMapType(@Body request: MapTypeUpdate):Response<CommonResponse>
 
     @POST("api/app/user/area?sortBy=createdAt&sortDir=desc") //&offset=1&limit=100
     suspend fun postSelectedArea(@Body request: ArrayList<PostAreaData>):Response<CommonResponse>

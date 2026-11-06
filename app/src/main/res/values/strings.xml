@@ -56,6 +56,10 @@
     <string name="fw_promo_hint">Have a promo code? Tap GET NOW, then choose Redeem code under the payment method.</string>
     <string name="terms_of_service">Terms Of Service</string>
     <string name="privacy_policy">Privacy Policy</string>
+    <string name="map_type">Map Type</string>
+    <string name="map_type_with_value">Map Type: %1$s</string>
+    <string name="map_type_dialog_title">Default map type</string>
+    <string name="map_type_saved">Map type updated</string>
     <string name="sign_out">Sign Out</string>
     <string name="save_update">Save and Update</string>
     <string name="change_password">Change Password ?</string>
