@@ -56,6 +56,9 @@
     <string name="fw_promo_hint">Have a promo code? Tap GET NOW, then choose Redeem code under the payment method.</string>
     <string name="terms_of_service">Terms Of Service</string>
     <string name="privacy_policy">Privacy Policy</string>
+    <string name="app_version_format">Version %1$s (build %2$d)</string>
+    <string name="app_version_content_description">App version %1$s, tap to copy</string>
+    <string name="copied">Copied</string>
     <string name="sign_out">Sign Out</string>
     <string name="save_update">Save and Update</string>
     <string name="change_password">Change Password ?</string>
