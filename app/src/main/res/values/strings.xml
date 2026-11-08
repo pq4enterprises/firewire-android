@@ -30,7 +30,7 @@
     <string name="done">Done</string>
     <string name="select_all">Select All</string>
     <!-- Feed header readout. Matches iOS IncidentListViewController's
-         "UPDATED 2:41 PM" stamp; the old "%s Posts are listed" count is gone. -->
+         "UPDATED 14:41" stamp (24-hour); the old "%s Posts are listed" count is gone. -->
     <string name="feed_updated_at">Updated %1$s</string>
     <string name="feed_updated_placeholder">Updated \u2014</string>
     <string name="filter">Filter</string>

@@ -104,7 +104,7 @@
                         android:fontFamily="monospace"
                         android:textColor="@color/fw_muted"
                         android:textSize="@dimen/fw_text_chip"
-                        tools:text="07 JUL | 08:31 AM"/>
+                        tools:text="07 JUL | 08:31"/>
                 </LinearLayout>
 
                 <LinearLayout

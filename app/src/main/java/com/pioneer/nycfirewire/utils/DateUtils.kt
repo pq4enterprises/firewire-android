@@ -7,7 +7,15 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+/**
+ * All user-facing times are 24-hour ("HH:mm"). Patterns are explicit and pinned
+ * to Locale.US so the device's 12/24-hour setting and locale cannot flip them.
+ * Parse patterns and the payment payload (formatToIso8601) are untouched.
+ */
 object DateUtils {
+
+    private const val WIRE_DATE_TIME_PATTERN = "dd LLL | HH:mm"   // "07 Jul | 20:31"
+    private const val NEWS_DATE_TIME_PATTERN = "dd MMM | HH:mm"   // "08 Oct | 16:20"
 
 
     fun getFormattedDateOfFireWire(date:String): String {
@@ -16,7 +24,7 @@ object DateUtils {
 
             var spf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH)
             val newDate = spf.parse(date)
-            spf = SimpleDateFormat("dd LLL | hh:mm aa", Locale.ENGLISH)
+            spf = SimpleDateFormat(WIRE_DATE_TIME_PATTERN, Locale.US)
             formatDate = spf.format(newDate!!)
         }catch (e:Exception){
             e.printStackTrace()
@@ -31,8 +39,8 @@ object DateUtils {
         isoFormat.timeZone = TimeZone.getTimeZone("UTC") // The 'Z' means UTC
 
         val date: Date = isoFormat.parse(isoString)!!
-        // Format the date to "dd LLL | hh:mm aa"
-        val outputFormat = SimpleDateFormat("dd LLL | hh:mm aa", Locale.ENGLISH)
+        // Format the date to "dd LLL | HH:mm" (24-hour)
+        val outputFormat = SimpleDateFormat(WIRE_DATE_TIME_PATTERN, Locale.US)
         outputFormat.timeZone = TimeZone.getDefault() // Local timezone (IST, for example)
 
         return outputFormat.format(date)
@@ -50,8 +58,7 @@ object DateUtils {
             return null
         }
 
-        val outputPattern = "dd MMM | hh:mm a" // "08 Oct | 04:20 PM"
-        val outputFormatter = SimpleDateFormat(outputPattern, Locale.ENGLISH)
+        val outputFormatter = SimpleDateFormat(NEWS_DATE_TIME_PATTERN, Locale.US)
 
         return date?.let { outputFormatter.format(it) }
     }

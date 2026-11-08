@@ -114,8 +114,8 @@ class WireFragment: Fragment(),IncidentClickListener {
             putParcelableArrayList(NAV_WIRE_list,incident)
         }
 
-        /** Matches iOS's "h:mm a" last-updated stamp. */
-        private val updatedTimeFormatter = SimpleDateFormat("h:mm a", Locale.getDefault())
+        /** 24-hour last-updated stamp ("UPDATED 14:41"); Locale.US pins the pattern. */
+        private val updatedTimeFormatter = SimpleDateFormat("HH:mm", Locale.US)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

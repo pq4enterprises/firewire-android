@@ -70,7 +70,7 @@
         app:layout_constraintEnd_toStartOf="@+id/iv_menu_dot"
         app:layout_constraintTop_toTopOf="@+id/fl_avatar"
         app:layout_constraintBottom_toBottomOf="@+id/fl_avatar"
-        tools:text="10 OCT | 10:15 AM" />
+        tools:text="10 OCT | 10:15" />
 
     <!-- overflow: report for everyone, delete / featured image for admins -->
     <ImageView

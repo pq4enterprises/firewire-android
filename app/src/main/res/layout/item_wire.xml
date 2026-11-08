@@ -59,7 +59,7 @@
                 android:fontFamily="monospace"
                 android:textColor="@color/fw_muted"
                 android:textSize="@dimen/fw_text_chip"
-                tools:text="07 JUL | 03:48 PM"/>
+                tools:text="07 JUL | 15:48"/>
         </LinearLayout>
 
         <!-- incident description -->
