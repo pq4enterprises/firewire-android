@@ -18,20 +18,21 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.pioneer.nycfirewire.R
 import com.pioneer.nycfirewire.receiver.MyAudioBroadCastReceiver
 import com.pioneer.nycfirewire.utils.Constants.ACTION_STOP
-import com.pioneer.nycfirewire.utils.IntentUtils.AUDIO_MAIN_POSITION
-import com.pioneer.nycfirewire.utils.IntentUtils.AUDIO_SUB_POSITION
 import com.pioneer.nycfirewire.utils.IntentUtils.AUDIO_URL
 
+/**
+ * Foreground playback service. Holds exactly one ExoPlayer, identified by the
+ * stream URL it was built for. The previous build kept a map of players keyed
+ * by the feed's adapter position: a position is not a stable identity (it
+ * changes when areas are added/removed or the server reorders), so a re-start
+ * for the same stream at a new position leaked the old player and could play
+ * two streams at once.
+ */
 class BackgroundAudioService : Service() {
 
-    //private lateinit var exoPlayer: ExoPlayer
-    private var playerPosition: Int = -1
-    private var subPosition: Int = -1
     private val pauseAction = "ACTION_PAUSE"
     private var url: String?=null
-
-
-    private val exoPlayer = mutableMapOf<Int, ExoPlayer?>()
+    private var player: ExoPlayer? = null
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate() {
@@ -58,8 +59,6 @@ class BackgroundAudioService : Service() {
             action = pauseAction
             putExtra(EXTRA_NOTIFICATION_ID, 0)
             putExtra(AUDIO_URL,url)
-            putExtra(AUDIO_MAIN_POSITION,playerPosition)
-            putExtra(AUDIO_SUB_POSITION,subPosition)
         }
 
         // Create a PendingIntent for the snooze action
@@ -84,23 +83,22 @@ class BackgroundAudioService : Service() {
             // Service restarted by system without intent
             return START_STICKY // Or START_NOT_STICKY if you want it to stop
         }
-        url = intent.getStringExtra("url") ?: return START_NOT_STICKY
-        playerPosition = intent.getIntExtra("mainPosition", -1)
-        subPosition = intent.getIntExtra("position", -1)
+        val requestedUrl = intent.getStringExtra("url") ?: return START_NOT_STICKY
         var actionOfNotification= intent.getStringExtra("action").toString()
 
         if(actionOfNotification!=pauseAction) {
-
-            if (exoPlayer[playerPosition] == null) {
-                val player = ExoPlayer.Builder(this).build().apply {
-                    val mediaItem = MediaItem.fromUri(url.toString())
-                    setMediaItem(mediaItem)
+            // Same stream already loaded (adapter re-bind after a list refresh):
+            // keep playing. Different stream: swap the player. This is keyed by
+            // URL, never by list position.
+            if (player == null || requestedUrl != url) {
+                releasePlayer()
+                url = requestedUrl
+                player = ExoPlayer.Builder(this).build().apply {
+                    setMediaItem(MediaItem.fromUri(requestedUrl))
                     prepare()
+                    playWhenReady = true
                 }
-                exoPlayer[playerPosition] = player
-                player.playWhenReady = true
             }
-
 
             startForeground(1, buildNotification())
         }
@@ -129,18 +127,20 @@ class BackgroundAudioService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        exoPlayer[playerPosition]?.release()
-        //val intent = Intent(AUDIO_BROADCAST)
-        //LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+        releasePlayer()
+    }
+
+    private fun releasePlayer() {
+        player?.release()
+        player = null
+        url = null
     }
 
 
     companion object {
-        fun startService(context: Context, url: String, mainPosition:Int,position: Int, pauseAction: String) {
+        fun startService(context: Context, url: String, pauseAction: String) {
             val intent = Intent(context, BackgroundAudioService::class.java).apply {
                 putExtra("url", url)
-                putExtra("mainPosition", mainPosition)
-                putExtra("position", position)
                 putExtra("action", pauseAction)
             }
             context.startService(intent)
@@ -152,17 +152,17 @@ class BackgroundAudioService : Service() {
     }
 
      fun togglePlayback() {
-        if (exoPlayer[playerPosition]?.isPlaying == true) {
-            exoPlayer[playerPosition]?.pause()
+        if (player?.isPlaying == true) {
+            player?.pause()
         } else {
-            exoPlayer[playerPosition]?.play()
+            player?.play()
         }
         // Update the notification after toggling the playback
         updateNotification()
     }
 
     private fun stopPlayback() {
-        exoPlayer[playerPosition]?.stop()
+        player?.stop()
         stopForeground(true) // Stop the service and remove the notification
         stopSelf()
     }

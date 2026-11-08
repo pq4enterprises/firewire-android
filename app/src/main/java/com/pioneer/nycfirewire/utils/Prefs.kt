@@ -23,6 +23,8 @@ class Prefs(context: Context) {
     private val COMMENT_COUNT = "comment_count"
     private val FEED_MAIN_POS = "feed_main_pos"
     private val FEED_SUB_POS = "feed_sub_pos"
+    private val PLAYING_FEED_ID = "playing_feed_id"
+    private val PLAYING_FEED_URL = "playing_feed_url"
     private val SOUND_NAME = "sound_name"
     private val ALERT_SOUND = "alert_sound"
     private val SHOW_APP_INTRO = "show_app_intro"
@@ -102,11 +104,53 @@ class Prefs(context: Context) {
     var commentCount:String? get() = preferences.getString(COMMENT_COUNT,"")
         set(value) = preferences.edit().putString(COMMENT_COUNT,value).apply()
 
+    /**
+     * Legacy: adapter positions of the playing feed. No longer read anywhere —
+     * a position written against one feed list crashed FeedsActivity with
+     * IndexOutOfBoundsException once the list shrank or reordered (areas
+     * removed, server reorder). Kept only so clearPlayingFeed() can wipe a
+     * value left behind by an older build.
+     */
+    @Deprecated("Use playingFeedId / playingFeedUrl")
     var feedMainPosition: Int get() = preferences.getInt(FEED_MAIN_POS,-1)
         set(value) = preferences.edit().putInt(FEED_MAIN_POS,value).apply()
 
+    @Deprecated("Use playingFeedId / playingFeedUrl")
     var feedSubPosition: Int get() = preferences.getInt(FEED_SUB_POS,-1)
         set(value) = preferences.edit().putInt(FEED_SUB_POS,value).apply()
+
+    /** `_id` of the feed currently playing in BackgroundAudioService, or null when idle. */
+    var playingFeedId: String? get() = preferences.getString(PLAYING_FEED_ID,null)
+        set(value) = preferences.edit().putString(PLAYING_FEED_ID,value).apply()
+
+    /** Stream URL of the playing feed; fallback identity if the `_id` changes server-side. */
+    var playingFeedUrl: String? get() = preferences.getString(PLAYING_FEED_URL,null)
+        set(value) = preferences.edit().putString(PLAYING_FEED_URL,value).apply()
+
+    fun isFeedPlaying(): Boolean = !playingFeedId.isNullOrEmpty() || !playingFeedUrl.isNullOrEmpty()
+
+    fun setPlayingFeed(id: String?, url: String?) {
+        preferences.edit()
+            .putString(PLAYING_FEED_ID, id)
+            .putString(PLAYING_FEED_URL, url)
+            .remove(FEED_MAIN_POS)
+            .remove(FEED_SUB_POS)
+            .apply()
+    }
+
+    /**
+     * Single place every stop path goes through (stop dialog, notification
+     * Stop, sign-out, last activity destroyed). Also removes the legacy
+     * positions so an upgraded install can never resurrect a stale index.
+     */
+    fun clearPlayingFeed() {
+        preferences.edit()
+            .remove(PLAYING_FEED_ID)
+            .remove(PLAYING_FEED_URL)
+            .remove(FEED_MAIN_POS)
+            .remove(FEED_SUB_POS)
+            .apply()
+    }
 
     var soundName:String? get() = preferences.getString(SOUND_NAME,"")
         set(value) = preferences.edit().putString(SOUND_NAME,value).apply()
