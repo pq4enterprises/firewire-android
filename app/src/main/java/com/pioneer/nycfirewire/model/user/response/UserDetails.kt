@@ -15,6 +15,8 @@ data class UserDetails(
     var title:String?="",
     var img:String?="",
     var emailVerified: Boolean?=false,
+    /** Preferred map type: "standard" | "satellite" | "hybrid"; null = never chosen. */
+    var mapType:String?=null,
 ):Parcelable
 
 

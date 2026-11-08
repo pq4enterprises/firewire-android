@@ -389,6 +389,26 @@
                 android:text="@string/areas_alerts" />
 
             <TextView
+                android:id="@+id/tv_map_type"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginBottom="@dimen/fw_card_gap"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/dis_16"
+                android:paddingRight="@dimen/dis_16"
+                android:background="@drawable/fw_card_bg"
+                android:fontFamily="@font/poppins_bold"
+                android:textSize="@dimen/fw_text_section"
+                android:textColor="@color/fw_text"
+                android:textAllCaps="true"
+                android:letterSpacing="0.02"
+                android:drawablePadding="14dp"
+                app:drawableStartCompat="@drawable/fw_ic_globe"
+                app:drawableEndCompat="@drawable/fw_ic_chevron_right"
+                app:drawableTint="@color/fw_muted"
+                android:text="@string/map_type" />
+
+            <TextView
                 android:id="@+id/tv_terms_service"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"

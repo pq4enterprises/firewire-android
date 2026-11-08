@@ -59,6 +59,10 @@
     <string name="app_version_format">Version %1$s (build %2$d)</string>
     <string name="app_version_content_description">App version %1$s, tap to copy</string>
     <string name="copied">Copied</string>
+    <string name="map_type">Map Type</string>
+    <string name="map_type_with_value">Map Type: %1$s</string>
+    <string name="map_type_dialog_title">Default map type</string>
+    <string name="map_type_saved">Map type updated</string>
     <string name="sign_out">Sign Out</string>
     <string name="save_update">Save and Update</string>
     <string name="change_password">Change Password ?</string>

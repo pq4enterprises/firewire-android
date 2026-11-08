@@ -67,6 +67,60 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener {
         vm.paymentLiveData.observe(this, Observer {
             updatePayment(it)
         })
+
+        vm.updateMapTypeLiveData.observe(this, Observer { onMapTypeSaved(it) })
+        renderMapTypeRow()
+    }
+
+    /** Row label reflects the current choice, e.g. "MAP TYPE: HYBRID". */
+    private fun renderMapTypeRow() {
+        val label = MapTypePrefs.label(prefs.mapType)
+        binding.tvMapType.text = if (label == null) getString(R.string.map_type)
+        else getString(R.string.map_type_with_value, label)
+    }
+
+    /**
+     * STREET / SATELLITE / HYBRID picker. The choice is applied locally right
+     * away (prefs + row label, so the home map picks it up in onResume) and then
+     * PUT to the profile; a failed PUT rolls the local copy back and reports.
+     */
+    private fun showMapTypeDialog() {
+        val labels = MapTypePrefs.LABELS.map { it.uppercase() }.toTypedArray()
+        val checked = MapTypePrefs.VALUES.indexOf(prefs.mapType)
+        AlertDialog.Builder(this)
+            .setTitle(R.string.map_type_dialog_title)
+            .setSingleChoiceItems(labels, checked) { dialog, which ->
+                dialog.dismiss()
+                val value = MapTypePrefs.VALUES[which]
+                if (value == prefs.mapType) return@setSingleChoiceItems
+                previousMapType = prefs.mapType
+                prefs.mapType = value
+                renderMapTypeRow()
+                vm.updateMapType(value)
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    private var previousMapType: String? = null
+
+    private fun onMapTypeSaved(response: Resource<CommonResponse>) {
+        when (response.state) {
+            ResourceState.LOADING -> binding.progress.visible()
+            ResourceState.SUCCESS -> {
+                binding.progress.gone()
+                showToast(this, getString(R.string.map_type_saved))
+            }
+            ResourceState.ERROR -> {
+                binding.progress.gone()
+                prefs.mapType = previousMapType
+                renderMapTypeRow()
+                if (response.message != getString(R.string.token_expired)) {
+                    showAlert(response.message)
+                }
+            }
+            else -> {}
+        }
     }
 
     /**
@@ -359,6 +413,7 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener {
             billingClient.launchBillingFlow(this, flowParams)
         }
 
+        binding.tvMapType.setOnClickListener { showMapTypeDialog() }
         binding.tvTermsService.setOnClickListener { moveToLink("https://nycfirewire.net/terms") }
         binding.tvPrivacyPolicy.setOnClickListener { moveToLink("https://nycfirewire.net/privacy") }
         binding.tvSignOut.setOnClickListener { showSignOut(getString(R.string.you_want_to_sign_out)) }

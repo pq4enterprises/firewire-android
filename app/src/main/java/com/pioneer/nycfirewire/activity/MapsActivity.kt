@@ -69,6 +69,7 @@ import com.pioneer.nycfirewire.model.locality.LocalityResponse
 import com.pioneer.nycfirewire.prefs
 import com.pioneer.nycfirewire.utils.Constants
 import com.pioneer.nycfirewire.utils.Constants.MAP_PAGE
+import com.pioneer.nycfirewire.utils.MapTypePrefs
 import com.pioneer.nycfirewire.utils.Constants.LOCALITY_DATA
 import com.pioneer.nycfirewire.utils.IntentUtils.BUN_WIRE_DETAILS
 import com.pioneer.nycfirewire.utils.NAV_COMMENT_LIST
@@ -233,6 +234,8 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
         // screen_view. The hosted fragments report their own on top of this.
         analyticMethod(MAP_PAGE,"MapsActivity")
         //mapFragment.onResume()
+        // Re-apply so a change made in My Account shows without a restart.
+        if (::mMap.isInitialized) MapTypePrefs.apply(mMap, GoogleMap.MAP_TYPE_NORMAL)
         val currentFragment = supportFragmentManager.fragments.lastOrNull { it.isVisible }
 
         if(currentFragment is WireFragment){
@@ -786,6 +789,9 @@ class MapsActivity : BaseActivity(), OnMapReadyCallback , ReplaceCallback, Callb
        // if(prefs.isDarkMode) {
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_in_night));
        // }
+        // My Account > Map Type. Street (NORMAL) is what this map always showed,
+        // so that stays the fallback for users who never picked one.
+        MapTypePrefs.apply(mMap, GoogleMap.MAP_TYPE_NORMAL)
         mMap.setOnMarkerClickListener { marker ->
             if(marker.isInfoWindowShown){
                 marker.hideInfoWindow()

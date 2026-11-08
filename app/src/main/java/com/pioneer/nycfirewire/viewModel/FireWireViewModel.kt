@@ -30,6 +30,7 @@ import com.pioneer.nycfirewire.repository.FireWireRepository
 import com.pioneer.nycfirewire.resource.Resource
 import com.pioneer.nycfirewire.model.user.request.DeleteUser
 import com.pioneer.nycfirewire.model.user.request.LocalityUpdate
+import com.pioneer.nycfirewire.model.user.request.MapTypeUpdate
 import com.pioneer.nycfirewire.model.user.request.NotificationAreaData
 import com.pioneer.nycfirewire.model.user.request.PostAreaData
 import com.pioneer.nycfirewire.model.user.request.ProfileUpdateRequest
@@ -93,6 +94,7 @@ class FireWireViewModel @Inject constructor(val context: Application,val apiEndP
     val feedLiveData = MutableLiveData<Resource<FeedResponse>>()
     val addCommentLiveData = MutableLiveData<Resource<CommonResponse>>()
     val updateLocalityLiveData = MutableLiveData<Resource<CommonResponse>>()
+    val updateMapTypeLiveData = MutableLiveData<Resource<CommonResponse>>()
     val postSelectAreaLiveData = MutableLiveData<Resource<CommonResponse>>()
     val postNotificationAreaLiveData = MutableLiveData<Resource<CommonResponse>>()
     val paymentLiveData = MutableLiveData<Resource<CommonResponse>>()
@@ -160,6 +162,12 @@ class FireWireViewModel @Inject constructor(val context: Application,val apiEndP
     fun updateLocalityProfile(request: LocalityUpdate){
         viewModelScope.launch {
             fireWireRepo.updateLocalityProfile(updateLocalityLiveData,request, context)
+        }
+    }
+
+    fun updateMapType(mapType: String){
+        viewModelScope.launch {
+            fireWireRepo.updateMapType(updateMapTypeLiveData, MapTypeUpdate(mapType), context)
         }
     }
 

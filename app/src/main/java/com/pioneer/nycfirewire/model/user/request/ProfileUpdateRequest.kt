@@ -18,3 +18,11 @@ data class LocalityUpdate(
     var unit:ArrayList<String>?=null,
 )
 
+/**
+ * Body for the map-type-only profile update. Kept separate from
+ * ProfileUpdateRequest so saving a map preference never re-sends (and never
+ * blanks) name / email / role; Gson omits nulls so nothing else is touched.
+ */
+data class MapTypeUpdate(
+    var mapType: String
+)
