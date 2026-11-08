@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- alert picker section header: label + card with the "All ..." switch.
+     When the switch is OFF the card continues below (tools + option rows). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_section_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="8dp"
+        android:fontFamily="@font/poppins_bold"
+        android:textSize="@dimen/fw_text_body"
+        android:textColor="@color/fw_text"
+        android:textAllCaps="true"
+        android:letterSpacing="0.03"
+        tools:text="INCIDENT TYPES" />
+
+    <LinearLayout
+        android:id="@+id/ll_section_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:minHeight="58dp"
+        android:paddingLeft="@dimen/fw_card_pad"
+        android:paddingRight="@dimen/fw_card_pad"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:background="@drawable/fw_card_bg">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginRight="12dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_all_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="@dimen/fw_text_section"
+                android:textColor="@color/fw_text"
+                android:textAllCaps="true"
+                tools:text="ALL INCIDENT TYPES" />
+
+            <TextView
+                android:id="@+id/tv_summary"
+                style="@style/TextAppearance.FireWire.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                tools:text="Every incident type alerts you" />
+        </LinearLayout>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/sw_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:thumb="@drawable/fw_switch_thumb"
+            app:track="@drawable/fw_switch_track"
+            app:showText="false" />
+    </LinearLayout>
+
+</LinearLayout>

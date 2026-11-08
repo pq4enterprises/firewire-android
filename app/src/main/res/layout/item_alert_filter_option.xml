@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- alert picker checkbox row (incident type or unit); the whole row is the tap target -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_option"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="@drawable/fw_card_bg_mid">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/fw_card_pad"
+        android:paddingRight="6dp">
+
+        <TextView
+            android:id="@+id/tv_option_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="@dimen/fw_text_section"
+            android:textColor="@color/fw_text"
+            android:textAllCaps="true"
+            tools:text="ALL HANDS" />
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/cb_option"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:focusable="false"
+            app:buttonTint="@color/fw_red" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fw_hairline_width"
+        android:layout_marginLeft="@dimen/fw_card_pad"
+        android:background="@color/fw_hairline" />
+
+</LinearLayout>

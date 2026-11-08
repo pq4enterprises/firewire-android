@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- alert picker tools row (only while "All" is OFF): optional search box
+     plus SELECT ALL / NONE links and a selected-count caption -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/fw_card_bg_mid">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fw_hairline_width"
+        android:layout_marginLeft="@dimen/fw_card_pad"
+        android:background="@color/fw_hairline" />
+
+    <EditText
+        android:id="@+id/et_search"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginLeft="@dimen/fw_card_pad"
+        android:layout_marginRight="@dimen/fw_card_pad"
+        android:layout_marginTop="12dp"
+        android:paddingLeft="14dp"
+        android:paddingRight="14dp"
+        android:hint="@string/alert_filters_search_units"
+        android:inputType="textNoSuggestions|textCapCharacters"
+        android:imeOptions="actionSearch|flagNoExtractUi"
+        android:maxLines="1"
+        android:background="@drawable/fw_input_bg"
+        android:fontFamily="@font/poppins_semibold"
+        android:textSize="@dimen/fw_text_body"
+        android:textColor="@color/fw_text"
+        android:textColorHint="@color/fw_muted"
+        android:importantForAutofill="no" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/fw_card_pad"
+        android:paddingRight="10dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="2dp">
+
+        <TextView
+            android:id="@+id/tv_count"
+            style="@style/TextAppearance.FireWire.Caption"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            tools:text="12 OF 40 SELECTED" />
+
+        <TextView
+            android:id="@+id/tv_select_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="36dp"
+            android:gravity="center"
+            android:padding="6dp"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="@dimen/fw_text_chip"
+            android:textColor="@color/fw_red"
+            android:textAllCaps="true"
+            android:letterSpacing="0.03"
+            android:text="@string/alert_filters_select_all" />
+
+        <TextView
+            android:id="@+id/tv_select_none"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="36dp"
+            android:gravity="center"
+            android:padding="6dp"
+            android:layout_marginLeft="4dp"
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="@dimen/fw_text_chip"
+            android:textColor="@color/fw_red"
+            android:textAllCaps="true"
+            android:letterSpacing="0.03"
+            android:text="@string/alert_filters_select_none" />
+    </LinearLayout>
+
+</LinearLayout>

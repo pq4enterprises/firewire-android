@@ -148,10 +148,14 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener {
         when (response.state) {
             ResourceState.LOADING -> binding.progress.visible()
             ResourceState.SUCCESS -> {
+                // role BEFORE this payment landed: the prompt below fires only
+                // on the basic -> premium transition (once per purchase event)
+                val previousRole = prefs.userRole
                 isPurchased = true
                 prefs.userRole = Constants.USER_PREMIUM_FREE
                 renderSubscriptionState()
                 binding.progress.gone()
+                PremiumPrompt.showIfJustUpgraded(this, previousRole)
 
                 Log.d("Billing", "Backend confirmed payment: ${response.data}")
                 if (response.data?.code == Constants.CODE_SUCCESS) {

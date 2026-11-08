@@ -16,6 +16,7 @@ import com.pioneer.nycfirewire.prefs
 import com.pioneer.nycfirewire.resource.Resource
 import com.pioneer.nycfirewire.resource.ResourceState
 import android.content.Intent
+import androidx.activity.result.contract.ActivityResultContracts
 import com.pioneer.nycfirewire.utils.Constants
 import com.pioneer.nycfirewire.utils.Constants.PERSONALIZATION
 import com.pioneer.nycfirewire.utils.gone
@@ -74,6 +75,20 @@ class AreasAlertsActivity : BaseActivity() {
     private var alertResponse: List<Locality>? = null
     private var pendingSaves = 0
 
+    // After the alert picker (AlertFiltersActivity) saves, the server's unit /
+    // incident-type rows for that locality changed. Re-read ONLY the preserved
+    // rows so the next SAVE here re-sends the fresh set instead of a stale one
+    // (POST api/app/user/notification drops any row not in the payload).
+    private var refreshPreservedOnly = false
+    private val alertFiltersLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                showSnack(getString(R.string.alert_filters_saved))
+                refreshPreservedOnly = true
+                vm.getAlertLocalityList()
+            }
+        }
+
     // selection sets being committed; promoted to initial* once the save lands
     private var savingFeedIds = setOf<String>()
     private var savingAlertIds = setOf<String>()
@@ -107,6 +122,7 @@ class AreasAlertsActivity : BaseActivity() {
         if (isFromStart) {
             binding.toolbar.ivMenu.gone()
             binding.cardAlertSound.gone()
+            binding.tvFiltersHint.gone()
             binding.tvHelper.text = getString(R.string.areas_alerts_onboarding_helper)
             binding.btnSave.text = getString(R.string.areas_alerts_continue)
         }
@@ -153,6 +169,15 @@ class AreasAlertsActivity : BaseActivity() {
             when (response.state) {
                 ResourceState.LOADING -> binding.progress.visible()
                 ResourceState.SUCCESS -> {
+                    if (refreshPreservedOnly && groups.isNotEmpty()) {
+                        // returning from the alert picker: keep the user's
+                        // unsaved toggles, refresh only the re-sent rows
+                        refreshPreservedOnly = false
+                        binding.progress.gone()
+                        collectPreservedRows(response.data?.data?.data.orEmpty())
+                        return@Observer
+                    }
+                    refreshPreservedOnly = false
                     alertResponse = response.data?.data?.data
                     onListsLoaded()
                 }
@@ -174,20 +199,12 @@ class AreasAlertsActivity : BaseActivity() {
         binding.progress.gone()
 
         val alertCheckedSubIds = HashSet<String>()
-        preservedUnitRows.clear()
-        preservedIncidentTypeRows.clear()
         alerts.forEach { locality ->
-            val localityId = locality._id ?: return@forEach
             locality.subLocality?.forEach { sub ->
                 if (sub.isChecked) sub._id?.let { alertCheckedSubIds.add(it) }
             }
-            locality.unit?.forEach { unit ->
-                if (unit.isChecked) unit._id?.let { preservedUnitRows.add(localityId to it) }
-            }
-            locality.incidentType?.forEach { type ->
-                if (type.isChecked) type._id?.let { preservedIncidentTypeRows.add(localityId to it) }
-            }
         }
+        collectPreservedRows(alerts)
 
         groups.clear()
         val feedIds = HashSet<String>()
@@ -216,6 +233,25 @@ class AreasAlertsActivity : BaseActivity() {
         initialAlertIds = alertCheckedSubIds.toSet()
 
         setupAdapter()
+    }
+
+    /**
+     * Unit / incident-type alert rows the server currently holds. The alert
+     * picker writes these (scoped by locality); this screen never edits them
+     * but must re-send them on save so the server's diff keeps them.
+     */
+    private fun collectPreservedRows(alerts: List<Locality>) {
+        preservedUnitRows.clear()
+        preservedIncidentTypeRows.clear()
+        alerts.forEach { locality ->
+            val localityId = locality._id ?: return@forEach
+            locality.unit?.forEach { unit ->
+                if (unit.isChecked) unit._id?.let { preservedUnitRows.add(localityId to it) }
+            }
+            locality.incidentType?.forEach { type ->
+                if (type.isChecked) type._id?.let { preservedIncidentTypeRows.add(localityId to it) }
+            }
+        }
     }
 
     // Region display priority — first match wins; unlisted regions follow alphabetically.
@@ -262,6 +298,19 @@ class AreasAlertsActivity : BaseActivity() {
                 groupBinding.llGroupHeader.setOnClickListener {
                     expandedGroups[group.localityId] = !expanded
                     binding.rvGroups.adapter?.notifyItemChanged(pos)
+                }
+
+                // TYPES & UNITS -> alert picker for this locality; premium only,
+                // gated exactly like an alert switch. Hidden during onboarding
+                // (new accounts are basic_user and have no alerts yet).
+                groupBinding.btnTypesUnits.visibility =
+                    if (isFromStart) android.view.View.GONE else android.view.View.VISIBLE
+                groupBinding.btnTypesUnits.setOnClickListener {
+                    if (isBasicUser()) {
+                        launchPaywall()
+                    } else {
+                        openAlertFilters(group)
+                    }
                 }
 
                 // SELECT ALL consumes its own tap — it never collapses the group
@@ -312,6 +361,13 @@ class AreasAlertsActivity : BaseActivity() {
         val intent = Intent(this, MyAccountActivity::class.java)
         intent.putExtra(IntentUtils.FROM_ACCOUNT, IntentUtils.OTHER)
         startActivity(intent)
+    }
+
+    private fun openAlertFilters(group: AreaGroup) {
+        val intent = Intent(this, AlertFiltersActivity::class.java)
+        intent.putExtra(Constants.LOCALITY_ID, group.localityId)
+        intent.putExtra(Constants.LOCALITY_NAME, group.name)
+        alertFiltersLauncher.launch(intent)
     }
 
     /** ALERT switch is only live while FEED is on; shown off + dimmed otherwise. */

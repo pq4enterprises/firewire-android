@@ -38,8 +38,24 @@ import retrofit2.http.*
 import com.pioneer.nycfirewire.model.link.LinkResponse
 import com.pioneer.nycfirewire.model.user.request.UserAreaItem
 import com.pioneer.nycfirewire.model.user.request.UserNotificationItem
+import com.pioneer.nycfirewire.model.alertfilters.AlertFiltersResponse
+import com.pioneer.nycfirewire.model.alertfilters.AlertFiltersUpdateRequest
+import com.pioneer.nycfirewire.model.alertfilters.AlertFiltersUpdateResponse
 
 interface ApiEndPoints {
+
+    // Alert picker: which incident types / units alert the caller inside ONE
+    // locality's alert areas. Lists come back fully populated with per-user
+    // `checked` flags; typesAll/unitsAll true = no narrowing stored.
+    @GET("api/app/alert-filters/{localityId}")
+    suspend fun getAlertFilters(@Path("localityId") localityId: String): Response<AlertFiltersResponse>
+
+    // Replaces that locality's scoped rows for the caller. null list = all.
+    @PUT("api/app/alert-filters/{localityId}")
+    suspend fun updateAlertFilters(
+        @Path("localityId") localityId: String,
+        @Body request: AlertFiltersUpdateRequest
+    ): Response<AlertFiltersUpdateResponse>
 
     // Areas & Alerts: locality tree with per-user isChecked flags.
     // query {"type":"area"} marks feed (UserLocality) selections; anything else

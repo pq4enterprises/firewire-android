@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- top segment of a card split across RecyclerView rows (alert picker):
+     rounded top corners; the bottom stroke is pushed outside the bounds -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:bottom="-2dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/fw_surface" />
+            <corners
+                android:topLeftRadius="@dimen/fw_corner_card"
+                android:topRightRadius="@dimen/fw_corner_card" />
+            <stroke android:width="@dimen/fw_hairline_width" android:color="@color/fw_hairline" />
+        </shape>
+    </item>
+</layer-list>

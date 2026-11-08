@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- middle segment of a card split across RecyclerView rows: side strokes only -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:top="-2dp" android:bottom="-2dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/fw_surface" />
+            <stroke android:width="@dimen/fw_hairline_width" android:color="@color/fw_hairline" />
+        </shape>
+    </item>
+</layer-list>
