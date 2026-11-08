@@ -460,6 +460,24 @@
                 android:textAllCaps="true"
                 android:letterSpacing="0.04"
                 android:text="@string/delete_account" />
+
+            <!-- App version footer; text is set from BuildConfig at runtime,
+                 tap copies it to the clipboard (see MyAccountActivity). -->
+            <TextView
+                android:id="@+id/tv_app_version"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dis_10"
+                android:paddingTop="@dimen/dis_10"
+                android:paddingBottom="@dimen/dis_10"
+                android:gravity="center"
+                android:fontFamily="@font/poppins_regular"
+                android:textSize="@dimen/fw_text_caption"
+                android:textColor="@color/fw_muted"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                tools:text="Version 10.5 (build 117)" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

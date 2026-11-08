@@ -1,6 +1,10 @@
 package com.pioneer.nycfirewire.activity
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -14,6 +18,7 @@ import com.android.billingclient.api.*
 import com.bumptech.glide.Glide
 import com.google.android.gms.common.util.CollectionUtils.listOf
 import com.onesignal.OneSignal
+import com.pioneer.nycfirewire.BuildConfig
 import com.pioneer.nycfirewire.R
 import com.pioneer.nycfirewire.databinding.ActivityMyAccountBinding
 import com.pioneer.nycfirewire.model.payment.PaymentRequest
@@ -57,10 +62,32 @@ class MyAccountActivity : BaseActivity(), PurchasesUpdatedListener {
         initExtra()
         clickEvent()
         initUi()
+        initAppVersion()
 
         vm.paymentLiveData.observe(this, Observer {
             updatePayment(it)
         })
+    }
+
+    /**
+     * "Version 10.5 (build 117)" footer, straight from BuildConfig so it can never
+     * drift from the Play listing. Tap copies the same text for support emails.
+     */
+    private fun initAppVersion() {
+        val versionText = getString(
+            R.string.app_version_format, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE
+        )
+        binding.tvAppVersion.text = versionText
+        binding.tvAppVersion.contentDescription =
+            getString(R.string.app_version_content_description, versionText)
+        binding.tvAppVersion.setOnClickListener {
+            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            clipboard.setPrimaryClip(ClipData.newPlainText("FireWire app version", versionText))
+            // Android 13+ shows its own clipboard confirmation; a toast would double up.
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                showToast(this, getString(R.string.copied))
+            }
+        }
     }
 
     private fun updatePayment(response: Resource<CommonResponse>) {
