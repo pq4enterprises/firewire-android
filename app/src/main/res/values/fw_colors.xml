@@ -70,15 +70,10 @@
         sync with iOS FireWireTheme / UnitCategory.
     -->
     <color name="fw_unit_engine_bg">#1C1C1E</color>
-    <color name="fw_unit_engine_fg">#FFFFFF</color>
     <color name="fw_unit_truck_bg">@color/fw_red</color>
-    <color name="fw_unit_truck_fg">#000000</color>
     <color name="fw_unit_marine_bg">#17B26A</color>
-    <color name="fw_unit_marine_fg">#000000</color>
     <color name="fw_unit_chief_bg">#F7C948</color>
-    <color name="fw_unit_chief_fg">#000000</color>
     <color name="fw_unit_soc_bg">#FCF0E4</color>
-    <color name="fw_unit_soc_fg">#B5661F</color>
     <color name="fw_unit_other_bg">@color/fw_surface2</color>
     <color name="fw_unit_other_fg">@color/fw_muted</color>
     <!-- solid swatch for the map legend dot (chip background is tinted) -->
