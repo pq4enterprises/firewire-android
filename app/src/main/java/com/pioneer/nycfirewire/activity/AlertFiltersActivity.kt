@@ -86,11 +86,27 @@ class AlertFiltersActivity : BaseActivity(), AlertFiltersAdapter.Listener {
     }
 
     private fun initToolbar() {
-        binding.toolbar.tvToolbarTitle.text =
-            getString(R.string.alert_filters_title, localityName).uppercase()
+        setToolbarTitle(localityName)
         binding.toolbar.tvToolbarTitle.visible()
         binding.toolbar.ivFeed.gone()
         binding.toolbar.ivMenu.setOnClickListener { finish() }
+    }
+
+    /**
+     * The shared toolbar centers the title between BACK and the right edge with
+     * no side constraints, so a long one ("NEW YORK CITY ALERTS") runs under
+     * BACK. Keep it to one line, cap its width, and drop the "ALERTS" suffix
+     * when the full title would not fit.
+     */
+    private fun setToolbarTitle(name: String?) {
+        val full = getString(R.string.alert_filters_title, name.orEmpty()).uppercase()
+        val title = binding.toolbar.tvToolbarTitle
+        val density = resources.displayMetrics.density
+        val maxWidth = (resources.displayMetrics.widthPixels - 2 * 96 * density).toInt()
+        title.maxLines = 1
+        title.ellipsize = android.text.TextUtils.TruncateAt.END
+        title.maxWidth = maxWidth
+        title.text = if (title.paint.measureText(full) <= maxWidth) full else name.orEmpty().uppercase()
     }
 
     private fun initList() {
@@ -156,8 +172,7 @@ class AlertFiltersActivity : BaseActivity(), AlertFiltersAdapter.Listener {
         loaded = true
         if (localityName.isEmpty()) {
             localityName = data.locality?.name ?: ""
-            binding.toolbar.tvToolbarTitle.text =
-                getString(R.string.alert_filters_title, localityName).uppercase()
+            setToolbarTitle(localityName)
         }
 
         typesAll = data.typesAll

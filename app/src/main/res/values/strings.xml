@@ -135,8 +135,8 @@
     <string name="alert_filters_units_section">UNITS</string>
     <string name="alert_filters_all_types">All incident types</string>
     <string name="alert_filters_all_units">All units</string>
-    <string name="alert_filters_summary_all_types">Every incident type alerts you</string>
-    <string name="alert_filters_summary_all_units">Every unit alerts you</string>
+    <string name="alert_filters_summary_all_types">Every incident type alerts you. Turn off to choose.</string>
+    <string name="alert_filters_summary_all_units">Every unit alerts you. Turn off to choose.</string>
     <string name="alert_filters_summary_selected">%1$d of %2$d selected</string>
     <string name="alert_filters_summary_none">Nothing selected — pick at least one</string>
     <string name="alert_filters_search_units">Search units (e.g. E-1, L-10)</string>
