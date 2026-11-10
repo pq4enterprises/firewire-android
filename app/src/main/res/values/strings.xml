@@ -128,7 +128,7 @@
     <string name="areas_alerts_pick_one">Select at least one area to continue.</string>
     <string name="areas_alerts_filters_hint">Tap a region to open it. Turn on its areas, then set Types &amp; Units for that region.</string>
     <string name="areas_alerts_types_units">Types &amp; Units</string>
-    <string name="areas_alerts_types_units_sub">Choose which incident types and units alert you here</string>
+    <string name="areas_alerts_types_units_sub">Incident types and units for this region</string>
     <string name="areas_alerts_types_units_desc">Types and units: choose which incident types and units alert you in this region</string>
     <!-- alert picker (AlertFiltersActivity) -->
     <string name="alert_filters_title">%1$s alerts</string>
