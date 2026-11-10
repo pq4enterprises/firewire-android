@@ -57,7 +57,9 @@ class StreetViewActivity : BaseActivity(), OnStreetViewPanoramaReadyCallback {
         val position = target ?: return
         panorama.setOnStreetViewPanoramaChangeListener { location ->
             if (isFinishing || isDestroyed) return@setOnStreetViewPanoramaChangeListener
-            if (location == null) {
+            // null (or a location without links) is how the SDK reports
+            // "no panorama near this position"
+            if (location == null || location.links == null) {
                 showNoStreetView()
             } else {
                 binding.tvNoStreetView.gone()
