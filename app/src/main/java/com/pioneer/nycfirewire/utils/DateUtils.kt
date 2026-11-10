@@ -47,6 +47,31 @@ object DateUtils {
     }
 
 
+    /**
+     * "HH:mm" (24-hour, device time zone) for an ISO-8601 UTC instant such as
+     * "2026-11-06T18:47:29.943Z" (milliseconds optional). Returns "" when the
+     * value is missing or unparseable, so callers can render it unconditionally.
+     */
+    fun formatTime24(isoString: String?, zone: TimeZone = TimeZone.getDefault()): String {
+        val raw = isoString?.trim().orEmpty()
+        if (raw.isEmpty()) return ""
+        for (pattern in arrayOf("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", "yyyy-MM-dd'T'HH:mm:ss'Z'")) {
+            try {
+                val parser = SimpleDateFormat(pattern, Locale.US)
+                parser.timeZone = TimeZone.getTimeZone("UTC")
+                parser.isLenient = false
+                val date = parser.parse(raw) ?: continue
+                val out = SimpleDateFormat("HH:mm", Locale.US)
+                out.timeZone = zone
+                return out.format(date)
+            } catch (e: Exception) {
+                // try the next pattern
+            }
+        }
+        return ""
+    }
+
+
     fun convertDate(inputDate: String): String? {
         val inputPattern = "EEE, dd MMM yyyy HH:mm:ss Z" // "Mon, 24 Jun 2024 22:14:11 +0000"
         val inputFormatter = SimpleDateFormat(inputPattern, Locale.ENGLISH)
