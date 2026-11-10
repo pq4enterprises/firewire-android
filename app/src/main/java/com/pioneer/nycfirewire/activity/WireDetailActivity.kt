@@ -110,6 +110,8 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
         private const val MAP_CONTROLS_HEIGHT_DP = 52f
         /** Extra clearance between the Google logo and the overlapping card. */
         private const val MAP_LOGO_CLEARANCE_DP = 8f
+        /** Collapsed strip: distance from its bottom edge to the incident pin's tip. */
+        private const val MAP_STRIP_PIN_INSET_DP = 24f
 
         const val EVENT_360_OPENED = "incident_360_opened"
         const val EVENT_FIREHOUSE_TAPPED = "incident_firehouse_tapped"
@@ -140,7 +142,7 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
      *    pans the map; only scrolling the cards collapses the hero
      *  - while it collapses (380dp -> 120dp strip, never gone) the map dims,
      *    the controls stay pinned to the top of the visible strip, and the map
-     *    is shifted so the incident pin ends up centred in the strip
+     *    is shifted so the incident pin stays visible inside the strip
      */
     private fun setupMapHero() {
         val appBarParams = binding.appBarMap.layoutParams as CoordinatorLayout.LayoutParams
@@ -172,12 +174,14 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
 
                 // The hero slides up under the top bar, leaving its bottom
                 // strip visible. Shift the map down inside it so the camera
-                // target (the incident pin) lands in the middle of that strip.
+                // target (the incident pin) ends up in that strip, low enough
+                // that the pin (36dp tall, tip on the point) clears the pinned
+                // controls above it.
                 val heroHeight = binding.mapHero.height
                 if (heroHeight > 0 && range > 0) {
-                    val stripHeight = heroHeight - range
                     val pinY = (heroHeight + mapPaddingTop() - mapPaddingBottom()) / 2f
-                    val maxShift = ((heroHeight - stripHeight / 2f) - pinY).coerceIn(0f, range.toFloat())
+                    val pinYCollapsed = heroHeight - dp(MAP_STRIP_PIN_INSET_DP)
+                    val maxShift = (pinYCollapsed - pinY).coerceIn(0f, range.toFloat())
                     binding.mapParallax.translationY = maxShift * fraction
                 }
             }
