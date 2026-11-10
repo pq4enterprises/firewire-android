@@ -60,6 +60,23 @@ import androidx.core.content.res.ResourcesCompat
 import com.pioneer.nycfirewire.utils.FirehouseMarker
 import com.pioneer.nycfirewire.utils.UnitCategory
 import com.pioneer.nycfirewire.utils.UnitColors
+import android.content.ActivityNotFoundException
+import android.content.res.ColorStateList
+import android.net.Uri
+import android.widget.FrameLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.lifecycle.lifecycleScope
+import com.google.android.material.appbar.AppBarLayout
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.analytics
+import com.pioneer.nycfirewire.databinding.ItemProgressionRowBinding
+import com.pioneer.nycfirewire.model.incident.response.ProgressionEntry
+import com.pioneer.nycfirewire.utils.IncidentPage
+import com.pioneer.nycfirewire.utils.StreetViewProbe
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.Locale
 
 @AndroidEntryPoint
 class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
@@ -78,11 +95,34 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
 
     private var pendingIncidentResponse: Resource<IncidentByIdResponse>? = null
 
+    // Variation D (map hero)
+    /** The Street View availability probe runs once per screen. */
+    private var streetViewProbed = false
+    /** Top margin of the 360 pill when it shares the row with the map-type toggle. */
+    private var streetViewButtonTopMargin = 0
+
+    companion object {
+        /** Dim over the map when the hero is fully collapsed. */
+        private const val MAP_SCRIM_MAX_ALPHA = 0.45f
+        /** Map controls shrink slightly as the hero collapses (mockup: 0.9). */
+        private const val MAP_CONTROLS_MIN_SCALE = 0.9f
+        /** Height reserved at the top of the map for the toggle / 360 pill. */
+        private const val MAP_CONTROLS_HEIGHT_DP = 52f
+        /** Extra clearance between the Google logo and the overlapping card. */
+        private const val MAP_LOGO_CLEARANCE_DP = 8f
+
+        const val EVENT_360_OPENED = "incident_360_opened"
+        const val EVENT_FIREHOUSE_TAPPED = "incident_firehouse_tapped"
+
+        private const val INCIDENT_MARKER_TAG = "incident"
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding= ActivityWireDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setupMapHero()
         initMap()
 
         clickEvent()
@@ -93,26 +133,201 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
     }
 
 
+    /**
+     * Variation D: the map is a collapsing hero under the top bar.
+     *
+     *  - the app bar itself is NOT draggable, so a drag that starts on the map
+     *    pans the map; only scrolling the cards collapses the hero
+     *  - while it collapses (380dp -> 120dp strip, never gone) the map dims,
+     *    the controls stay pinned to the top of the visible strip, and the map
+     *    is shifted so the incident pin ends up centred in the strip
+     */
+    private fun setupMapHero() {
+        val appBarParams = binding.appBarMap.layoutParams as CoordinatorLayout.LayoutParams
+        val appBarBehavior = (appBarParams.behavior as? AppBarLayout.Behavior) ?: AppBarLayout.Behavior()
+        appBarBehavior.setDragCallback(object : AppBarLayout.Behavior.DragCallback() {
+            override fun canDrag(appBarLayout: AppBarLayout): Boolean = false
+        })
+        appBarParams.behavior = appBarBehavior
+
+        binding.appBarMap.addOnOffsetChangedListener(
+            AppBarLayout.OnOffsetChangedListener { appBar, verticalOffset ->
+                val range = appBar.totalScrollRange
+                val scrolled = -verticalOffset
+                val fraction = if (range > 0) (scrolled.toFloat() / range).coerceIn(0f, 1f) else 0f
+
+                binding.mapScrim.alpha = MAP_SCRIM_MAX_ALPHA * fraction
+
+                // pinned: cancel the hero's own upward movement
+                binding.mapControls.translationY = scrolled.toFloat()
+                val scale = 1f - (1f - MAP_CONTROLS_MIN_SCALE) * fraction
+                binding.llMapTypeToggle.apply {
+                    pivotX = 0f; pivotY = 0f
+                    scaleX = scale; scaleY = scale
+                }
+                binding.btnStreetView.apply {
+                    pivotX = width.toFloat(); pivotY = 0f
+                    scaleX = scale; scaleY = scale
+                }
+
+                // The hero slides up under the top bar, leaving its bottom
+                // strip visible. Shift the map down inside it so the camera
+                // target (the incident pin) lands in the middle of that strip.
+                val heroHeight = binding.mapHero.height
+                if (heroHeight > 0 && range > 0) {
+                    val stripHeight = heroHeight - range
+                    val pinY = (heroHeight + mapPaddingTop() - mapPaddingBottom()) / 2f
+                    val maxShift = ((heroHeight - stripHeight / 2f) - pinY).coerceIn(0f, range.toFloat())
+                    binding.mapParallax.translationY = maxShift * fraction
+                }
+            }
+        )
+
+        // 360 pill and map-type toggle share one row; if they would collide
+        // (narrow screen / large font scale) the pill drops under the toggle.
+        streetViewButtonTopMargin =
+            (binding.btnStreetView.layoutParams as FrameLayout.LayoutParams).topMargin
+        binding.mapControls.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            binding.mapControls.post { placeStreetViewButton() }
+        }
+
+        binding.btnStreetView.setOnClickListener { openStreetView() }
+    }
+
+    private fun dp(value: Float): Int = (value * resources.displayMetrics.density).toInt()
+
+    /** Map padding: keeps the compass clear of the controls ... */
+    private fun mapPaddingTop(): Int = dp(MAP_CONTROLS_HEIGHT_DP)
+
+    /** ... and the Google logo / camera centre clear of the overlapping card. */
+    private fun mapPaddingBottom(): Int =
+        resources.getDimensionPixelSize(R.dimen.fw_incident_map_overlap) + dp(MAP_LOGO_CLEARANCE_DP)
+
+    private fun placeStreetViewButton() {
+        val toggle = binding.llMapTypeToggle
+        val button = binding.btnStreetView
+        if (button.visibility != View.VISIBLE || button.width == 0 || toggle.width == 0) return
+        val params = button.layoutParams as FrameLayout.LayoutParams
+        val gap = dp(8f)
+        val buttonLeft = binding.mapControls.width - params.marginEnd - button.width
+        val collides = toggle.right + gap > buttonLeft
+        val wantedTop = if (collides) toggle.bottom + gap else streetViewButtonTopMargin
+        if (params.topMargin != wantedTop) {
+            params.topMargin = wantedTop
+            button.layoutParams = params
+        }
+    }
+
+    /**
+     * The map sits in the app bar, outside the scroll view, so nothing should
+     * take its gestures; this makes that explicit for every ancestor (the
+     * CoordinatorLayout included) from the first touch, then lets the event
+     * fall through to the map underneath.
+     */
     private fun setupMapTouchHandler() {
         binding.mapOverlay.setOnTouchListener { v, event ->
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    // When user touches the map, tell ScrollView: "Don't steal this touch!"
-                    binding.nestedScrollView.requestDisallowInterceptTouchEvent(true)
-                    false
-                }
-                MotionEvent.ACTION_UP -> {
-                    // When user lifts finger, allow ScrollView to scroll normally again
-                    binding.nestedScrollView.requestDisallowInterceptTouchEvent(false)
-                    true
-                }
-                MotionEvent.ACTION_MOVE -> {
-                    binding.nestedScrollView.requestDisallowInterceptTouchEvent(true)
-                    false
-                }
-                else -> false
+            if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+                v.parent?.requestDisallowInterceptTouchEvent(true)
+            }
+            false
+        }
+    }
+
+    /**
+     * Shows the 360 pill only when Google reports a panorama near the incident.
+     * The check is a free metadata request (no panorama is created here; the
+     * billable panorama is created only when the pill is tapped).
+     *
+     * If the key is not allowed to call the metadata endpoint (DENIED) coverage
+     * is unknown, so the pill is shown and StreetViewActivity reports
+     * "No street view here" itself when there is none.
+     */
+    private fun probeStreetView() {
+        if (streetViewProbed) return
+        val lat = wireDetails.latitude?.toDoubleOrNull() ?: return
+        val lng = wireDetails.longitude?.toDoubleOrNull() ?: return
+        if (lat == 0.0 && lng == 0.0) return
+        streetViewProbed = true
+        val appContext = applicationContext
+        lifecycleScope.launch {
+            val result = withContext(Dispatchers.IO) { StreetViewProbe.check(appContext, lat, lng) }
+            if (isFinishing || isDestroyed) return@launch
+            if (result == StreetViewProbe.Result.AVAILABLE || result == StreetViewProbe.Result.DENIED) {
+                binding.btnStreetView.visible()
+            } else {
+                binding.btnStreetView.gone()
             }
         }
+    }
+
+    private fun openStreetView() {
+        val lat = wireDetails.latitude?.toDoubleOrNull() ?: return
+        val lng = wireDetails.longitude?.toDoubleOrNull() ?: return
+        Firebase.analytics.logEvent(EVENT_360_OPENED, Bundle().apply {
+            putString("incident_id", wireDetails._id.orEmpty())
+        })
+        startActivity(StreetViewActivity.intent(this, lat, lng, wireDetails.address))
+    }
+
+    /**
+     * INCIDENT PROGRESSION card: one row per title change, newest first, title
+     * and time only. Hidden until the incident has had two or more titles.
+     */
+    private fun bindProgression(progression: List<ProgressionEntry?>?) {
+        val rows = IncidentPage.progressionRows(progression)
+        val container = binding.llProgressionRows
+        container.removeAllViews()
+        if (rows.isEmpty()) {
+            binding.cardProgression.gone()
+            return
+        }
+        val red = ContextCompat.getColor(this, R.color.fw_red)
+        val muted = ContextCompat.getColor(this, R.color.fw_muted)
+        val olderBadge = ContextCompat.getColor(this, R.color.fw_surface2)
+        val white = ContextCompat.getColor(this, R.color.white)
+        rows.forEachIndexed { index, entry ->
+            val latest = index == 0
+            val row = ItemProgressionRowBinding.inflate(layoutInflater, container, false)
+            row.tvProgressionTime.text = DateUtils.formatTime24(entry.at)
+            row.tvProgressionTitle.text = entry.title?.trim()
+            row.tvProgressionTitle.backgroundTintList =
+                ColorStateList.valueOf(if (latest) red else olderBadge)
+            row.tvProgressionTitle.setTextColor(if (latest) white else muted)
+            row.vProgressionDot.backgroundTintList =
+                ColorStateList.valueOf(if (latest) red else muted)
+            // connector runs dot to dot: nothing above the first, nothing below the last
+            row.vProgressionLineTop.visibility = if (index == 0) View.INVISIBLE else View.VISIBLE
+            row.vProgressionLineBottom.visibility =
+                if (index == rows.lastIndex) View.INVISIBLE else View.VISIBLE
+            container.addView(row.root)
+        }
+        binding.cardProgression.visible()
+    }
+
+    /** Firehouse callout tapped: hand off to turn-by-turn, or any maps app. */
+    private fun openDirections(point: Points) {
+        val lat = point.latitude?.toDoubleOrNull() ?: return
+        val lng = point.longitude?.toDoubleOrNull() ?: return
+        val coords = String.format(Locale.US, "%.6f,%.6f", lat, lng)
+        try {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("google.navigation:q=$coords")))
+        } catch (e: ActivityNotFoundException) {
+            try {
+                val label = Uri.encode(point.name.orEmpty())
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("geo:$coords?q=$coords($label)")))
+            } catch (e2: ActivityNotFoundException) {
+                Toast.makeText(this, getString(R.string.directions_unavailable), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun logFirehouseTapped(point: Points, action: String) {
+        Firebase.analytics.logEvent(EVENT_FIREHOUSE_TAPPED, Bundle().apply {
+            putString("incident_id", wireDetails._id.orEmpty())
+            putString("firehouse", point.name.orEmpty().take(100))
+            putString("action", action)
+            point.distanceMiles?.let { putDouble("distance_miles", it) }
+        })
     }
 
 
@@ -195,6 +410,10 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
                     // single comma-joined label
                     bindUnits()
 
+                    // Variation D: title history card + 360 availability
+                    bindProgression(dataItem.progression)
+                    probeStreetView()
+
                     if (!::mMap.isInitialized) {
                         pendingIncidentResponse = response
                         return
@@ -234,7 +453,7 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
                         R.drawable.frame
                     )
                 )
-        )
+        )?.tag = INCIDENT_MARKER_TAG
 
         if(dataItem?.get(0)?.points?.isNotEmpty() == true) {
             fireStationlist= ArrayList(dataItem.get(0).points!!)
@@ -253,10 +472,13 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
                     MarkerOptions()
                         .position(latLng)
                         .title(it.name.toString())
-                        .snippet(it.address)
+                        // "0.4 mi · 74 Middagh St" (distance from the server, nearest first)
+                        .snippet(IncidentPage.firehouseSnippet(it.distanceMiles, it.address))
                         .icon(composed.descriptor)
                         // pin tip on the coordinate; the label hangs below it
                         .anchor(composed.anchorU, composed.anchorV))
+                    // the marker carries its firehouse: info window + directions read it back
+                    ?.tag = it
             }
 
         }
@@ -577,7 +799,11 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_in_night))
         // Saved default from My Account; hybrid is what this screen always forced,
         // so it stays the fallback for users who never picked one.
-        mMap.mapType = MapTypePrefs.googleMapType(GoogleMap.MAP_TYPE_HYBRID)
+        MapTypePrefs.apply(mMap, GoogleMap.MAP_TYPE_HYBRID)
+        highlightMapTypeSegment(mMap.mapType)
+        // Before any camera move: the camera target is centred in the padded
+        // area, i.e. between the on-map controls and the overlapping card.
+        mMap.setPadding(0, mapPaddingTop(), 0, mapPaddingBottom())
 
         pendingIncidentResponse?.let {
             addingMarkerInMap(it.data?.data)
@@ -591,27 +817,42 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
             }
 
             override fun getInfoContents(marker: Marker): View? {
-                val view = layoutInflater.inflate(R.layout.custom_info_window, null)
-                val titleTextView = view.findViewById<TextView>(R.id.title)
-                val snippetTextView = view.findViewById<TextView>(R.id.snippet)
+                val view = layoutInflater.inflate(R.layout.info_window_incident_map, null)
+                val titleTextView = view.findViewById<TextView>(R.id.tv_info_title)
+                val snippetTextView = view.findViewById<TextView>(R.id.tv_info_snippet)
+                val directionsTextView = view.findViewById<TextView>(R.id.tv_info_directions)
 
-                if(marker.position.latitude.toString()== wireDetails.latitude && marker.position.longitude.toString()==wireDetails.longitude){
+                val firehouse = marker.tag as? Points
+                if (firehouse != null) {
+                    // name, "0.4 mi · address", and the hint that a tap opens directions
+                    titleTextView.text = firehouse.name
+                    val snippet = marker.snippet.orEmpty()
+                    snippetTextView.text = snippet
+                    snippetTextView.visibility = if (snippet.isEmpty()) View.GONE else View.VISIBLE
+                    directionsTextView.visible()
+                } else {
                     titleTextView.text = wireDetails.field1Value
-                    snippetTextView.text =wireDetails.address
-                    snippetTextView.visible()
+                    snippetTextView.text = wireDetails.address
+                    snippetTextView.visibility =
+                        if (wireDetails.address.isNullOrBlank()) View.GONE else View.VISIBLE
+                    directionsTextView.gone()
                 }
-                fireStationlist.forEach {
-                   if(it.latitude == marker.position.latitude.toString() && it.longitude== marker.position.longitude.toString()){
-                       titleTextView.text = it.name
-                       snippetTextView.gone()
-                   }
-                }
-
-
-
                 return view
             }
         })
+
+        // Firehouse pin: default behaviour (centre + callout) plus the event.
+        mMap.setOnMarkerClickListener { marker ->
+            (marker.tag as? Points)?.let { logFirehouseTapped(it, "pin") }
+            false
+        }
+        // Firehouse callout: open directions to it.
+        mMap.setOnInfoWindowClickListener { marker ->
+            (marker.tag as? Points)?.let {
+                logFirehouseTapped(it, "directions")
+                openDirections(it)
+            }
+        }
     }
 
     fun shareText(context: Context, text: String) {

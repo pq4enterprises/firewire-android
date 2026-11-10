@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- white capsule for buttons that float on the map (360° VIEW); white in
+     both modes, like the selected map-type segment -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/white" />
+    <corners android:radius="20dp" />
+</shape>

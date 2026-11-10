@@ -187,6 +187,14 @@
     <string name="fw_you_have_access">You Have Access To</string>
     <string name="global_alert_sound">GLOBAL ALERT SOUND</string>
     <string name="incident_title">INCIDENT</string>
+    <!-- incident page, Variation D -->
+    <string name="incident_progression_title">INCIDENT PROGRESSION</string>
+    <string name="street_view_360">360\u00B0 VIEW</string>
+    <string name="street_view_360_desc">Open 360 degree street view</string>
+    <string name="street_view_none">No street view here</string>
+    <string name="street_view_caption_fallback">Street view</string>
+    <string name="firehouse_directions">DIRECTIONS</string>
+    <string name="directions_unavailable">No maps app available for directions</string>
     <string name="map_hybrid">HYBRID</string>
     <string name="map_satellite">SATELLITE</string>
     <string name="map_street">STREET</string>

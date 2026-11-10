@@ -52,4 +52,14 @@
     <dimen name="fw_text_watermark">10sp</dimen>
     <dimen name="fw_text_legend">9sp</dimen>
 
+
+    <!-- incident page map hero (Variation D). Height is the short-screen
+         value; values-h640dp raises it to the designed 380dp. -->
+    <dimen name="fw_incident_map_height">300dp</dimen>
+    <dimen name="fw_incident_map_collapsed">120dp</dimen>  <!-- strip left when scrolled -->
+    <dimen name="fw_incident_map_overlap">56dp</dimen>     <!-- summary card over the map -->
+    <dimen name="fw_progression_row_height">34dp</dimen>
+    <dimen name="fw_progression_time_width">46dp</dimen>
+    <dimen name="fw_progression_rail_width">14dp</dimen>
+    <dimen name="fw_progression_line_width">2dp</dimen>
 </resources>

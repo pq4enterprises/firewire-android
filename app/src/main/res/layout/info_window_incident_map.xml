@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Info-window contents for the incident page map. Drawn inside Google's
+     default white bubble in both light and night mode, so the colours here
+     are fixed (not fw_text / fw_muted, which flip at night). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="6dp"
+    android:paddingRight="6dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
+
+    <TextView
+        android:id="@+id/tv_info_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxWidth="220dp"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:textColor="@color/app_red"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        tools:text="ENGINE 205 / LADDER 118"/>
+
+    <TextView
+        android:id="@+id/tv_info_snippet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:maxWidth="220dp"
+        android:maxLines="3"
+        android:ellipsize="end"
+        android:textColor="@color/fw_map_seg_text_selected"
+        android:textSize="13sp"
+        android:visibility="gone"
+        tools:text="0.4 mi · 74 Middagh St"
+        tools:visibility="visible"/>
+
+    <TextView
+        android:id="@+id/tv_info_directions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:fontFamily="@font/poppins_bold"
+        android:text="@string/firehouse_directions"
+        android:textColor="@color/fw_red"
+        android:textSize="@dimen/fw_text_chip"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+</LinearLayout>

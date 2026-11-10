@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 360° street-level view of an incident address (opened from the 360° VIEW
+     pill on the incident map). Always dark: it is a full-screen photo. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <com.google.android.gms.maps.StreetViewPanoramaView
+        android:id="@+id/street_view_panorama"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- shown when Google has no panorama near the coordinate -->
+    <TextView
+        android:id="@+id/tv_no_street_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black"
+        android:gravity="center"
+        android:padding="24dp"
+        android:text="@string/street_view_none"
+        android:textColor="@color/white"
+        android:textSize="@dimen/fw_text_section"
+        android:fontFamily="@font/poppins_semibold"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/fw_screen_margin">
+
+        <ImageView
+            android:id="@+id/iv_close"
+            android:layout_width="@dimen/fw_touch_target"
+            android:layout_height="@dimen/fw_touch_target"
+            android:background="@drawable/fw_circle_bg"
+            android:backgroundTint="@color/fw_scrim"
+            android:contentDescription="@string/close"
+            android:padding="12dp"
+            android:src="@drawable/fw_ic_close"
+            app:tint="@color/white" />
+
+        <TextView
+            android:id="@+id/tv_caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/fw_badge_bg"
+            android:backgroundTint="@color/fw_scrim"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:paddingLeft="@dimen/fw_badge_pad_h"
+            android:paddingRight="@dimen/fw_badge_pad_h"
+            android:paddingTop="@dimen/fw_badge_pad_v"
+            android:paddingBottom="@dimen/fw_badge_pad_v"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/fw_text_body"
+            android:fontFamily="@font/poppins_bold"
+            tools:text="45 COURT ST" />
+    </LinearLayout>
+</FrameLayout>
