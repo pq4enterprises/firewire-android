@@ -126,8 +126,10 @@
     <string name="areas_alerts_onboarding_helper">Pick at least one area to build your feed. Use the bell for push alerts. You can change this any time under Areas &amp; Alerts.</string>
     <string name="areas_alerts_continue">CONTINUE</string>
     <string name="areas_alerts_pick_one">Select at least one area to continue.</string>
-    <string name="areas_alerts_filters_hint">Pick areas here, then types &amp; units per area.</string>
+    <string name="areas_alerts_filters_hint">Tap a region to open it. Turn on its areas, then set Types &amp; Units for that region.</string>
     <string name="areas_alerts_types_units">Types &amp; Units</string>
+    <string name="areas_alerts_types_units_sub">Choose which incident types and units alert you here</string>
+    <string name="areas_alerts_types_units_desc">Types and units: choose which incident types and units alert you in this region</string>
     <!-- alert picker (AlertFiltersActivity) -->
     <string name="alert_filters_title">%1$s alerts</string>
     <string name="alert_filters_helper">Only the incident types and units you keep checked will alert you in this area. All is the default.</string>
