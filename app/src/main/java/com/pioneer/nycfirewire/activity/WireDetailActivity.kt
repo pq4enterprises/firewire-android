@@ -416,6 +416,9 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
                      unitLegend= dataItem.unitLegend,
                      unitColorsConfigured= dataItem.unitColorsConfigured,
                      field4Value= dataItem.field4Value,
+                     // the summary card's time was never filled on this screen
+                     // because createdAt was dropped here
+                     createdAt= dataItem.createdAt,
                      subLocalityDetails= arrayListOf(subLocalityData))
                       //response.data.data
                     isLikeSingle= wireDetails.isLiked
