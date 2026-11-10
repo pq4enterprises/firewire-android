@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- incident page map hero at its designed height on regular-height phones -->
-<resources>
-    <dimen name="fw_incident_map_height">380dp</dimen>
-</resources>

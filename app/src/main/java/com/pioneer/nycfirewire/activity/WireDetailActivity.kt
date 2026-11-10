@@ -192,6 +192,31 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
         }
 
         binding.btnStreetView.setOnClickListener { openStreetView() }
+
+        // Short screens (landscape, split screen, small phones): never let the
+        // hero push the cards off screen, since only the cards can collapse it.
+        binding.coordinator.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
+            if (bottom - top != oldBottom - oldTop) binding.coordinator.post { fitMapHeroToScreen() }
+        }
+    }
+
+    /**
+     * The hero is fw_incident_map_height tall unless that would leave less
+     * than fw_incident_min_cards_area for the cards; it never goes below the
+     * collapsed strip plus a small scroll range.
+     */
+    private fun fitMapHeroToScreen() {
+        val available = binding.coordinator.height
+        if (available <= 0) return
+        val designed = resources.getDimensionPixelSize(R.dimen.fw_incident_map_height)
+        val strip = resources.getDimensionPixelSize(R.dimen.fw_incident_map_collapsed)
+        val minCards = resources.getDimensionPixelSize(R.dimen.fw_incident_min_cards_area)
+        val wanted = minOf(designed, maxOf(available - minCards, strip + dp(40f)))
+        val params = binding.mapHero.layoutParams
+        if (params.height != wanted) {
+            params.height = wanted
+            binding.mapHero.layoutParams = params
+        }
     }
 
     private fun dp(value: Float): Int = (value * resources.displayMetrics.density).toInt()

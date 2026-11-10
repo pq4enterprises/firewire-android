@@ -53,9 +53,11 @@
     <dimen name="fw_text_legend">9sp</dimen>
 
 
-    <!-- incident page map hero (Variation D). Height is the short-screen
-         value; values-h640dp raises it to the designed 380dp. -->
-    <dimen name="fw_incident_map_height">300dp</dimen>
+    <!-- incident page map hero (Variation D). Designed height; on screens too
+         short for it WireDetailActivity.fitMapHeroToScreen() shrinks the hero
+         so fw_incident_min_cards_area always stays free for the cards. -->
+    <dimen name="fw_incident_map_height">380dp</dimen>
+    <dimen name="fw_incident_min_cards_area">170dp</dimen>
     <dimen name="fw_incident_map_collapsed">120dp</dimen>  <!-- strip left when scrolled -->
     <dimen name="fw_incident_map_overlap">56dp</dimen>     <!-- summary card over the map -->
     <dimen name="fw_progression_row_height">34dp</dimen>
