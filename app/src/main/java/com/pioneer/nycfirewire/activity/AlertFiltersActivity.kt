@@ -95,6 +95,9 @@ class AlertFiltersActivity : BaseActivity(), AlertFiltersAdapter.Listener {
 
     private fun initList() {
         adapter = AlertFiltersAdapter(this)
+        // Without a layout manager RecyclerView skips layout entirely and the
+        // screen stays blank even though the rows were submitted.
+        binding.rvFilters.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         binding.rvFilters.adapter = adapter
         // checkbox rows flip in place; no fade/crossfade churn on long lists
         binding.rvFilters.itemAnimator = null
