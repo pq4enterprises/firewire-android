@@ -436,7 +436,7 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
                     if(sub.isNotEmpty()){
                         binding.tvSubLocality.text= sub
                         binding.tvSubLocality.visible()
-                    } else binding.tvSubLocality.gone()
+                    } else binding.tvSubLocality.visibility = android.view.View.INVISIBLE
 
                     // redesign: units rendered as coloured chips instead of a
                     // single comma-joined label
@@ -595,7 +595,7 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
         if(subLocality.isNotEmpty()){
             binding.tvSubLocality.text= subLocality
             binding.tvSubLocality.visible()
-        } else binding.tvSubLocality.gone()
+        } else binding.tvSubLocality.visibility = android.view.View.INVISIBLE
 
         val subTitle= wireDetails.field3Value?.trim().orEmpty()
         if(subTitle.isNotEmpty()){

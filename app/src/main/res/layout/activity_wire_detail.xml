@@ -261,8 +261,9 @@
 
                     <TextView
                         android:id="@+id/tv_sub_locality"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:layout_marginStart="8dp"
                         android:maxLines="1"
                         android:ellipsize="end"
@@ -276,9 +277,10 @@
 
                     <TextView
                         android:id="@+id/tv_date_time"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        android:maxLines="1"
                         android:gravity="end"
                         android:fontFamily="monospace"
                         android:textColor="@color/fw_muted"
