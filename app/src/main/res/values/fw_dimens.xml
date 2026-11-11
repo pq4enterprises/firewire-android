@@ -28,9 +28,18 @@
     <dimen name="fw_unit_chip_pad_h">8dp</dimen>  <!-- unit chips (set in code) -->
     <dimen name="fw_unit_chip_pad_v">4dp</dimen>
     <dimen name="fw_chip_spacing">4dp</dimen>
-    <dimen name="fw_seg_pad_h">10dp</dimen>       <!-- map segment items -->
+    <!-- map segment items; the horizontal padding is a minimum, the five
+         segments share the spare track width equally (activity_wire_detail) -->
+    <dimen name="fw_seg_pad_h">6dp</dimen>
     <dimen name="fw_seg_pad_v">6dp</dimen>
     <dimen name="fw_seg_track_pad">3dp</dimen>
+    <dimen name="fw_seg_gap">2dp</dimen>          <!-- between segments -->
+    <dimen name="fw_seg_lock_size">10dp</dimen>   <!-- lock on the locked segments -->
+    <dimen name="fw_seg_lock_gap">3dp</dimen>
+    <!-- floor for the segment labels when they are scaled down to fit; dp on
+         purpose (10sp at the default font size) so a large font scale cannot
+         push the control off the map -->
+    <dimen name="fw_seg_text_min">10dp</dimen>
     <dimen name="fw_legend_dot_size">8dp</dimen>
 
     <!-- menu screen -->

@@ -90,22 +90,41 @@
                     android:clipToPadding="false"
                     android:paddingBottom="8dp">
 
+                    <!-- ONE five-segment control spanning the map width:
+                         HYBRID / STREET / SATELLITE switch the map type;
+                         360 and 3D are locked "coming soon" Premium teasers
+                         (lock icon, muted) that never take the highlight.
+                         Segments are wrap_content + equal weight, so each is
+                         as wide as its label plus an equal share of the spare
+                         width. Fit at a 360dp screen, default font size:
+                         track 360 - 2x12 margin = 336, - 2x3 track padding
+                         = 330, - 4x2 gaps = 322dp for the segments; labels
+                         at 11sp Poppins Bold 41.1 + 38.8 + 53.5 + 20.8 + 14.7
+                         = 168.9, + 5 x 2x6 padding = 60, + 2 x (10 lock + 3
+                         gap) = 26 -> 254.9dp needed, 67dp to spare.
+                         WireDetailActivity.fitMapTypeToggle() scales the
+                         labels down together at large system font sizes. -->
                     <LinearLayout
                         android:id="@+id/ll_map_type_toggle"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="start|top"
+                        android:layout_gravity="top"
                         android:layout_marginStart="@dimen/fw_screen_margin"
+                        android:layout_marginEnd="@dimen/fw_screen_margin"
                         android:layout_marginTop="@dimen/fw_screen_margin"
                         android:background="@drawable/fw_map_seg_bg"
                         android:padding="@dimen/fw_seg_track_pad"
+                        android:baselineAligned="false"
                         android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/tv_map_hybrid"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:background="@drawable/fw_map_seg_selected"
+                            android:gravity="center"
+                            android:maxLines="1"
                             android:paddingLeft="@dimen/fw_seg_pad_h"
                             android:paddingRight="@dimen/fw_seg_pad_h"
                             android:paddingTop="@dimen/fw_seg_pad_v"
@@ -119,8 +138,11 @@
                             android:id="@+id/tv_map_street"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="2dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="@dimen/fw_seg_gap"
                             android:background="@null"
+                            android:gravity="center"
+                            android:maxLines="1"
                             android:paddingLeft="@dimen/fw_seg_pad_h"
                             android:paddingRight="@dimen/fw_seg_pad_h"
                             android:paddingTop="@dimen/fw_seg_pad_v"
@@ -134,8 +156,11 @@
                             android:id="@+id/tv_map_satellite"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="2dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="@dimen/fw_seg_gap"
                             android:background="@null"
+                            android:gravity="center"
+                            android:maxLines="1"
                             android:paddingLeft="@dimen/fw_seg_pad_h"
                             android:paddingRight="@dimen/fw_seg_pad_h"
                             android:paddingTop="@dimen/fw_seg_pad_v"
@@ -144,47 +169,78 @@
                             android:textColor="@color/white"
                             android:textSize="@dimen/fw_text_chip"
                             android:fontFamily="@font/poppins_bold"/>
-                    </LinearLayout>
 
-                    <!-- 360° VIEW: hidden until the Street View probe says a
-                         panorama exists near the incident -->
-                    <LinearLayout
-                        android:id="@+id/btn_street_view"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end|top"
-                        android:layout_marginEnd="@dimen/fw_screen_margin"
-                        android:layout_marginTop="@dimen/fw_screen_margin"
-                        android:minHeight="34dp"
-                        android:background="@drawable/fw_map_pill_bg"
-                        android:elevation="3dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingLeft="@dimen/fw_seg_pad_h"
-                        android:paddingRight="12dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:contentDescription="@string/street_view_360_desc"
-                        android:visibility="gone"
-                        tools:visibility="visible">
-
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:importantForAccessibility="no"
-                            android:src="@drawable/fw_ic_globe"
-                            app:tint="@color/fw_map_seg_text_selected"/>
-
-                        <TextView
+                        <!-- locked: 360 street view (Premium, coming soon) -->
+                        <LinearLayout
+                            android:id="@+id/seg_map_360"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
-                            android:includeFontPadding="false"
-                            android:maxLines="1"
-                            android:text="@string/street_view_360"
-                            android:textColor="@color/fw_map_seg_text_selected"
-                            android:textSize="@dimen/fw_text_chip"
-                            android:fontFamily="@font/poppins_bold"/>
+                            android:layout_weight="1"
+                            android:layout_marginStart="@dimen/fw_seg_gap"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:paddingLeft="@dimen/fw_seg_pad_h"
+                            android:paddingRight="@dimen/fw_seg_pad_h"
+                            android:paddingTop="@dimen/fw_seg_pad_v"
+                            android:paddingBottom="@dimen/fw_seg_pad_v"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:contentDescription="@string/map_360_locked_desc">
+
+                            <ImageView
+                                android:layout_width="@dimen/fw_seg_lock_size"
+                                android:layout_height="@dimen/fw_seg_lock_size"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/fw_ic_lock"
+                                app:tint="@color/fw_on_scrim_muted"/>
+
+                            <TextView
+                                android:id="@+id/tv_map_360"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/fw_seg_lock_gap"
+                                android:maxLines="1"
+                                android:text="@string/map_360"
+                                android:textColor="@color/fw_on_scrim_muted"
+                                android:textSize="@dimen/fw_text_chip"
+                                android:fontFamily="@font/poppins_bold"/>
+                        </LinearLayout>
+
+                        <!-- locked: 3D scene view (Premium, coming soon) -->
+                        <LinearLayout
+                            android:id="@+id/seg_map_3d"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="@dimen/fw_seg_gap"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:paddingLeft="@dimen/fw_seg_pad_h"
+                            android:paddingRight="@dimen/fw_seg_pad_h"
+                            android:paddingTop="@dimen/fw_seg_pad_v"
+                            android:paddingBottom="@dimen/fw_seg_pad_v"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:contentDescription="@string/map_3d_locked_desc">
+
+                            <ImageView
+                                android:layout_width="@dimen/fw_seg_lock_size"
+                                android:layout_height="@dimen/fw_seg_lock_size"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/fw_ic_lock"
+                                app:tint="@color/fw_on_scrim_muted"/>
+
+                            <TextView
+                                android:id="@+id/tv_map_3d"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/fw_seg_lock_gap"
+                                android:maxLines="1"
+                                android:text="@string/map_3d"
+                                android:textColor="@color/fw_on_scrim_muted"
+                                android:textSize="@dimen/fw_text_chip"
+                                android:fontFamily="@font/poppins_bold"/>
+                        </LinearLayout>
                     </LinearLayout>
                 </FrameLayout>
             </FrameLayout>

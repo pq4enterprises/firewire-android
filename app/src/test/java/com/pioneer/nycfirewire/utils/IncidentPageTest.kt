@@ -57,25 +57,4 @@ class IncidentPageTest {
         assertEquals("", DateUtils.formatTime24("not a date", newYork))
         assertEquals("", DateUtils.formatTime24(null, newYork))
     }
-
-    @Test
-    fun streetViewProbe_mapsMetadataStatuses() {
-        val ok = "{\n \"pano_id\" : \"abc\",\n \"status\" : \"OK\"\n}"
-        assertEquals("OK", StreetViewProbe.parseStatus(ok))
-        assertEquals(StreetViewProbe.Result.AVAILABLE, StreetViewProbe.resultForStatus("OK"))
-        assertEquals(StreetViewProbe.Result.NONE, StreetViewProbe.resultForStatus("ZERO_RESULTS"))
-        assertEquals(StreetViewProbe.Result.NONE, StreetViewProbe.resultForStatus("NOT_FOUND"))
-        assertEquals(
-            StreetViewProbe.Result.DENIED,
-            StreetViewProbe.resultForStatus(
-                StreetViewProbe.parseStatus("{\"error_message\":\"x\",\"status\":\"REQUEST_DENIED\"}")
-            )
-        )
-        assertEquals(StreetViewProbe.Result.ERROR, StreetViewProbe.resultForStatus(null))
-        assertEquals(StreetViewProbe.Result.ERROR, StreetViewProbe.resultForStatus("OVER_QUERY_LIMIT"))
-        assertEquals(
-            "https://maps.googleapis.com/maps/api/streetview/metadata?location=40.692500,-73.990900&radius=50&source=outdoor&key=K",
-            StreetViewProbe.metadataUrl(40.6925, -73.9909, "K")
-        )
-    }
 }

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.TextPaint
 import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
@@ -39,6 +40,7 @@ import com.pioneer.nycfirewire.model.incident.response.IncidentDataByID
 import com.pioneer.nycfirewire.model.incident.response.IncidentSubLocality
 import com.pioneer.nycfirewire.model.incident.response.Points
 import com.pioneer.nycfirewire.utils.BitmapFromVector
+import com.pioneer.nycfirewire.utils.Constants
 import com.pioneer.nycfirewire.utils.MapTypePrefs
 import com.pioneer.nycfirewire.utils.Constants.CODE_SUCCESS
 import com.pioneer.nycfirewire.utils.Constants.INCIDENT_DETAILS
@@ -63,19 +65,13 @@ import com.pioneer.nycfirewire.utils.UnitColors
 import android.content.ActivityNotFoundException
 import android.content.res.ColorStateList
 import android.net.Uri
-import android.widget.FrameLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.lifecycle.lifecycleScope
 import com.google.android.material.appbar.AppBarLayout
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.analytics
 import com.pioneer.nycfirewire.databinding.ItemProgressionRowBinding
 import com.pioneer.nycfirewire.model.incident.response.ProgressionEntry
 import com.pioneer.nycfirewire.utils.IncidentPage
-import com.pioneer.nycfirewire.utils.StreetViewProbe
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.Locale
 
 @AndroidEntryPoint
@@ -95,25 +91,19 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
 
     private var pendingIncidentResponse: Resource<IncidentByIdResponse>? = null
 
-    // Variation D (map hero)
-    /** The Street View availability probe runs once per screen. */
-    private var streetViewProbed = false
-    /** Top margin of the 360 pill when it shares the row with the map-type toggle. */
-    private var streetViewButtonTopMargin = 0
-
     companion object {
         /** Dim over the map when the hero is fully collapsed. */
         private const val MAP_SCRIM_MAX_ALPHA = 0.45f
         /** Map controls shrink slightly as the hero collapses (mockup: 0.9). */
         private const val MAP_CONTROLS_MIN_SCALE = 0.9f
-        /** Height reserved at the top of the map for the toggle / 360 pill. */
+        /** Height reserved at the top of the map for the map-type toggle. */
         private const val MAP_CONTROLS_HEIGHT_DP = 52f
         /** Extra clearance between the Google logo and the overlapping card. */
         private const val MAP_LOGO_CLEARANCE_DP = 8f
         /** Collapsed strip: distance from its bottom edge to the incident pin's tip. */
         private const val MAP_STRIP_PIN_INSET_DP = 24f
 
-        const val EVENT_360_OPENED = "incident_360_opened"
+        const val EVENT_PREMIUM_TEASER_TAPPED = "incident_premium_teaser_tapped"
         const val EVENT_FIREHOUSE_TAPPED = "incident_firehouse_tapped"
 
         private const val INCIDENT_MARKER_TAG = "incident"
@@ -167,10 +157,6 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
                     pivotX = 0f; pivotY = 0f
                     scaleX = scale; scaleY = scale
                 }
-                binding.btnStreetView.apply {
-                    pivotX = width.toFloat(); pivotY = 0f
-                    scaleX = scale; scaleY = scale
-                }
 
                 // The hero slides up under the top bar, leaving its bottom
                 // strip visible. Shift the map down inside it so the camera
@@ -187,15 +173,11 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
             }
         )
 
-        // 360 pill and map-type toggle share one row; if they would collide
-        // (narrow screen / large font scale) the pill drops under the toggle.
-        streetViewButtonTopMargin =
-            (binding.btnStreetView.layoutParams as FrameLayout.LayoutParams).topMargin
-        binding.mapControls.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-            binding.mapControls.post { placeStreetViewButton() }
+        // The five-segment toggle spans the map; keep its labels on one line
+        // whatever the width / system font size.
+        binding.llMapTypeToggle.addOnLayoutChangeListener { toggle, left, _, right, _, oldLeft, _, oldRight, _ ->
+            if (right - left != oldRight - oldLeft) toggle.post { fitMapTypeToggle() }
         }
-
-        binding.btnStreetView.setOnClickListener { openStreetView() }
 
         // Short screens (landscape, split screen, small phones): never let the
         // hero push the cards off screen, since only the cards can collapse it.
@@ -232,18 +214,35 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
     private fun mapPaddingBottom(): Int =
         resources.getDimensionPixelSize(R.dimen.fw_incident_map_overlap) + dp(MAP_LOGO_CLEARANCE_DP)
 
-    private fun placeStreetViewButton() {
+    /**
+     * The five map-type segments always share one line. At the default font
+     * size they fit a 360dp screen with room to spare (arithmetic next to the
+     * control in activity_wire_detail.xml); at large system font sizes, or on
+     * narrower screens, the five labels are scaled down together, never below
+     * fw_seg_text_min, so the control cannot overflow the map.
+     */
+    private fun fitMapTypeToggle() {
         val toggle = binding.llMapTypeToggle
-        val button = binding.btnStreetView
-        if (button.visibility != View.VISIBLE || button.width == 0 || toggle.width == 0) return
-        val params = button.layoutParams as FrameLayout.LayoutParams
-        val gap = dp(8f)
-        val buttonLeft = binding.mapControls.width - params.marginEnd - button.width
-        val collides = toggle.right + gap > buttonLeft
-        val wantedTop = if (collides) toggle.bottom + gap else streetViewButtonTopMargin
-        if (params.topMargin != wantedTop) {
-            params.topMargin = wantedTop
-            button.layoutParams = params
+        val available = toggle.width - toggle.paddingLeft - toggle.paddingRight
+        if (available <= 0) return
+        val labels = listOf(
+            binding.tvMapHybrid, binding.tvMapStreet, binding.tvMapSatellite,
+            binding.tvMap360, binding.tvMap3d
+        )
+        val designed = resources.getDimension(R.dimen.fw_text_chip)
+        val paint = TextPaint(labels.first().paint).apply { textSize = designed }
+        // +1px per label: each TextView rounds its own width up
+        val textWidth = labels.sumOf { paint.measureText(it.text.toString()).toDouble() + 1.0 }.toFloat()
+        // everything in the track that is not label text (same dimens as the layout)
+        val chrome = labels.size * 2 * resources.getDimension(R.dimen.fw_seg_pad_h) +
+            (labels.size - 1) * resources.getDimension(R.dimen.fw_seg_gap) +
+            2 * (resources.getDimension(R.dimen.fw_seg_lock_size) + resources.getDimension(R.dimen.fw_seg_lock_gap))
+        val wanted = if (textWidth + chrome <= available) designed else maxOf(
+            minOf(designed, resources.getDimension(R.dimen.fw_seg_text_min)),
+            designed * (available - chrome) / textWidth
+        )
+        if (kotlin.math.abs(labels.first().textSize - wanted) >= 0.5f) {
+            labels.forEach { it.setTextSize(TypedValue.COMPLEX_UNIT_PX, wanted) }
         }
     }
 
@@ -260,42 +259,6 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
             }
             false
         }
-    }
-
-    /**
-     * Shows the 360 pill only when Google reports a panorama near the incident.
-     * The check is a free metadata request (no panorama is created here; the
-     * billable panorama is created only when the pill is tapped).
-     *
-     * If the key is not allowed to call the metadata endpoint (DENIED) coverage
-     * is unknown, so the pill is shown and StreetViewActivity reports
-     * "No street view here" itself when there is none.
-     */
-    private fun probeStreetView() {
-        if (streetViewProbed) return
-        val lat = wireDetails.latitude?.toDoubleOrNull() ?: return
-        val lng = wireDetails.longitude?.toDoubleOrNull() ?: return
-        if (lat == 0.0 && lng == 0.0) return
-        streetViewProbed = true
-        val appContext = applicationContext
-        lifecycleScope.launch {
-            val result = withContext(Dispatchers.IO) { StreetViewProbe.check(appContext, lat, lng) }
-            if (isFinishing || isDestroyed) return@launch
-            if (result == StreetViewProbe.Result.AVAILABLE || result == StreetViewProbe.Result.DENIED) {
-                binding.btnStreetView.visible()
-            } else {
-                binding.btnStreetView.gone()
-            }
-        }
-    }
-
-    private fun openStreetView() {
-        val lat = wireDetails.latitude?.toDoubleOrNull() ?: return
-        val lng = wireDetails.longitude?.toDoubleOrNull() ?: return
-        Firebase.analytics.logEvent(EVENT_360_OPENED, Bundle().apply {
-            putString("incident_id", wireDetails._id.orEmpty())
-        })
-        startActivity(StreetViewActivity.intent(this, lat, lng, wireDetails.address))
     }
 
     /**
@@ -442,9 +405,8 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
                     // single comma-joined label
                     bindUnits()
 
-                    // Variation D: title history card + 360 availability
+                    // Variation D: title history card
                     bindProgression(dataItem.progression)
-                    probeStreetView()
 
                     if (!::mMap.isInitialized) {
                         pendingIncidentResponse = response
@@ -750,16 +712,12 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
     }
 
     /**
-     * Map type is now a three-segment text control (STREET / SATELLITE / HYBRID)
-     * instead of three swapped ImageViews.
+     * One five-segment control on the map: HYBRID / STREET / SATELLITE switch
+     * the map type; 360 and 3D are locked Premium teasers that only open a
+     * "Coming soon" dialog (they never change the map or take the highlight).
      */
     private fun setupMapTypeToggle() {
-        val segments = mapOf(
-            binding.tvMapHybrid to GoogleMap.MAP_TYPE_HYBRID,
-            binding.tvMapStreet to GoogleMap.MAP_TYPE_NORMAL,
-            binding.tvMapSatellite to GoogleMap.MAP_TYPE_SATELLITE
-        )
-        segments.forEach { (segmentView, mapType) ->
+        mapTypeSegments().forEach { (segmentView, mapType) ->
             segmentView.setOnClickListener {
                 if (!::mMap.isInitialized) return@setOnClickListener
                 // Temporary override for this screen only; the persisted default
@@ -768,17 +726,46 @@ class WireDetailActivity : BaseActivity(), OnMapReadyCallback {
                 highlightMapTypeSegment(mapType)
             }
         }
+        binding.segMap360.setOnClickListener { showPremiumTeaser("360", R.string.incident_teaser_360) }
+        binding.segMap3d.setOnClickListener { showPremiumTeaser("3d", R.string.incident_teaser_3d) }
         // Initial highlight follows the user's saved preference (hybrid when unset).
         highlightMapTypeSegment(MapTypePrefs.googleMapType(GoogleMap.MAP_TYPE_HYBRID))
     }
 
+    /** The selectable segments; the locked 360 / 3D segments are not map types. */
+    private fun mapTypeSegments(): Map<TextView, Int> = mapOf(
+        binding.tvMapHybrid to GoogleMap.MAP_TYPE_HYBRID,
+        binding.tvMapStreet to GoogleMap.MAP_TYPE_NORMAL,
+        binding.tvMapSatellite to GoogleMap.MAP_TYPE_SATELLITE
+    )
+
+    /**
+     * Locked 360 / 3D segment tapped: "Coming soon" for everyone, plus a way
+     * to the paywall for basic users (same route as AreasAlertsActivity).
+     */
+    private fun showPremiumTeaser(feature: String, messageRes: Int) {
+        Firebase.analytics.logEvent(EVENT_PREMIUM_TEASER_TAPPED, Bundle().apply {
+            putString("feature", feature)
+        })
+        if (isFinishing || isDestroyed) return
+        val dialog = AlertDialog.Builder(this)
+            .setTitle(R.string.incident_teaser_title)
+            .setMessage(messageRes)
+        if ((prefs.userRole ?: "") == Constants.USER_BASIC_USER) {
+            dialog.setPositiveButton(R.string.incident_teaser_see_premium) { _, _ ->
+                val intent = Intent(this, MyAccountActivity::class.java)
+                intent.putExtra(IntentUtils.FROM_ACCOUNT, IntentUtils.OTHER)
+                startActivity(intent)
+            }
+            dialog.setNegativeButton(R.string.ok, null)
+        } else {
+            dialog.setPositiveButton(R.string.ok, null)
+        }
+        dialog.show()
+    }
+
     private fun highlightMapTypeSegment(mapType: Int) {
-        val segments = mapOf(
-            binding.tvMapHybrid to GoogleMap.MAP_TYPE_HYBRID,
-            binding.tvMapStreet to GoogleMap.MAP_TYPE_NORMAL,
-            binding.tvMapSatellite to GoogleMap.MAP_TYPE_SATELLITE
-        )
-        segments.forEach { (seg, type) ->
+        mapTypeSegments().forEach { (seg, type) ->
             val selected = type == mapType
             seg.background = if (selected)
                 ContextCompat.getDrawable(this, R.drawable.fw_map_seg_selected)

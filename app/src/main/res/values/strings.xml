@@ -189,15 +189,19 @@
     <string name="incident_title">INCIDENT</string>
     <!-- incident page, Variation D -->
     <string name="incident_progression_title">INCIDENT PROGRESSION</string>
-    <string name="street_view_360">360\u00B0 VIEW</string>
-    <string name="street_view_360_desc">Open 360 degree street view</string>
-    <string name="street_view_none">No street view here</string>
-    <string name="street_view_caption_fallback">Street view</string>
+    <string name="incident_teaser_title">Coming soon</string>
+    <string name="incident_teaser_360">360\u00B0 street view is coming soon to Fire Wire Premium.</string>
+    <string name="incident_teaser_3d">3D scene view is coming soon to Fire Wire Premium.</string>
+    <string name="incident_teaser_see_premium">See Premium</string>
     <string name="firehouse_directions">DIRECTIONS</string>
     <string name="directions_unavailable">No maps app available for directions</string>
     <string name="map_hybrid">HYBRID</string>
     <string name="map_satellite">SATELLITE</string>
     <string name="map_street">STREET</string>
+    <string name="map_360">360</string>
+    <string name="map_3d">3D</string>
+    <string name="map_360_locked_desc">360 degree street view, Premium, coming soon</string>
+    <string name="map_3d_locked_desc">3D scene view, Premium, coming soon</string>
     <string name="menu_post">POST</string>
     <string name="news_site_link">NYCFIREWIRE.NET</string>
     <string name="save">Save</string>

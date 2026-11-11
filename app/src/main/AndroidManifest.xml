@@ -80,9 +80,6 @@
             android:exported="false"/>
         <activity android:name=".activity.WireDetailActivity"
             android:exported="false"/>
-        <!-- 360° street-level view opened from the incident page -->
-        <activity android:name=".activity.StreetViewActivity"
-            android:exported="false"/>
 
         <activity android:name=".activity.NewsDetailActivity"
             android:exported="false"/>
