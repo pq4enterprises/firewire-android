@@ -13,20 +13,255 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"/>
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nestedScrollView"
-        android:layout_width="match_parent"
+    <!-- ===== Variation D: map hero + overlapping cards =====
+         The map is an edge-to-edge hero directly under the top bar. It lives
+         in an AppBarLayout so the cards scroll over it: the hero collapses
+         from fw_incident_map_height to a fw_incident_map_collapsed strip
+         (exitUntilCollapsed + minHeight) and never disappears. The scrolling
+         content overlaps the hero's bottom edge by fw_incident_map_overlap
+         (behavior_overlapTop). WireDetailActivity.setupMapHero() drives the
+         dim scrim, keeps the controls pinned and parallaxes the map. -->
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinator"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:paddingBottom="@dimen/dis_10"
+        android:background="@color/fw_background"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
         app:layout_constraintBottom_toTopOf="@+id/ll_bottom_bar">
 
-        <LinearLayout
+        <!-- elevation 0 + no state-list animator: the cards (declared after,
+             and raised) must draw ABOVE the map where they overlap it -->
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar_map"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dis_10"
+            android:background="@color/fw_background"
+            android:stateListAnimator="@null"
+            app:elevation="0dp">
+
+            <FrameLayout
+                android:id="@+id/map_hero"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/fw_incident_map_height"
+                android:minHeight="@dimen/fw_incident_map_collapsed"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+                <!-- translated by setupMapHero() while collapsing so the
+                     incident pin stays inside the visible strip -->
+                <FrameLayout
+                    android:id="@+id/map_parallax"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <fragment
+                        android:id="@+id/map"
+                        android:name="com.google.android.gms.maps.SupportMapFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        tools:context=".activity.MapsActivity" />
+                </FrameLayout>
+
+                <!-- transparent overlay: sees the first touch on the map so
+                     setupMapTouchHandler() can stop any ancestor from
+                     stealing the gesture, then lets it fall through -->
+                <View
+                    android:id="@+id/map_overlay"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent" />
+
+                <!-- dim: alpha 0 expanded, up to 0.45 collapsed -->
+                <View
+                    android:id="@+id/map_scrim"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:alpha="0"
+                    android:background="@color/black" />
+
+                <!-- controls on the map; kept pinned to the top of the
+                     visible strip while the hero collapses -->
+                <FrameLayout
+                    android:id="@+id/map_controls"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:paddingBottom="8dp">
+
+                    <!-- ONE five-segment control spanning the map width:
+                         HYBRID / STREET / SATELLITE switch the map type;
+                         360 and 3D are locked "coming soon" Premium teasers
+                         (lock icon, muted) that never take the highlight.
+                         Segments are wrap_content + equal weight, so each is
+                         as wide as its label plus an equal share of the spare
+                         width. Fit at a 360dp screen, default font size:
+                         track 360 - 2x12 margin = 336, - 2x3 track padding
+                         = 330, - 4x2 gaps = 322dp for the segments; labels
+                         at 11sp Poppins Bold 41.1 + 38.8 + 53.5 + 20.8 + 14.7
+                         = 168.9, + 5 x 2x6 padding = 60, + 2 x (10 lock + 3
+                         gap) = 26 -> 254.9dp needed, 67dp to spare.
+                         WireDetailActivity.fitMapTypeToggle() scales the
+                         labels down together at large system font sizes. -->
+                    <LinearLayout
+                        android:id="@+id/ll_map_type_toggle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top"
+                        android:layout_marginStart="@dimen/fw_screen_margin"
+                        android:layout_marginEnd="@dimen/fw_screen_margin"
+                        android:layout_marginTop="@dimen/fw_screen_margin"
+                        android:background="@drawable/fw_map_seg_bg"
+                        android:padding="@dimen/fw_seg_track_pad"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tv_map_hybrid"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/fw_map_seg_selected"
+                            android:gravity="center"
+                            android:maxLines="1"
+                            android:paddingLeft="@dimen/fw_seg_pad_h"
+                            android:paddingRight="@dimen/fw_seg_pad_h"
+                            android:paddingTop="@dimen/fw_seg_pad_v"
+                            android:paddingBottom="@dimen/fw_seg_pad_v"
+                            android:text="@string/map_hybrid"
+                            android:textColor="@color/fw_map_seg_text_selected"
+                            android:textSize="@dimen/fw_text_chip"
+                            android:fontFamily="@font/poppins_bold"/>
+
+                        <TextView
+                            android:id="@+id/tv_map_street"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="@dimen/fw_seg_gap"
+                            android:background="@null"
+                            android:gravity="center"
+                            android:maxLines="1"
+                            android:paddingLeft="@dimen/fw_seg_pad_h"
+                            android:paddingRight="@dimen/fw_seg_pad_h"
+                            android:paddingTop="@dimen/fw_seg_pad_v"
+                            android:paddingBottom="@dimen/fw_seg_pad_v"
+                            android:text="@string/map_street"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/fw_text_chip"
+                            android:fontFamily="@font/poppins_bold"/>
+
+                        <TextView
+                            android:id="@+id/tv_map_satellite"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="@dimen/fw_seg_gap"
+                            android:background="@null"
+                            android:gravity="center"
+                            android:maxLines="1"
+                            android:paddingLeft="@dimen/fw_seg_pad_h"
+                            android:paddingRight="@dimen/fw_seg_pad_h"
+                            android:paddingTop="@dimen/fw_seg_pad_v"
+                            android:paddingBottom="@dimen/fw_seg_pad_v"
+                            android:text="@string/map_satellite"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/fw_text_chip"
+                            android:fontFamily="@font/poppins_bold"/>
+
+                        <!-- locked: 360 street view (Premium, coming soon) -->
+                        <LinearLayout
+                            android:id="@+id/seg_map_360"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="@dimen/fw_seg_gap"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:paddingLeft="@dimen/fw_seg_pad_h"
+                            android:paddingRight="@dimen/fw_seg_pad_h"
+                            android:paddingTop="@dimen/fw_seg_pad_v"
+                            android:paddingBottom="@dimen/fw_seg_pad_v"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:contentDescription="@string/map_360_locked_desc">
+
+                            <ImageView
+                                android:layout_width="@dimen/fw_seg_lock_size"
+                                android:layout_height="@dimen/fw_seg_lock_size"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/fw_ic_lock"
+                                app:tint="@color/fw_on_scrim_muted"/>
+
+                            <TextView
+                                android:id="@+id/tv_map_360"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/fw_seg_lock_gap"
+                                android:maxLines="1"
+                                android:text="@string/map_360"
+                                android:textColor="@color/fw_on_scrim_muted"
+                                android:textSize="@dimen/fw_text_chip"
+                                android:fontFamily="@font/poppins_bold"/>
+                        </LinearLayout>
+
+                        <!-- locked: 3D scene view (Premium, coming soon) -->
+                        <LinearLayout
+                            android:id="@+id/seg_map_3d"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="@dimen/fw_seg_gap"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:paddingLeft="@dimen/fw_seg_pad_h"
+                            android:paddingRight="@dimen/fw_seg_pad_h"
+                            android:paddingTop="@dimen/fw_seg_pad_v"
+                            android:paddingBottom="@dimen/fw_seg_pad_v"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:contentDescription="@string/map_3d_locked_desc">
+
+                            <ImageView
+                                android:layout_width="@dimen/fw_seg_lock_size"
+                                android:layout_height="@dimen/fw_seg_lock_size"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/fw_ic_lock"
+                                app:tint="@color/fw_on_scrim_muted"/>
+
+                            <TextView
+                                android:id="@+id/tv_map_3d"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/fw_seg_lock_gap"
+                                android:maxLines="1"
+                                android:text="@string/map_3d"
+                                android:textColor="@color/fw_on_scrim_muted"
+                                android:textSize="@dimen/fw_text_chip"
+                                android:fontFamily="@font/poppins_bold"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </FrameLayout>
+            </FrameLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <!-- elevation only orders this above the app bar (no background, so
+             no shadow is cast) -->
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:elevation="2dp"
+            android:paddingBottom="@dimen/dis_10"
+            app:behavior_overlapTop="@dimen/fw_incident_map_overlap"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:id="@+id/ll_cards"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/fw_screen_margin"
             android:layout_marginRight="@dimen/fw_screen_margin"
             android:orientation="vertical">
@@ -82,8 +317,9 @@
 
                     <TextView
                         android:id="@+id/tv_sub_locality"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:layout_marginStart="8dp"
                         android:maxLines="1"
                         android:ellipsize="end"
@@ -97,9 +333,10 @@
 
                     <TextView
                         android:id="@+id/tv_date_time"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        android:maxLines="1"
                         android:gravity="end"
                         android:fontFamily="monospace"
                         android:textColor="@color/fw_muted"
@@ -175,94 +412,39 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- ===== map card ===== -->
-            <com.google.android.material.card.MaterialCardView
+            <!-- ===== incident progression card =====
+                 one row per title change, newest first; shown only when the
+                 incident has had 2+ titles (bindProgression) -->
+            <LinearLayout
+                android:id="@+id/card_progression"
                 android:layout_width="match_parent"
-                android:layout_height="166dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/fw_card_gap"
-                app:cardCornerRadius="@dimen/fw_corner_card"
-                app:cardElevation="0dp"
-                app:strokeWidth="@dimen/fw_hairline_width"
-                app:strokeColor="@color/fw_hairline">
+                android:orientation="vertical"
+                android:background="@drawable/fw_card_bg"
+                android:paddingLeft="@dimen/fw_card_pad"
+                android:paddingRight="@dimen/fw_card_pad"
+                android:paddingTop="12dp"
+                android:paddingBottom="10dp"
+                android:visibility="gone"
+                tools:visibility="visible">
 
-                <FrameLayout
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/incident_progression_title"
+                    android:textColor="@color/fw_text"
+                    android:textSize="@dimen/fw_text_section"
+                    android:fontFamily="@font/poppins_bold"/>
+
+                <!-- rows are inflated from item_progression_row.xml -->
+                <LinearLayout
+                    android:id="@+id/ll_progression_rows"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <fragment
-                        android:id="@+id/map"
-                        android:name="com.google.android.gms.maps.SupportMapFragment"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        tools:context=".activity.MapsActivity" />
-
-                    <!-- transparent overlay: sits on top of the map inside this
-                         FrameLayout so setupMapTouchHandler() can hand the gesture
-                         to the map instead of letting the NestedScrollView steal it -->
-                    <View
-                        android:id="@+id/map_overlay"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@android:color/transparent" />
-
-                    <!-- (address chip removed — the pin alone marks the spot;
-                         the address already headlines the summary card) -->
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end|bottom"
-                        android:layout_margin="8dp"
-                        android:background="@drawable/fw_map_seg_bg"
-                        android:padding="@dimen/fw_seg_track_pad"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/tv_map_hybrid"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/fw_map_seg_selected"
-                            android:paddingLeft="@dimen/fw_seg_pad_h"
-                            android:paddingRight="@dimen/fw_seg_pad_h"
-                            android:paddingTop="@dimen/fw_seg_pad_v"
-                            android:paddingBottom="@dimen/fw_seg_pad_v"
-                            android:text="@string/map_hybrid"
-                            android:textColor="@color/fw_map_seg_text_selected"
-                            android:textSize="@dimen/fw_text_chip"
-                            android:fontFamily="@font/poppins_bold"/>
-
-                        <TextView
-                            android:id="@+id/tv_map_street"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="2dp"
-                            android:background="@null"
-                            android:paddingLeft="@dimen/fw_seg_pad_h"
-                            android:paddingRight="@dimen/fw_seg_pad_h"
-                            android:paddingTop="@dimen/fw_seg_pad_v"
-                            android:paddingBottom="@dimen/fw_seg_pad_v"
-                            android:text="@string/map_street"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/fw_text_chip"
-                            android:fontFamily="@font/poppins_bold"/>
-
-                        <TextView
-                            android:id="@+id/tv_map_satellite"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="2dp"
-                            android:background="@null"
-                            android:paddingLeft="@dimen/fw_seg_pad_h"
-                            android:paddingRight="@dimen/fw_seg_pad_h"
-                            android:paddingTop="@dimen/fw_seg_pad_v"
-                            android:paddingBottom="@dimen/fw_seg_pad_v"
-                            android:text="@string/map_satellite"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/fw_text_chip"
-                            android:fontFamily="@font/poppins_bold"/>
-                    </LinearLayout>
-                </FrameLayout>
-            </com.google.android.material.card.MaterialCardView>
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:orientation="vertical"/>
+            </LinearLayout>
 
             <!-- ===== units card ===== -->
             <LinearLayout
@@ -343,7 +525,8 @@
                     android:visibility="gone"/>
             </LinearLayout>
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <!-- ===== bottom action bar ===== -->
     <LinearLayout

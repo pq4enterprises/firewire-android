@@ -30,6 +30,16 @@ data class IncidentDataByID(
     val subLocalityName:String?="",
     val featuredImageUrl:String?="",
     var isLiked:Boolean=false,
+    // title history, oldest first (absent on older servers / single-title incidents)
+    val progression: List<ProgressionEntry>? = null,
+) : Parcelable
+
+/** One title change of an incident: `{ "version": 1, "title": "10-75", "at": "<ISO-8601 UTC>" }`. */
+@Parcelize
+data class ProgressionEntry(
+    val version: Int? = null,
+    val title: String? = "",
+    val at: String? = ""
 ) : Parcelable
 
 
@@ -46,7 +56,10 @@ data class Points(
     val name: String?="",
     // used as the marker snippet on the incident map (added with the redesign's
     // firehouse pins); defaulted so existing construction sites are unaffected
-    val address: String?=""
+    val address: String?="",
+    // miles from the incident, computed by the server (points arrive nearest
+    // first); absent on older servers
+    val distanceMiles: Double?=null
 ): Parcelable
 
 
